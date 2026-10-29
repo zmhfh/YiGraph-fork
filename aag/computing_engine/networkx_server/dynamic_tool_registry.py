@@ -687,7 +687,11 @@ def _export_schemas(schemas_map: Dict[str, Dict[str, Any]], schema_type: str):
     import json
     
     try:
-        output_file = Path(__file__).parent / f"generated_{schema_type}_schemas.json"
+        from aag.utils.path_utils import RUNTIME_ROOT
+
+        output_dir = RUNTIME_ROOT / ".cache" / "schemas" / "networkx"
+        output_dir.mkdir(parents=True, exist_ok=True)
+        output_file = output_dir / f"generated_{schema_type}_schemas.json"
         
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(schemas_map, f, indent=2, ensure_ascii=False)

@@ -17,12 +17,25 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python"></a>
   <a href="http://iDC-NEU.github.io/YiGraphDocs/"><img src="https://img.shields.io/badge/📚-用户文档-purple.svg" alt="Docs"></a>
-  <a href="#-联系我们"><img src="https://img.shields.io/badge/📞-联系我们-green.svg" alt="Contact"></a>
+  <a href="figure/wechat.jpg"><img src="https://img.shields.io/badge/-%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7-07C160.svg?logo=wechat&logoColor=white" alt="微信公众号"></a>
+  <a href="figure/wechat_group.png"><img src="https://img.shields.io/badge/-%E5%BE%AE%E4%BF%A1%E7%BE%A4-07C160.svg?logo=wechat&logoColor=white" alt="微信群"></a>
+  <a href="figure/rednote.png"><img src="https://img.shields.io/badge/-%E5%B0%8F%E7%BA%A2%E4%B9%A6-FF2442.svg?logo=xiaohongshu&logoColor=white" alt="小红书"></a>
+  <a href="https://x.com/idcneu"><img src="https://img.shields.io/badge/-%40idcneu-000000.svg?logo=x&logoColor=white" alt="在 X 上关注 @idcneu"></a>
 </p>
 
 [English](README.md) | 简体中文
 
 </div>
+
+---
+
+## 🎬 演示视频
+
+从原始数据导入与自动构图，到可疑交易分析、可追溯报告生成和专家模式下的工作流调整，查看易图的完整操作过程。
+
+https://github.com/user-attachments/assets/595de226-147f-40eb-aa3e-475a789fbc76
+
+[打开独立中文播放器](https://anoodle3.github.io/YiGraph-1/figure/demo/?lang=zh) · [中文字幕](figure/demo/yigraph-demo-zh.srt)
 
 ---
 
@@ -110,7 +123,7 @@
 
 ## 🎯 版本发布
 
-### v1.1.0 (当前版本)
+### v2.0.0（当前源码版本）
 
 **核心能力**
 - ✅ 完整的图计算引擎（基于 NetworkX 和 Neo4j）
@@ -122,14 +135,114 @@
 
 ### 路线图
 
-**v2.0.0（计划中）**
-- 🔄 交互体验更强的用户页面
-- 🔄 支持算法知识库的动态扩展与持续更新
+main 分支已包含 Web 2.0 界面及算法知识库管理功能。
+Python 包的构建、安装与调用方式见下文。
 
 
 ---
 
-## 🚀 快速开始
+## Python 包安装与使用（2.0）
+
+需要 Python 3.11 或更新版本。2.0.0 已发布到 [PyPI](https://pypi.org/project/yigraph/2.0.0/)，可直接安装：
+
+```bash
+python -m pip install yigraph==2.0.0
+yigraph --version
+yigraph demo
+```
+
+也可以在当前源码仓库安装，或构建 wheel 后分发：
+
+```bash
+python -m pip install .
+# 构建 wheel 和源码发行包
+python -m pip install build twine
+python -m build
+python -m twine check dist/*
+# 在其他机器安装
+python -m pip install ./dist/yigraph-2.0.0-py3-none-any.whl
+```
+
+`yigraph demo` 使用易图已有的图处理器计算最短路径和 PageRank，
+不需要大模型、GPU 或数据库。A 到 D 的最短路径应为 `["A", "C", "D"]`。
+也可以直接在 Python 中调用：
+
+```python
+from yigraph import EdgeData, GraphComputationProcessor, VertexData
+
+graph = GraphComputationProcessor()
+graph.create_graph_from_edges(
+    [VertexData(name) for name in ("A", "B", "C")],
+    [EdgeData("A", "B"), EdgeData("B", "C")],
+)
+print(graph.run_shortest_path("A", "C"))
+```
+
+完整 AAG 智能体需安装扩展依赖并初始化工作目录：
+
+```bash
+python -m pip install "yigraph[engine]==2.0.0"
+# 或在源码仓库中安装：python -m pip install ".[engine]"
+# 或从 wheel 安装：
+# python -m pip install "./dist/yigraph-2.0.0-py3-none-any.whl[engine]"
+yigraph init ./yigraph-workspace
+```
+
+编辑工作目录中的 `config/engine_config.yaml`，配置模型服务及数据库。
+在导入 AAG 模块前，将 `YIGRAPH_HOME` 设置为工作目录的绝对路径：
+Linux/macOS 使用 `export YIGRAPH_HOME=/absolute/path/to/yigraph-workspace`；
+PowerShell 使用 `$env:YIGRAPH_HOME = (Resolve-Path ./yigraph-workspace).Path`。
+算法知识库及演示数据也会复制到工作目录，重复初始化会保留已有文件。
+
+```python
+import asyncio
+from yigraph import AAGEngine, load_config
+
+
+async def main():
+    engine = AAGEngine(load_config())
+    try:
+        print(engine.list_datasets())
+        engine.specific_dataset("AMLSim1K", "graph")
+        print(await engine.run("使用 PageRank 找出最重要的十个账户", mode="normal"))
+    finally:
+        await engine.shutdown()
+
+
+asyncio.run(main())
+```
+
+终端交互入口：`yigraph --home ./yigraph-workspace chat`。
+图学习算法额外安装 `yigraph[engine,pyg]==2.0.0`。完整智能体依赖外部模型和数据库服务，
+需按环境配置；Python 包包含程序代码及运行资源，Web 2.0 前端从源码仓库启动。
+原有 `aag.*` 导入方式继续可用。
+
+完整说明见 [Python 包教程](docs-site/docs/tutorial-basics/python-package.md)、
+[示例代码](examples)及[在线文档](https://idc-neu.com/YiGraphDocs/)。
+向独立文档仓库同步教程：`python scripts/sync_python_docs.py ../YiGraphDocs`，
+追加 `--check` 可检查两边是否一致。
+
+### 维护者发布到 PyPI
+
+2.0.0 已发布，不能再次上传或覆盖。发布后续版本前，请先更新版本号。
+
+在 [PyPI](https://pypi.org/) 注册账号、验证邮箱并开启双重验证后，创建 API Token。
+首次创建项目需要可用于创建项目的 Token。请仅在本机的隐藏输入提示中输入 Token，
+脚本将其保存到系统凭据管理器，不会写入仓库：
+
+```bash
+python -m pip install ".[dev]"
+python -m build
+python scripts/publish_pypi.py --configure-token
+python scripts/publish_pypi.py --check
+python scripts/publish_pypi.py
+```
+
+`--check` 只检查，不上传。发布脚本仅上传与 `pyproject.toml` 的包名和版本一致的
+wheel 与源码包，并拒绝重复发布已有版本。发布成功后，可用
+`python -m pip install yigraph==2.0.0` 安装。后续发布需提升版本号并重新构建。
+
+## 🚀 源码部署指南
 
 ### 1. 准备环境
 
@@ -478,33 +591,6 @@ python aag/main.py
 - **API 参考**：完整的 API 接口文档
 - **最佳实践**：典型场景的分析案例和经验总结
 
-## 📞 联系我们
-
-
-### 贡献指南
-
-我们欢迎各种形式的贡献：
-
-- 🐛 报告 Bug
-- 💡 提出新功能建议
-- 📝 改进文档
-- 🔧 提交代码
-
-
-### 社区交流
-
-
-
-<div align="center">
-
-| 微信 | 小红书 | Twitter |
-|:---:|:---:|:---:|
-| <img src="figure/wechat.png" alt="微信" width="200"/> | <img src="figure/redbook.png" alt="小红书" width="200"/> | <img src="figure/twitter.png" alt="Twitter" width="200"/> |
-
-</div>
-
-
-
 ---
 
 ## 📚 引用
@@ -547,8 +633,3 @@ python aag/main.py
 </div>
 
 ---
-
-
-
-
-

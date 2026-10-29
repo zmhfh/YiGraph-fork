@@ -1,7 +1,6 @@
 from aag.reasoner.model_deployment import EmbeddingEnv
 from aag.expert_search_engine.database.milvus import myMilvus, MilvusDB
 from aag.utils.timer import Timer
-from aag.expert_search_engine.data_process.openai_extractor.gpt_extract_triplets import OpenAIExtractor
 from tqdm import tqdm
 
 
@@ -15,6 +14,8 @@ class EntitiesDB:
                  step=100,
                  device='cuda:0',
                  verbose=False):
+        from aag.expert_search_engine.data_process.openai_extractor.gpt_extract_triplets import OpenAIExtractor
+
         self.openai_extractor = OpenAIExtractor()
         self.embed_model = EmbeddingEnv(embed_name=embed_name, device=device)
 

@@ -1,0 +1,50 @@
+# Template for a local YiGraph installation. Configure services before using chat.
+version: "2.0.0"
+mode: interactive
+reasoner:
+  llm:
+    provider: openai
+    openai:
+      base_url: https://api.openai.com/v1
+      api_key: ""
+      model: gpt-4o-mini
+      temperature: 0.0
+    ollama:
+      model_name: llama3.1:8b
+      device: cpu
+      port: 11434
+      timeout: 150000
+retrieval:
+  database:
+    graph:
+      space_name: AMLSim1K
+      server_ip: 127.0.0.1
+      server_port: "9669"
+      username: root
+      password: ""
+    vector:
+      collection_name: graphllm_collection
+      dim: 1024
+      host: localhost
+      port: 19530
+    neo4j:
+      enabled: false
+      uri: bolt://localhost:7687
+      user: neo4j
+      password: ""
+  embedding:
+    model_name: BAAI/bge-large-en-v1.5
+    batch_size: 20
+    device: cpu
+  rag:
+    graph:
+      k_hop: 2
+      pruning: 30
+      data_type: qa
+      pruning_mode: embedding_for_perentity
+    vector:
+      k_similarity: 5
+monitoring:
+  enabled: true
+output:
+  format: text

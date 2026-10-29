@@ -2,6 +2,7 @@ import importlib
 import yaml
 import logging
 import json
+import sys
 from pathlib import Path
 from typing import Dict, Any, Optional
 from aag.utils.path_utils import DEFAULT_CONFIG_SERVER_PATH
@@ -44,7 +45,7 @@ class ComputingEngine:
         
         for engine_name, server in config.get("servers", {}).items():
             client = GraphMCPClient(
-                server_command=server.get("command", "python"),
+                server_command=(sys.executable if server.get("command", "python") == "python" else server["command"]),
                 server_args=server.get("args", [])
             )
             ok = await client.connect()

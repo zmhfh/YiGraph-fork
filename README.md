@@ -17,12 +17,25 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python"></a>
   <a href="http://iDC-NEU.github.io/YiGraphDocs/"><img src="https://img.shields.io/badge/📚-Docs-purple.svg" alt="Docs"></a>
-  <a href="#-contact-us"><img src="https://img.shields.io/badge/📞-Contact_Us-green.svg" alt="Contact"></a>
+  <a href="figure/wechat.jpg"><img src="https://img.shields.io/badge/-WeChat_Official_Account-07C160.svg?logo=wechat&logoColor=white" alt="WeChat Official Account"></a>
+  <a href="figure/wechat_group.png"><img src="https://img.shields.io/badge/-WeChat_Group-07C160.svg?logo=wechat&logoColor=white" alt="WeChat Group"></a>
+  <a href="figure/rednote.png"><img src="https://img.shields.io/badge/-Xiaohongshu-FF2442.svg?logo=xiaohongshu&logoColor=white" alt="Xiaohongshu"></a>
+  <a href="https://x.com/idcneu"><img src="https://img.shields.io/badge/-%40idcneu-000000.svg?logo=x&logoColor=white" alt="Follow @idcneu on X"></a>
 </p>
 
 English | [简体中文](README_CN.md)
 
 </div>
+
+---
+
+## 🎬 Demo
+
+Watch YiGraph turn raw data into a graph, analyze suspicious transactions, generate a traceable report, and refine a workflow in expert mode.
+
+https://github.com/user-attachments/assets/dcbbc3a0-1ab8-4997-9a00-9bea480bad5e
+
+[Open the standalone English player](https://anoodle3.github.io/YiGraph-1/figure/demo/?lang=en)
 
 ---
 
@@ -110,7 +123,7 @@ The system will automatically extract entities and relationships from raw data t
 
 ## 🎯 Version Release
 
-### v1.1.0 (Current Version)
+### v2.0.0 (Current Source Version)
 
 **Core Capabilities**
 - ✅ Complete graph computing engine (based on NetworkX and  Neo4j)
@@ -121,14 +134,108 @@ The system will automatically extract entities and relationships from raw data t
 
 ### Roadmap
 
-**v2.0.0 (Planned)**
-- 🔄 Enhanced interactive user interface
-- 🔄 Dynamic expansion of the algorithm knowledge base
+The main branch includes the Web 2.0 interface and algorithm knowledge base management.
+Python packaging and installation instructions are provided below.
 
 
 ---
 
-## 🚀 Quick Start
+## Python Package (2.0)
+
+Requires Python 3.11+. Version 2.0.0 is available on [PyPI](https://pypi.org/project/yigraph/2.0.0/):
+
+```bash
+python -m pip install yigraph==2.0.0
+yigraph --version
+yigraph demo
+```
+
+For source installation and distributable builds, run from this checkout:
+
+```bash
+python -m pip install .
+# Build wheel and source distribution:
+python -m pip install build twine
+python -m build
+python -m twine check dist/*
+# Install on another machine:
+python -m pip install ./dist/yigraph-2.0.0-py3-none-any.whl
+```
+
+`yigraph demo` computes a shortest path and PageRank using YiGraph's graph processor
+without an LLM, GPU or database. The expected A-to-D path is `["A", "C", "D"]`.
+Direct Python calls are supported:
+
+```python
+from yigraph import EdgeData, GraphComputationProcessor, VertexData
+
+graph = GraphComputationProcessor()
+graph.create_graph_from_edges(
+    [VertexData(name) for name in ("A", "B", "C")],
+    [EdgeData("A", "B"), EdgeData("B", "C")],
+)
+print(graph.run_shortest_path("A", "C"))
+```
+
+For the full AAG engine, install `python -m pip install "yigraph[engine]==2.0.0"`
+(or install `".[engine]"` from the checkout), run
+`yigraph init ./yigraph-workspace`, and configure its `config/engine_config.yaml`.
+Set `YIGRAPH_HOME` to the absolute workspace path **before importing AAG modules**.
+The workspace stores editable configuration, knowledge base files and sample data.
+Model and database services must be configured separately.
+
+```python
+import asyncio
+from yigraph import AAGEngine, load_config
+
+
+async def main():
+    engine = AAGEngine(load_config())
+    try:
+        print(engine.list_datasets())
+        engine.specific_dataset("AMLSim1K", "graph")
+        print(await engine.run("Find the ten most important accounts using PageRank.", mode="normal"))
+    finally:
+        await engine.shutdown()
+
+
+asyncio.run(main())
+```
+
+The terminal entry point is `yigraph --home ./yigraph-workspace chat`.
+Install `yigraph[engine,pyg]==2.0.0` for PyG algorithms. The wheel contains Python code and
+runtime resources; the Web 2.0 frontend continues to run from the source checkout.
+Existing `aag.*` imports remain supported.
+
+See the [full Python tutorial](docs-site/i18n/en/docusaurus-plugin-content-docs/current/tutorial-basics/python-package.md),
+[examples](examples), and [documentation site](https://idc-neu.com/YiGraphDocs/).
+To update a separate documentation checkout, run
+`python scripts/sync_python_docs.py ../YiGraphDocs` (add `--check` to verify synchronization).
+
+### Maintainers: publish to PyPI
+
+Version 2.0.0 is already published and cannot be uploaded again or replaced.
+Update the version before following these steps for a future release.
+
+Create a [PyPI](https://pypi.org/) account, verify your email, enable two-factor
+authentication, and create an API token. The first release needs a token that can
+create a new project. Enter the token only in the local hidden prompt; the script
+stores it in the system credential manager, never in the repository:
+
+```bash
+python -m pip install ".[dev]"
+python -m build
+python scripts/publish_pypi.py --configure-token
+python scripts/publish_pypi.py --check
+python scripts/publish_pypi.py
+```
+
+`--check` does not upload. The script validates both artifact metadata files against
+`pyproject.toml`, uploads only that version's wheel and source archive, and refuses
+to replace an existing release. After publication, install with
+`python -m pip install yigraph==2.0.0`. Increment the version before future releases.
+
+## 🚀 Source Deployment Guide
 
 ### 1. Environment Preparation
 
@@ -479,34 +586,6 @@ Documentation includes:
 
 
 
-## 📞 Contact Us
-
-
-
-### Contribution Guidelines
-
-We welcome all forms of contributions:
-
-- 🐛 Report Bugs
-- 💡 Suggest New Features
-- 📝 Improve Documentation
-- 🔧 Submit Code
-
-
-### Community Communication
-
-
-
-<div align="center">
-
-| WeChat | Xiaohongshu | Twitter |
-|:---:|:---:|:---:|
-| <img src="figure/wechat.png" alt="WeChat" width="200"/> | <img src="figure/redbook.png" alt="Xiaohongshu" width="200"/> | <img src="figure/twitter.png" alt="Twitter" width="200"/> |
-
-</div>
-
-
-
 ---
 
 ## 📚 Citation
@@ -549,7 +628,3 @@ This project is licensed under the [MIT License](LICENSE).
 </div>
 
 ---
-
-
-
-

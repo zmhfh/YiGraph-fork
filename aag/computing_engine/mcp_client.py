@@ -12,6 +12,7 @@ import logging
 import csv
 import asyncio
 import json
+import sys
 from typing import Any, Dict, List, Optional
 from pathlib import Path
 
@@ -26,9 +27,9 @@ logger = logging.getLogger(__name__)
 class GraphMCPClient:
     """Graph computation MCP client with schema loaded from files."""
 
-    def __init__(self, server_command: str = "python", server_args: List[str] = None, schema_dir: Optional[str] = None):
-        self.server_command = server_command
-        self.server_args = server_args or ["networkx_server/mcp_server.py"]
+    def __init__(self, server_command: str = None, server_args: List[str] = None, schema_dir: Optional[str] = None):
+        self.server_command = server_command or sys.executable
+        self.server_args = server_args or ["-m", "aag.computing_engine.networkx_server.mcp_server"]
         self.schema_dir = Path(schema_dir) if schema_dir else None
         self.session = None
         self.available_tools = {}
@@ -92,6 +93,12 @@ class GraphMCPClient:
                 module_path = module_name.replace('.', '/')
                 module_dir = '/'.join(module_path.split('/')[:-1])
                 schema_file = Path(__file__).parent.parent.parent / module_dir / f"generated_{schema_type}_schemas.json"
+                if module_name == "aag.computing_engine.networkx_server.mcp_server":
+                    from aag.utils.path_utils import RUNTIME_ROOT
+
+                    cached = RUNTIME_ROOT / ".cache" / "schemas" / "networkx" / f"generated_{schema_type}_schemas.json"
+                    if cached.exists():
+                        schema_file = cached
             else:
                 schema_file = Path(self.server_args[0]).parent / f"generated_{schema_type}_schemas.json"
         else:

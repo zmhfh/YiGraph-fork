@@ -3,7 +3,6 @@ import logging
 import community 
 from typing import List, Tuple, Dict, Any, Optional, Union
 from aag.expert_search_engine.database.datatype import *
-from aag.expert_search_engine.database.nebulagraph import NebulaGraphClient
 from aag.computing_engine.graph_processor import GraphProcessor
 
 logger = logging.getLogger(__name__)
@@ -576,6 +575,8 @@ class GraphComputationProcessor(GraphProcessor):
 
 
 if __name__ == '__main__':
+    from aag.expert_search_engine.database.nebulagraph import NebulaGraphClient
+
     testclient = NebulaGraphClient(space_name="AMLSim1K")
     vertices = testclient.get_all_vertices()
     edges = testclient.get_all_edges()

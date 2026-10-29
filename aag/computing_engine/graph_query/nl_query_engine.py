@@ -32,7 +32,7 @@ from aag.computing_engine.graph_query.graph_query import Neo4jGraphClient, Neo4j
 from aag.computing_engine.graph_query.nl_query_engine_refactored import ParameterExtractorRouter
 # add gjq
 # Removed direct OpenAI client initialization
-# os.environ['OPENAI_API_KEY'] = 'sk-G30rFStBigqXtuyIOkOo7Zh4QNxO8ZAjfZQ5DYPCgMXbPv8q'
+# Set OPENAI_API_KEY through your environment or configuration.
 # os.environ['OPENAI_BASE_URL'] = 'https://gitaigc.com/v1/'
 # client = OpenAI(
 #     api_key=os.environ.get("OPENAI_API_KEY"),

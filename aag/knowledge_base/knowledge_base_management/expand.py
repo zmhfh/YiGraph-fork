@@ -20,8 +20,9 @@ from .basic import (
 )
 
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
-YIGRAPH_CONFIG_PATH = PROJECT_ROOT / "config" / "engine_config.yaml"
+from aag.utils.path_utils import DEFAULT_CONFIG_PATH
+
+YIGRAPH_CONFIG_PATH = DEFAULT_CONFIG_PATH
 BASE_DIR = Path(__file__).resolve().parent
 ALGORITHMS_NEW_PATH = ALGORITHMS_PATH.with_name("algorithms_new.yaml")
 

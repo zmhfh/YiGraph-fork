@@ -7,7 +7,9 @@ from typing import Any
 import yaml
 
 
-BASE_DIR = Path(__file__).resolve().parents[1]
+from aag.utils.path_utils import KNOWLEDGE_BASE_DIR
+
+BASE_DIR = KNOWLEDGE_BASE_DIR
 ALGORITHMS_PATH = BASE_DIR / "algorithms.yaml"
 TASK_TYPES_PATH = BASE_DIR / "task_types.yaml"
 DEFAULT_LANG = "zh-CN"

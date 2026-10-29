@@ -1,0 +1,10 @@
+include README_CN.md
+recursive-include examples *.py
+recursive-include tests *.py
+recursive-include scripts *.py
+include docs-site/docs/tutorial-basics/python-package.md
+include docs-site/i18n/en/docusaurus-plugin-content-docs/current/tutorial-basics/python-package.md
+prune aag/expert_search_engine/data_process
+include aag/expert_search_engine/data_process/openai_extractor/gpt_extract_triplets.py
+prune aag/data_pipeline/knowledge_ingestion
+global-exclude *.pyc __pycache__ *.log
