@@ -1,0 +1,7 @@
+{
+  "archive": "binder-training-and-evaluations.tar.gz",
+  "bytes": 1095565189,
+  "sha256": "fa174d7ac0c193198856d8a7fa38014640cee3c3576fe7513d6d50fbd8352724",
+  "files_scanned": 369,
+  "contains": "Binder training scripts, datasets, configs, checkpoints, final adapters and evaluations; original paths preserved in historical configs"
+}

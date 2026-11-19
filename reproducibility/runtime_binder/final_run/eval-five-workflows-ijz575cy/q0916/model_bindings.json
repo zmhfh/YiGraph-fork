@@ -1,0 +1,70 @@
+[
+  {
+    "expected": {
+      "input_refs": [
+        "G0"
+      ]
+    },
+    "prediction": {
+      "input_refs": [
+        "G0"
+      ]
+    },
+    "strict": true,
+    "raw_response": "{\"input_refs\":[\"G0\"]}",
+    "issue": null,
+    "step_id": "v1",
+    "algorithm": "connected_components"
+  },
+  {
+    "expected": {
+      "input_refs": [
+        "first_core"
+      ]
+    },
+    "prediction": {
+      "input_refs": [
+        "first_core"
+      ]
+    },
+    "strict": true,
+    "raw_response": "{\"input_refs\":[\"first_core\"]}",
+    "issue": null,
+    "step_id": "v2",
+    "algorithm": "minimum_spanning_tree"
+  },
+  {
+    "expected": {
+      "input_refs": [
+        "first_core"
+      ]
+    },
+    "prediction": {
+      "input_refs": [
+        "first_core"
+      ]
+    },
+    "strict": true,
+    "raw_response": "{\"input_refs\":[\"first_core\"]}",
+    "issue": null,
+    "step_id": "v3",
+    "algorithm": "average_neighbor_degree"
+  },
+  {
+    "expected": {
+      "input_refs": [
+        "second_core"
+      ]
+    },
+    "prediction": {
+      "input_refs": [
+        "second_core"
+      ]
+    },
+    "strict": true,
+    "raw_response": "{\"input_refs\":[\"second_core\"]}",
+    "issue": null,
+    "step_id": "v4",
+    "algorithm": "voterank"
+  }
+]

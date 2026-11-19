@@ -155,3 +155,10 @@ node_modules
 
 # Local ReAct execution records (goals, observations and artifacts).
 /output/react-runs/
+
+# Runtime Binder local configuration, logs and deployment backups.
+/local_models/
+/runtime/binder/
+/tools/runtime_binder/local.env
+*.before-local-*
+*.before-runtime-binder-*

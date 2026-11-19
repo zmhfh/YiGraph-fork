@@ -1,0 +1,9 @@
+{
+  "question_id": "q0916",
+  "dag_type": "diamond",
+  "graph_sha256": "113976382a13c3ad275c4d89ae243133465f604960b618c691e7a63c7d38c657",
+  "matched_bindings": 4,
+  "total_bindings": 4,
+  "passed": true,
+  "first_difference": null
+}

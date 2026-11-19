@@ -1,0 +1,58 @@
+{
+  "val": {
+    "steps": {
+      "passed": 192,
+      "total": 192
+    },
+    "whole_questions": {
+      "passed": 10,
+      "total": 10
+    },
+    "multi_candidate_G0": {
+      "passed": 56,
+      "total": 56
+    },
+    "non_G0": {
+      "passed": 104,
+      "total": 104
+    },
+    "scope_pairs_both_correct": {
+      "passed": 40,
+      "total": 40
+    },
+    "by_dag_type": {
+      "sequential": {
+        "passed": 32,
+        "total": 32
+      },
+      "parallel": {
+        "passed": 32,
+        "total": 32
+      },
+      "convergence": {
+        "passed": 40,
+        "total": 40
+      },
+      "divergence": {
+        "passed": 40,
+        "total": 40
+      },
+      "diamond": {
+        "passed": 48,
+        "total": 48
+      }
+    },
+    "failure_issues": {}
+  },
+  "inference_config": {
+    "model_name_or_path": "/home/hdd3/fuzq/node1-copy-20261114/home/LLaMA-Factory/models/Qwen3.5-2B",
+    "template": "qwen3_5",
+    "enable_thinking": false,
+    "trust_remote_code": true,
+    "infer_backend": "huggingface",
+    "finetuning_type": "lora",
+    "adapter_name_or_path": "/home/hdd3/fuzq/node1-copy-20261114/hdd2/qwen35-dag.h5GkGf/runtime-binding.eLxc9y/scope-gpu3-20261119-193920-6cd432/binding_lora"
+  },
+  "scope_hint": "\n先根据当前 step.description 确定算法的作用范围。要求使用原始图、完整输入图或全图时，选择 G0，即使已有子图。在汇聚或并行任务中，每个步骤按自己的描述选择输入。要求使用筛选或合并后的子图时，依据 derived_from 核对产物来源。",
+  "scope": "Input binding from provided status snapshots. No model-generated transformations, parameters, or final report."
+}

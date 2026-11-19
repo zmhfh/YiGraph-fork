@@ -1,0 +1,1152 @@
+{
+  "skipped": [],
+  "train": [
+    {
+      "question_id": "q0474",
+      "dag_type": "convergence",
+      "graph_sha256": "b6e7a6dba1325c66d6de961d606efee2ae6eb87450b1845573e0bef7f8a75587",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "核对最大度节点、Prim 最优权重、树上手工路径及沿边求和。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0474/20261102_131209_1378eb34",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0474",
+      "dag_type": "convergence",
+      "graph_sha256": "b6e7a6dba1325c66d6de961d606efee2ae6eb87450b1845573e0bef7f8a75587",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "核对最大度节点、Prim 最优权重、树上手工路径及沿边求和。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0474/20261102_131209_1378eb34",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0474",
+      "dag_type": "convergence",
+      "graph_sha256": "b6e7a6dba1325c66d6de961d606efee2ae6eb87450b1845573e0bef7f8a75587",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "核对最大度节点、Prim 最优权重、树上手工路径及沿边求和。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0474/20261102_131209_1378eb34",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0531",
+      "dag_type": "convergence",
+      "graph_sha256": "c5bb5e6584d3e6bc09588d447f77510a1676aebd5b7b7e9d17d921b1d5957ea3",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS、权重转移迭代和 Prim 最优权重复算一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0531/20261102_131216_17b7c742",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0531",
+      "dag_type": "convergence",
+      "graph_sha256": "c5bb5e6584d3e6bc09588d447f77510a1676aebd5b7b7e9d17d921b1d5957ea3",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS、权重转移迭代和 Prim 最优权重复算一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0531/20261102_131216_17b7c742",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0531",
+      "dag_type": "convergence",
+      "graph_sha256": "c5bb5e6584d3e6bc09588d447f77510a1676aebd5b7b7e9d17d921b1d5957ea3",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS、权重转移迭代和 Prim 最优权重复算一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0531/20261102_131216_17b7c742",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0473",
+      "dag_type": "convergence",
+      "graph_sha256": "1fcb5f7df816b895b6f7e93efb3cf73acdb8a32eeaffb5127c0f9393e3af21a3",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "四环枚举、BFS 最短距离和诱导子图最小点割一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0473/20261102_131128_66b7a2d3",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0473",
+      "dag_type": "convergence",
+      "graph_sha256": "1fcb5f7df816b895b6f7e93efb3cf73acdb8a32eeaffb5127c0f9393e3af21a3",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "四环枚举、BFS 最短距离和诱导子图最小点割一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0473/20261102_131128_66b7a2d3",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0473",
+      "dag_type": "convergence",
+      "graph_sha256": "1fcb5f7df816b895b6f7e93efb3cf73acdb8a32eeaffb5127c0f9393e3af21a3",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "四环枚举、BFS 最短距离和诱导子图最小点割一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0473/20261102_131128_66b7a2d3",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0562",
+      "dag_type": "convergence",
+      "graph_sha256": "4634120b4a07115c687d9f50c1689ddc9d5f0cfccfea8db938887de3189c41ec",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0562/20261102_131217_44e5ca0e",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0562",
+      "dag_type": "convergence",
+      "graph_sha256": "4634120b4a07115c687d9f50c1689ddc9d5f0cfccfea8db938887de3189c41ec",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0562/20261102_131217_44e5ca0e",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0562",
+      "dag_type": "convergence",
+      "graph_sha256": "4634120b4a07115c687d9f50c1689ddc9d5f0cfccfea8db938887de3189c41ec",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0562/20261102_131217_44e5ca0e",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0562",
+      "dag_type": "convergence",
+      "graph_sha256": "4634120b4a07115c687d9f50c1689ddc9d5f0cfccfea8db938887de3189c41ec",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0562/20261102_131217_44e5ca0e",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0481",
+      "dag_type": "convergence",
+      "graph_sha256": "b814cc316e037a30068532093f3e0cc2c695d414818b938b95663c69088c0099",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、独立度统计和邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0481/20261102_131209_4b304aec",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0481",
+      "dag_type": "convergence",
+      "graph_sha256": "b814cc316e037a30068532093f3e0cc2c695d414818b938b95663c69088c0099",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、独立度统计和邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0481/20261102_131209_4b304aec",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0481",
+      "dag_type": "convergence",
+      "graph_sha256": "b814cc316e037a30068532093f3e0cc2c695d414818b938b95663c69088c0099",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、独立度统计和邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0481/20261102_131209_4b304aec",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0510",
+      "dag_type": "convergence",
+      "graph_sha256": "8f83e7ab6c83c7c85789656dd2bf474f376732b71258d2ed17f2f92aaba6a0dd",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "稀疏特征分解的首位节点一致，BFS 分量与分组度统计一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0510/20261102_131210_8de4fc70",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0510",
+      "dag_type": "convergence",
+      "graph_sha256": "8f83e7ab6c83c7c85789656dd2bf474f376732b71258d2ed17f2f92aaba6a0dd",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "稀疏特征分解的首位节点一致，BFS 分量与分组度统计一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0510/20261102_131210_8de4fc70",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0510",
+      "dag_type": "convergence",
+      "graph_sha256": "8f83e7ab6c83c7c85789656dd2bf474f376732b71258d2ed17f2f92aaba6a0dd",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "稀疏特征分解的首位节点一致，BFS 分量与分组度统计一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0510/20261102_131210_8de4fc70",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0910",
+      "dag_type": "diamond",
+      "graph_sha256": "f1edd5b755240a07354afdba12c9c27e3340b7e3139d463111c1400a8229465f",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "用四环、稀疏特征分解、邻居度和最小边割独立复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0910/20261102_131223_8948a434",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0910",
+      "dag_type": "diamond",
+      "graph_sha256": "f1edd5b755240a07354afdba12c9c27e3340b7e3139d463111c1400a8229465f",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "用四环、稀疏特征分解、邻居度和最小边割独立复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0910/20261102_131223_8948a434",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0910",
+      "dag_type": "diamond",
+      "graph_sha256": "f1edd5b755240a07354afdba12c9c27e3340b7e3139d463111c1400a8229465f",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "用四环、稀疏特征分解、邻居度和最小边割独立复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0910/20261102_131223_8948a434",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0910",
+      "dag_type": "diamond",
+      "graph_sha256": "f1edd5b755240a07354afdba12c9c27e3340b7e3139d463111c1400a8229465f",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "用四环、稀疏特征分解、邻居度和最小边割独立复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0910/20261102_131223_8948a434",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0947",
+      "dag_type": "diamond",
+      "graph_sha256": "063aae1c045c1e53056cf0cc86401e95d4cab5fa1868bb0c3c7531b756af4ea7",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复核筛选，并用最短路计数累加全部边介数。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0947/20261102_131226_8c84f863",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0947",
+      "dag_type": "diamond",
+      "graph_sha256": "063aae1c045c1e53056cf0cc86401e95d4cab5fa1868bb0c3c7531b756af4ea7",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复核筛选，并用最短路计数累加全部边介数。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0947/20261102_131226_8c84f863",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0947",
+      "dag_type": "diamond",
+      "graph_sha256": "063aae1c045c1e53056cf0cc86401e95d4cab5fa1868bb0c3c7531b756af4ea7",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复核筛选，并用最短路计数累加全部边介数。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0947/20261102_131226_8c84f863",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0947",
+      "dag_type": "diamond",
+      "graph_sha256": "063aae1c045c1e53056cf0cc86401e95d4cab5fa1868bb0c3c7531b756af4ea7",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复核筛选，并用最短路计数累加全部边介数。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0947/20261102_131226_8c84f863",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0969",
+      "dag_type": "diamond",
+      "graph_sha256": "275a2f17a61b2aa7ca0e7a5ec5ebfb624dd15ae6cde20ee7da2bee3427f1ee0d",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 PageRank、邻居度排序、Prim 骨架和最小边割一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0969/20261102_131227_99f1d8ff",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0969",
+      "dag_type": "diamond",
+      "graph_sha256": "275a2f17a61b2aa7ca0e7a5ec5ebfb624dd15ae6cde20ee7da2bee3427f1ee0d",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 PageRank、邻居度排序、Prim 骨架和最小边割一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0969/20261102_131227_99f1d8ff",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0969",
+      "dag_type": "diamond",
+      "graph_sha256": "275a2f17a61b2aa7ca0e7a5ec5ebfb624dd15ae6cde20ee7da2bee3427f1ee0d",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 PageRank、邻居度排序、Prim 骨架和最小边割一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0969/20261102_131227_99f1d8ff",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0969",
+      "dag_type": "diamond",
+      "graph_sha256": "275a2f17a61b2aa7ca0e7a5ec5ebfb624dd15ae6cde20ee7da2bee3427f1ee0d",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 PageRank、邻居度排序、Prim 骨架和最小边割一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0969/20261102_131227_99f1d8ff",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0908",
+      "dag_type": "diamond",
+      "graph_sha256": "76fb8e9fdbd1622289e7f8dcc63779d311c79f1ccfa02bbbc9ee9f2f50ff0b1e",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0908/20261102_131223_0b31c071",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0908",
+      "dag_type": "diamond",
+      "graph_sha256": "76fb8e9fdbd1622289e7f8dcc63779d311c79f1ccfa02bbbc9ee9f2f50ff0b1e",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0908/20261102_131223_0b31c071",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0908",
+      "dag_type": "diamond",
+      "graph_sha256": "76fb8e9fdbd1622289e7f8dcc63779d311c79f1ccfa02bbbc9ee9f2f50ff0b1e",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0908/20261102_131223_0b31c071",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0908",
+      "dag_type": "diamond",
+      "graph_sha256": "76fb8e9fdbd1622289e7f8dcc63779d311c79f1ccfa02bbbc9ee9f2f50ff0b1e",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0908/20261102_131223_0b31c071",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0912",
+      "dag_type": "diamond",
+      "graph_sha256": "475b7fcae3aad84fa08123bc642164061d1c6f81aa1bb0d1a769927522618a43",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建两个诱导子图，核对两个排名和最小点割。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0912/20261102_131224_c69af7c1",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0912",
+      "dag_type": "diamond",
+      "graph_sha256": "475b7fcae3aad84fa08123bc642164061d1c6f81aa1bb0d1a769927522618a43",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建两个诱导子图，核对两个排名和最小点割。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0912/20261102_131224_c69af7c1",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0912",
+      "dag_type": "diamond",
+      "graph_sha256": "475b7fcae3aad84fa08123bc642164061d1c6f81aa1bb0d1a769927522618a43",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建两个诱导子图，核对两个排名和最小点割。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0912/20261102_131224_c69af7c1",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0912",
+      "dag_type": "diamond",
+      "graph_sha256": "475b7fcae3aad84fa08123bc642164061d1c6f81aa1bb0d1a769927522618a43",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建两个诱导子图，核对两个排名和最小点割。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0912/20261102_131224_c69af7c1",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0940",
+      "dag_type": "diamond",
+      "graph_sha256": "205ef734a4eda22e94dd21f2857900edd32edc3a180252787eff37d53cae34d7",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS/四环枚举和度统计复算排名、筛选集合及最终连通性。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0940/20261102_131226_2c608817",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0940",
+      "dag_type": "diamond",
+      "graph_sha256": "205ef734a4eda22e94dd21f2857900edd32edc3a180252787eff37d53cae34d7",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS/四环枚举和度统计复算排名、筛选集合及最终连通性。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0940/20261102_131226_2c608817",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0940",
+      "dag_type": "diamond",
+      "graph_sha256": "205ef734a4eda22e94dd21f2857900edd32edc3a180252787eff37d53cae34d7",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS/四环枚举和度统计复算排名、筛选集合及最终连通性。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0940/20261102_131226_2c608817",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0940",
+      "dag_type": "diamond",
+      "graph_sha256": "205ef734a4eda22e94dd21f2857900edd32edc3a180252787eff37d53cae34d7",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS/四环枚举和度统计复算排名、筛选集合及最终连通性。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0940/20261102_131226_2c608817",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0932",
+      "dag_type": "diamond",
+      "graph_sha256": "c4001d414f0c6e1f6137d145fd59aba6dd5e497bcb67913b46b67eb785c633c1",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0932/20261102_131225_1ed05182",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0932",
+      "dag_type": "diamond",
+      "graph_sha256": "c4001d414f0c6e1f6137d145fd59aba6dd5e497bcb67913b46b67eb785c633c1",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0932/20261102_131225_1ed05182",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0932",
+      "dag_type": "diamond",
+      "graph_sha256": "c4001d414f0c6e1f6137d145fd59aba6dd5e497bcb67913b46b67eb785c633c1",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0932/20261102_131225_1ed05182",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0932",
+      "dag_type": "diamond",
+      "graph_sha256": "c4001d414f0c6e1f6137d145fd59aba6dd5e497bcb67913b46b67eb785c633c1",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0932/20261102_131225_1ed05182",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0708",
+      "dag_type": "divergence",
+      "graph_sha256": "9f99ae9e26829e20cf357f3cc3c90d3968816fbe0f50b59b722b6d01cc969a33",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、层距二染色和逐节点平均邻居度均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0708/20261102_131217_1371eeae",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0708",
+      "dag_type": "divergence",
+      "graph_sha256": "9f99ae9e26829e20cf357f3cc3c90d3968816fbe0f50b59b722b6d01cc969a33",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、层距二染色和逐节点平均邻居度均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0708/20261102_131217_1371eeae",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0708",
+      "dag_type": "divergence",
+      "graph_sha256": "9f99ae9e26829e20cf357f3cc3c90d3968816fbe0f50b59b722b6d01cc969a33",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、层距二染色和逐节点平均邻居度均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0708/20261102_131217_1371eeae",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0752",
+      "dag_type": "divergence",
+      "graph_sha256": "727905cdf7f0d524ee6dde7efbb0d3bb010ec72eb3f04b027e8db23b83a13bd9",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0752/20261102_131220_c273f5d5",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0752",
+      "dag_type": "divergence",
+      "graph_sha256": "727905cdf7f0d524ee6dde7efbb0d3bb010ec72eb3f04b027e8db23b83a13bd9",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0752/20261102_131220_c273f5d5",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0752",
+      "dag_type": "divergence",
+      "graph_sha256": "727905cdf7f0d524ee6dde7efbb0d3bb010ec72eb3f04b027e8db23b83a13bd9",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0752/20261102_131220_c273f5d5",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0661",
+      "dag_type": "divergence",
+      "graph_sha256": "7b11dae462af4404f5a4fe38416d95ac42381a44bbd412d57fa997ad64298cda",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "Prim 最优权重、逐节点 BFS 接近中心性和删边分区介数公式均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd2/qwen35-dag.h5GkGf/divergence-pair.RBKsti/results/q0661",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0661",
+      "dag_type": "divergence",
+      "graph_sha256": "7b11dae462af4404f5a4fe38416d95ac42381a44bbd412d57fa997ad64298cda",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "Prim 最优权重、逐节点 BFS 接近中心性和删边分区介数公式均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd2/qwen35-dag.h5GkGf/divergence-pair.RBKsti/results/q0661",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0661",
+      "dag_type": "divergence",
+      "graph_sha256": "7b11dae462af4404f5a4fe38416d95ac42381a44bbd412d57fa997ad64298cda",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "Prim 最优权重、逐节点 BFS 接近中心性和删边分区介数公式均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd2/qwen35-dag.h5GkGf/divergence-pair.RBKsti/results/q0661",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0755",
+      "dag_type": "divergence",
+      "graph_sha256": "17b0e545b7c6383ef83ac7df43ff29d77d3886a41b4ad26fee7d733354a7fe28",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、逐节点三角聚类及按度分组邻居度完全复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0755/20261102_131221_93c81e99",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0755",
+      "dag_type": "divergence",
+      "graph_sha256": "17b0e545b7c6383ef83ac7df43ff29d77d3886a41b4ad26fee7d733354a7fe28",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、逐节点三角聚类及按度分组邻居度完全复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0755/20261102_131221_93c81e99",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0755",
+      "dag_type": "divergence",
+      "graph_sha256": "17b0e545b7c6383ef83ac7df43ff29d77d3886a41b4ad26fee7d733354a7fe28",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、逐节点三角聚类及按度分组邻居度完全复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0755/20261102_131221_93c81e99",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0745",
+      "dag_type": "divergence",
+      "graph_sha256": "01db532a02f04071850c1853cf0688bc38a7692382fd8b175faf26946b4550dd",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0745/20261102_131218_369efb4f",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0745",
+      "dag_type": "divergence",
+      "graph_sha256": "01db532a02f04071850c1853cf0688bc38a7692382fd8b175faf26946b4550dd",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0745/20261102_131218_369efb4f",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0745",
+      "dag_type": "divergence",
+      "graph_sha256": "01db532a02f04071850c1853cf0688bc38a7692382fd8b175faf26946b4550dd",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0745/20261102_131218_369efb4f",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0751",
+      "dag_type": "divergence",
+      "graph_sha256": "00c3dd6875b81547ce01fb3f62bc2e926094f03ffd30a16bf4dfbf62aab02732",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "由度重新取前 10，邻居对计算聚类，BFS 重算端点路径长度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0751/20261102_131220_62e82ef5",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0751",
+      "dag_type": "divergence",
+      "graph_sha256": "00c3dd6875b81547ce01fb3f62bc2e926094f03ffd30a16bf4dfbf62aab02732",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "由度重新取前 10，邻居对计算聚类，BFS 重算端点路径长度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0751/20261102_131220_62e82ef5",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0751",
+      "dag_type": "divergence",
+      "graph_sha256": "00c3dd6875b81547ce01fb3f62bc2e926094f03ffd30a16bf4dfbf62aab02732",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "由度重新取前 10，邻居对计算聚类，BFS 重算端点路径长度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0751/20261102_131220_62e82ef5",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0255",
+      "dag_type": "parallel",
+      "graph_sha256": "2c31601782db8d6b78dce87d653d24e2543a8d8b793dab9f28d9a19d4c29ba93",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立计算邻居度，并通过最小割集合大小核对连通度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0255/20261102_131156_690c98d6",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0255",
+      "dag_type": "parallel",
+      "graph_sha256": "2c31601782db8d6b78dce87d653d24e2543a8d8b793dab9f28d9a19d4c29ba93",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立计算邻居度，并通过最小割集合大小核对连通度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0255/20261102_131156_690c98d6",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0266",
+      "dag_type": "parallel",
+      "graph_sha256": "e978830327347a2ab8ef30cb429b06ce07af3f5fce6fd66f081abf74561ddf94",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 Prim 最优总权重、原边属性、节点集合和分量与执行结果一致，第二步单独复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0266/20261102_131207_e030dd62",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0266",
+      "dag_type": "parallel",
+      "graph_sha256": "e978830327347a2ab8ef30cb429b06ce07af3f5fce6fd66f081abf74561ddf94",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 Prim 最优总权重、原边属性、节点集合和分量与执行结果一致，第二步单独复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0266/20261102_131207_e030dd62",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0247",
+      "dag_type": "parallel",
+      "graph_sha256": "58712dee6052ba9e8c1a1d15071b2b4823c13022278e482f7109679ceaeb8964",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立计算邻居度，并通过最小割集合大小核对连通度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0247/20261102_131152_ef8da0d2",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0247",
+      "dag_type": "parallel",
+      "graph_sha256": "58712dee6052ba9e8c1a1d15071b2b4823c13022278e482f7109679ceaeb8964",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立计算邻居度，并通过最小割集合大小核对连通度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0247/20261102_131152_ef8da0d2",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0262",
+      "dag_type": "parallel",
+      "graph_sha256": "6041a64a530a9eb530e448718ecf3098efa7acee5b4f069bd72049d6420a8f49",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0262/20261102_131204_9207503b",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0262",
+      "dag_type": "parallel",
+      "graph_sha256": "6041a64a530a9eb530e448718ecf3098efa7acee5b4f069bd72049d6420a8f49",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0262/20261102_131204_9207503b",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0234",
+      "dag_type": "parallel",
+      "graph_sha256": "eee7ada8491474e4a04854dacfc1751fea86c003b812952e0c0f10c4cba3acc5",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立计算邻居度，并通过最小割集合大小核对连通度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0234/20261102_131150_a09a3a8c",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0234",
+      "dag_type": "parallel",
+      "graph_sha256": "eee7ada8491474e4a04854dacfc1751fea86c003b812952e0c0f10c4cba3acc5",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立计算邻居度，并通过最小割集合大小核对连通度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0234/20261102_131150_a09a3a8c",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0283",
+      "dag_type": "parallel",
+      "graph_sha256": "ff7ae5204ae18c7c3e66f48eed6bfa91556a97f754999db6500ae71ea73fc4b0",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "逐点 BFS 偏心度最小值及邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0283/20261102_131208_ff73cbfc",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0283",
+      "dag_type": "parallel",
+      "graph_sha256": "ff7ae5204ae18c7c3e66f48eed6bfa91556a97f754999db6500ae71ea73fc4b0",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "逐点 BFS 偏心度最小值及邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0283/20261102_131208_ff73cbfc",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0257",
+      "dag_type": "parallel",
+      "graph_sha256": "3f894fc45aa711cd2ee642121cfdd751e6b25f67b33f03ee7f19cd43116e8f4f",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "用 BFS 路径计数累加介数，再按可达性构造连通分量。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0257/20261102_131201_13fcfef0",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0257",
+      "dag_type": "parallel",
+      "graph_sha256": "3f894fc45aa711cd2ee642121cfdd751e6b25f67b33f03ee7f19cd43116e8f4f",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "用 BFS 路径计数累加介数，再按可达性构造连通分量。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0257/20261102_131201_13fcfef0",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0256",
+      "dag_type": "parallel",
+      "graph_sha256": "807004dd12de8585f3d34984f33fde9bbe49fcc9d469d61797fe2dc830908e54",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "按度分组重算邻居度，并逐个枚举四环相对顶点和潜在闭合数。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0256/20261102_131201_ef88af3d",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0256",
+      "dag_type": "parallel",
+      "graph_sha256": "807004dd12de8585f3d34984f33fde9bbe49fcc9d469d61797fe2dc830908e54",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "按度分组重算邻居度，并逐个枚举四环相对顶点和潜在闭合数。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0256/20261102_131201_ef88af3d",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0069",
+      "dag_type": "sequential",
+      "graph_sha256": "767bb0b13fb72d3d3e7e5aff309c628035d238845377e50b2af74377000d39de",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复算节点指标和筛选集合，枚举诱导子图中的邻居对后核对最终指标。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0069/20261102_131141_cce41ad8",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0069",
+      "dag_type": "sequential",
+      "graph_sha256": "767bb0b13fb72d3d3e7e5aff309c628035d238845377e50b2af74377000d39de",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复算节点指标和筛选集合，枚举诱导子图中的邻居对后核对最终指标。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0069/20261102_131141_cce41ad8",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0095",
+      "dag_type": "sequential",
+      "graph_sha256": "befd54b728c7b51fab1eba46844020794336666874103a2674f49317b36ec866",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 Prim 最优总权重、原边属性、节点集合和分量与执行结果一致，第二步单独复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0095/20261102_131148_bc68c906",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0095",
+      "dag_type": "sequential",
+      "graph_sha256": "befd54b728c7b51fab1eba46844020794336666874103a2674f49317b36ec866",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 Prim 最优总权重、原边属性、节点集合和分量与执行结果一致，第二步单独复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0095/20261102_131148_bc68c906",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0062",
+      "dag_type": "sequential",
+      "graph_sha256": "c999075b5064c95f820ec78d457d2c486ec284474b6a0074ac18191c1b4e59ba",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0062/20261102_131140_dc073ade",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0062",
+      "dag_type": "sequential",
+      "graph_sha256": "c999075b5064c95f820ec78d457d2c486ec284474b6a0074ac18191c1b4e59ba",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0062/20261102_131140_dc073ade",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0083",
+      "dag_type": "sequential",
+      "graph_sha256": "731324d5018db5e30e1f57d2347ec0697eef134ffab699a611ad44a89fe81fb4",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0083/20261102_131145_61aab764",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0083",
+      "dag_type": "sequential",
+      "graph_sha256": "731324d5018db5e30e1f57d2347ec0697eef134ffab699a611ad44a89fe81fb4",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0083/20261102_131145_61aab764",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0031",
+      "dag_type": "sequential",
+      "graph_sha256": "7abc6a4b4bbca971f9e3f12c72208f5bfa76a8039089391055d6098f5cdf05ef",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复算节点指标和筛选集合，枚举诱导子图中的邻居对后核对最终指标。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0031/20261102_131138_36cc5697",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0031",
+      "dag_type": "sequential",
+      "graph_sha256": "7abc6a4b4bbca971f9e3f12c72208f5bfa76a8039089391055d6098f5cdf05ef",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复算节点指标和筛选集合，枚举诱导子图中的邻居对后核对最终指标。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0031/20261102_131138_36cc5697",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0097",
+      "dag_type": "sequential",
+      "graph_sha256": "86495db0e72c7762274ee039e4ad50ed5a15a1e3b333118054bbad103550490b",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0097/20261102_131149_3f648a75",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0097",
+      "dag_type": "sequential",
+      "graph_sha256": "86495db0e72c7762274ee039e4ad50ed5a15a1e3b333118054bbad103550490b",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0097/20261102_131149_3f648a75",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0074",
+      "dag_type": "sequential",
+      "graph_sha256": "14678e972d3f70d8ab75601e7d8768a7475413d03921753d47f0ec8244820f91",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复算节点指标和筛选集合，枚举诱导子图中的邻居对后核对最终指标。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0074/20261102_131141_943e5562",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0074",
+      "dag_type": "sequential",
+      "graph_sha256": "14678e972d3f70d8ab75601e7d8768a7475413d03921753d47f0ec8244820f91",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复算节点指标和筛选集合，枚举诱导子图中的邻居对后核对最终指标。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0074/20261102_131141_943e5562",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0071",
+      "dag_type": "sequential",
+      "graph_sha256": "feb8b41cf48f5f764318d04bf003a9939fc6ebfc52e0aa37a46a235d00a73d81",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "逐轮重算 VoteRank 选中顺序与邻居度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0071/20261102_131141_d8122ee2",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0071",
+      "dag_type": "sequential",
+      "graph_sha256": "feb8b41cf48f5f764318d04bf003a9939fc6ebfc52e0aa37a46a235d00a73d81",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "逐轮重算 VoteRank 选中顺序与邻居度。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0071/20261102_131141_d8122ee2",
+      "step_id": "v2"
+    }
+  ],
+  "val": [
+    {
+      "question_id": "q0619",
+      "dag_type": "convergence",
+      "graph_sha256": "e6289faf7f590562a5469414a36b676bd79065298746c53625c762a4dadfafb4",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、独立度统计和邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0619/20261102_131217_ba8e7730",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0619",
+      "dag_type": "convergence",
+      "graph_sha256": "e6289faf7f590562a5469414a36b676bd79065298746c53625c762a4dadfafb4",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、独立度统计和邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0619/20261102_131217_ba8e7730",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0619",
+      "dag_type": "convergence",
+      "graph_sha256": "e6289faf7f590562a5469414a36b676bd79065298746c53625c762a4dadfafb4",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、独立度统计和邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0619/20261102_131217_ba8e7730",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0619",
+      "dag_type": "convergence",
+      "graph_sha256": "e6289faf7f590562a5469414a36b676bd79065298746c53625c762a4dadfafb4",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、独立度统计和邻居对枚举均一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0619/20261102_131217_ba8e7730",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0962",
+      "dag_type": "diamond",
+      "graph_sha256": "644e7f3406e666888e7b40a6ba0e4e6cf1bef80455eacccaae786c401f5ad4a6",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS/四环枚举和度统计复算排名、筛选集合及最终连通性。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0962/20261102_131227_b85f999c",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0962",
+      "dag_type": "diamond",
+      "graph_sha256": "644e7f3406e666888e7b40a6ba0e4e6cf1bef80455eacccaae786c401f5ad4a6",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS/四环枚举和度统计复算排名、筛选集合及最终连通性。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0962/20261102_131227_b85f999c",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0962",
+      "dag_type": "diamond",
+      "graph_sha256": "644e7f3406e666888e7b40a6ba0e4e6cf1bef80455eacccaae786c401f5ad4a6",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS/四环枚举和度统计复算排名、筛选集合及最终连通性。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0962/20261102_131227_b85f999c",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0962",
+      "dag_type": "diamond",
+      "graph_sha256": "644e7f3406e666888e7b40a6ba0e4e6cf1bef80455eacccaae786c401f5ad4a6",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS/四环枚举和度统计复算排名、筛选集合及最终连通性。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0962/20261102_131227_b85f999c",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0806",
+      "dag_type": "divergence",
+      "graph_sha256": "e8dedfa25bc2f58f2992349b900675c8ae6f28fedacc9c03b10b234949dcc9b2",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、Pearson 度相关、枚举聚类和独立 PageRank 一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0806/20261102_131222_c7c39dfe",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0806",
+      "dag_type": "divergence",
+      "graph_sha256": "e8dedfa25bc2f58f2992349b900675c8ae6f28fedacc9c03b10b234949dcc9b2",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、Pearson 度相关、枚举聚类和独立 PageRank 一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0806/20261102_131222_c7c39dfe",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0806",
+      "dag_type": "divergence",
+      "graph_sha256": "e8dedfa25bc2f58f2992349b900675c8ae6f28fedacc9c03b10b234949dcc9b2",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、Pearson 度相关、枚举聚类和独立 PageRank 一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0806/20261102_131222_c7c39dfe",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0806",
+      "dag_type": "divergence",
+      "graph_sha256": "e8dedfa25bc2f58f2992349b900675c8ae6f28fedacc9c03b10b234949dcc9b2",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "BFS 分量、Pearson 度相关、枚举聚类和独立 PageRank 一致。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0806/20261102_131222_c7c39dfe",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0259",
+      "dag_type": "parallel",
+      "graph_sha256": "3faba2168cc2361dc07c1be35d69dfc6d52ae8e8f6d557d54bcbc191c76be29f",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0259/20261102_131204_88b47934",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0259",
+      "dag_type": "parallel",
+      "graph_sha256": "3faba2168cc2361dc07c1be35d69dfc6d52ae8e8f6d557d54bcbc191c76be29f",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "以 Prim 独立比较最优值并核对原图边，第二个指标另行计算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0259/20261102_131204_88b47934",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0076",
+      "dag_type": "sequential",
+      "graph_sha256": "a541e67624d88f13308c50e6eca968f8a5aace5c69e73ace43485eb8a6b1a0cf",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 Prim 最优总权重、原边属性、节点集合和分量与执行结果一致，第二步单独复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0076/20261102_131144_3b1432c1",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0076",
+      "dag_type": "sequential",
+      "graph_sha256": "a541e67624d88f13308c50e6eca968f8a5aace5c69e73ace43485eb8a6b1a0cf",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立 Prim 最优总权重、原边属性、节点集合和分量与执行结果一致，第二步单独复算。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0076/20261102_131144_3b1432c1",
+      "step_id": "v2"
+    }
+  ],
+  "test": [
+    {
+      "question_id": "q0493",
+      "dag_type": "convergence",
+      "graph_sha256": "a1fc0d664aa814e8afbed11330bdfeca88494740d9a5f3ce9d5853658e17da87",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0493/20261102_131209_957b9204",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0493",
+      "dag_type": "convergence",
+      "graph_sha256": "a1fc0d664aa814e8afbed11330bdfeca88494740d9a5f3ce9d5853658e17da87",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0493/20261102_131209_957b9204",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0493",
+      "dag_type": "convergence",
+      "graph_sha256": "a1fc0d664aa814e8afbed11330bdfeca88494740d9a5f3ce9d5853658e17da87",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0493/20261102_131209_957b9204",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0916",
+      "dag_type": "diamond",
+      "graph_sha256": "113976382a13c3ad275c4d89ae243133465f604960b618c691e7a63c7d38c657",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0916/20261102_131224_db0cd45a",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0916",
+      "dag_type": "diamond",
+      "graph_sha256": "113976382a13c3ad275c4d89ae243133465f604960b618c691e7a63c7d38c657",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0916/20261102_131224_db0cd45a",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0916",
+      "dag_type": "diamond",
+      "graph_sha256": "113976382a13c3ad275c4d89ae243133465f604960b618c691e7a63c7d38c657",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0916/20261102_131224_db0cd45a",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0916",
+      "dag_type": "diamond",
+      "graph_sha256": "113976382a13c3ad275c4d89ae243133465f604960b618c691e7a63c7d38c657",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立重建筛选和诱导子图，逐轮复算 VoteRank。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0916/20261102_131224_db0cd45a",
+      "step_id": "v4"
+    },
+    {
+      "question_id": "q0750",
+      "dag_type": "divergence",
+      "graph_sha256": "691b74a24db72df84dca6267178188400f681c1c2a74366149bc00ceaab75414",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立枚举三角闭合比例、复算 PageRank，并逐点 BFS 核对全部有限距离。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0750/20261102_131219_299e85c4",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0750",
+      "dag_type": "divergence",
+      "graph_sha256": "691b74a24db72df84dca6267178188400f681c1c2a74366149bc00ceaab75414",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立枚举三角闭合比例、复算 PageRank，并逐点 BFS 核对全部有限距离。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0750/20261102_131219_299e85c4",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0750",
+      "dag_type": "divergence",
+      "graph_sha256": "691b74a24db72df84dca6267178188400f681c1c2a74366149bc00ceaab75414",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立枚举三角闭合比例、复算 PageRank，并逐点 BFS 核对全部有限距离。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0750/20261102_131219_299e85c4",
+      "step_id": "v3"
+    },
+    {
+      "question_id": "q0242",
+      "dag_type": "parallel",
+      "graph_sha256": "96ee59761cf3a1d2da0964c961678bdbdf1b7d60b28c462fe18b9033f0d9e895",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "枚举四环和邻居对，用 BFS 核对中心节点。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0242/20261102_131151_34dae279",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0242",
+      "dag_type": "parallel",
+      "graph_sha256": "96ee59761cf3a1d2da0964c961678bdbdf1b7d60b28c462fe18b9033f0d9e895",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "枚举四环和邻居对，用 BFS 核对中心节点。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0242/20261102_131151_34dae279",
+      "step_id": "v2"
+    },
+    {
+      "question_id": "q0036",
+      "dag_type": "sequential",
+      "graph_sha256": "12ee71eefe71a9affe6d272b44965c107fea867d2d70d83fc536817ee113a768",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复算节点指标和筛选集合，枚举诱导子图中的邻居对后核对最终指标。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0036/20261102_131139_7333fd37",
+      "step_id": "v1"
+    },
+    {
+      "question_id": "q0036",
+      "dag_type": "sequential",
+      "graph_sha256": "12ee71eefe71a9affe6d272b44965c107fea867d2d70d83fc536817ee113a768",
+      "reviewer": "Codex same-graph reference audit",
+      "reference_check": "独立复算节点指标和筛选集合，枚举诱导子图中的邻居对后核对最终指标。",
+      "source_run": "/home/hdd3/fuzq/node1-copy-20261114/hdd/all_dag_execution/selected_dag_training/execution/results/q0036/20261102_131139_7333fd37",
+      "step_id": "v2"
+    }
+  ]
+}

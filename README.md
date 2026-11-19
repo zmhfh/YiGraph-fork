@@ -628,3 +628,8 @@ This project is licensed under the [MIT License](LICENSE).
 </div>
 
 ---
+
+
+## Trained Runtime Binder (LoRA)
+
+Runtime input-binding integration, the final Qwen3.5-2B LoRA, reproducibility data and evaluation evidence are available in [the Binder guide](docs/runtime-binder.md), [model card](models/runtime_binder/README.md), and [complete release artifacts](https://github.com/zmhfh/YiGraph-fork/releases/tag/runtime-binder-v1.0.0).
