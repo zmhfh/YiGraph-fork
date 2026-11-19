@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.yigraph.local</groupId>
+  <artifactId>neo4j-runtime</artifactId>
+  <version>1.0</version>
+  <!-- Obtain the same published server when the legacy distribution archive
+       is unavailable. Java 11 and an external writable home are required. -->
+  <dependencies>
+    <dependency>
+      <groupId>org.neo4j.app</groupId>
+      <artifactId>neo4j-server</artifactId>
+      <version>3.5.25</version>
+    </dependency>
+  </dependencies>
+</project>

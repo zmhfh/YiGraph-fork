@@ -86,7 +86,7 @@ def normalize_parameters(
             converted_value = _smart_convert(param_value, base_type, param_name, log = log)
             
             if type(converted_value).__name__ != original_type:
-                logger.info(
+                log.info(
                     f"🔄 自动类型转换: {param_name} = {repr(param_value)[:50]} "
                     f"({original_type}) → {repr(converted_value)[:50]} ({type(converted_value).__name__})"
                 )
@@ -193,3 +193,4 @@ def _smart_convert(
         return value if isinstance(value, str) else str(value)
 
     log.warning("⚠️ 未知类型 '%s' for %s，保持原值", target_type, param_name)
+    return value

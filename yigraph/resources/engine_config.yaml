@@ -1,7 +1,18 @@
 # Template for a local YiGraph installation. Configure services before using chat.
 version: "2.0.0"
-mode: interactive
+mode: react
+execution:
+  mode: react
+  react:
+    max_steps: 16
+    max_retries_per_action: 2
+    observation_chars: 6000
+    timeout_seconds: 600
+    record_dag: true
 reasoner:
+  react:
+    # Empty = decision, binder, observer and writer all use llm.openai.model.
+    adapters: {}
   llm:
     provider: openai
     openai:
@@ -9,6 +20,10 @@ reasoner:
       api_key: ""
       model: gpt-4o-mini
       temperature: 0.0
+    # Enable shared-backend LoRA routing after adapters are deployed.
+    backend: {}
+    default_adapter: null
+    adapters: {}
     ollama:
       model_name: llama3.1:8b
       device: cpu

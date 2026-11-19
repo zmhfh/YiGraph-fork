@@ -5,6 +5,7 @@ import openai
 import json
 import re
 import requests # deepseek
+import logging
 from typing import Dict, Literal, Any, List, Optional
 from llama_index.core import Settings
 from llama_index.core.utils import print_text
@@ -20,6 +21,12 @@ from aag.reasoner.prompt_template.llm_prompt_en import *
 from aag.reasoner.prompt_template.llm_prompt_zh import *
 from aag.utils.parse_json import extract_json_from_response, parse_openai_json_response
 from aag.error_recovery.enhancer import enhance_prompt
+from aag.reasoner.prompt_template.react_prompts import (
+    DECISION_INSTRUCTIONS, OBSERVER_INSTRUCTIONS, COMPLETION_INSTRUCTIONS, REPORT_INSTRUCTIONS,
+    REPORT_REVIEW_INSTRUCTIONS,
+)
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -173,12 +180,20 @@ class OllamaEnv:
                  device='cuda:2',
                  timeout=150000,
                  port=11434,
-                 verbose=False):
+                 verbose=False,
+                 adapters: Optional[Dict[str, Any]] = None,
+                 default_adapter: Optional[str] = None):
 
         base_url = f"http://localhost:{port}"
         Settings.llm = Ollama(model=llm_mode_name, request_timeout=timeout,
                               temperature=0.0, base_url=base_url)  # , device=device
         self.verbose = verbose
+        self.base_model = llm_mode_name
+        self.adapters = adapters or {}
+        self.default_adapter = default_adapter
+        self._adapter_llms = {None: Settings.llm}
+        self._ollama_base_url = base_url
+        self._ollama_timeout = timeout
 
         if 'BAAI' in llm_embed_name:
             Settings.embed_model = HuggingFaceEmbedding(
@@ -202,7 +217,31 @@ class OllamaEnv:
             f"llm_mode_name: {llm_mode_name}, llm_embed_name: {llm_embed_name}, chunk_size: {Settings.chunk_size}, chunk_overlap: {chunk_overlap}")
 
 
-    def chat(self, messages: list) -> str:
+    def _adapter_spec(self, adapter: Optional[str]) -> Any:
+        key = adapter or self.default_adapter
+        return self.adapters.get(key) if key else None
+
+    def _llm_for_adapter(self, adapter: Optional[str]):
+        """Return a client for an adapter while keeping one Ollama backend.
+
+        Ollama adapters are normally exposed as model variants.  A string
+        entry is therefore treated as the variant model name, while a mapping
+        may provide ``model`` for the same purpose.
+        """
+        spec = self._adapter_spec(adapter)
+        model = spec if isinstance(spec, str) else (spec or {}).get("model") or (spec or {}).get("model_name")
+        if not model or model == self.base_model:
+            return self.llm
+        if model not in self._adapter_llms:
+            self._adapter_llms[model] = Ollama(
+                model=model,
+                request_timeout=self._ollama_timeout,
+                temperature=0.0,
+                base_url=self._ollama_base_url,
+            )
+        return self._adapter_llms[model]
+
+    def chat(self, messages: list, adapter: Optional[str] = None) -> str:
         if messages and isinstance(messages[0], dict):
             messages = [
                 ChatMessage(
@@ -211,16 +250,18 @@ class OllamaEnv:
                 )
                 for m in messages
             ]
-        response = self.llm.chat(messages=messages)
+        response = self._llm_for_adapter(adapter).chat(messages=messages)
         if hasattr(response, "message") and hasattr(response.message, "content"):
             return response.message.content
         return response.raw
 
-    def generate_response(self, query: str):
-        response = self.llm.complete(query)
+    def generate_response(self, query: str, adapter: Optional[str] = None):
+        response = self._llm_for_adapter(adapter).complete(query)
         return response
     
-    def execute_prompt(self, full_prompt: str, parse_json: bool = True, response_format: Optional[Dict] = None) -> Any:
+    def execute_prompt(self, full_prompt: str, parse_json: bool = True,
+                       response_format: Optional[Dict] = None,
+                       adapter: Optional[str] = None) -> Any:
         """Execute a formatted prompt and return the response.
         
         Args:
@@ -231,7 +272,7 @@ class OllamaEnv:
         Returns:
             Parsed JSON dict if parse_json=True, otherwise raw response text
         """
-        response = self.llm.complete(full_prompt)
+        response = self._llm_for_adapter(adapter).complete(full_prompt)
         if parse_json:
             return extract_json_from_response(response.text)
         return response.text
@@ -556,11 +597,15 @@ class OpenAIEnv:
                  base_url,
                  api_key,
                  model_name,
-                 temperature: float = 0.0):
+                 temperature: float = 0.0,
+                 adapters: Optional[Dict[str, Any]] = None,
+                 default_adapter: Optional[str] = None):
         self.base_url = base_url
         self.api_key = api_key
         self.model = model_name
         self.temperature = temperature
+        self.adapters = adapters or {}
+        self.default_adapter = default_adapter
 
         openai.api_key = self.api_key
         openai.base_url = self.base_url
@@ -578,7 +623,43 @@ class OpenAIEnv:
         else:
             print("[OpenAIEnv] no HTTP(S)_PROXY / ALL_PROXY in environment", flush=True)
 
-    def execute_prompt(self, full_prompt: str, parse_json: bool = True, response_format: Optional[Dict] = None) -> Any:
+    def _adapter_spec(self, adapter: Optional[str]) -> Any:
+        key = adapter or self.default_adapter
+        return self.adapters.get(key) if key else None
+
+    def _request_overrides(self, adapter: Optional[str]) -> Dict[str, Any]:
+        """Translate an adapter entry into OpenAI-compatible request fields.
+
+        A shared vLLM/TGI backend commonly accepts ``extra_body`` for a LoRA
+        request.  ``model`` is also supported for servers that publish each
+        adapter as a model alias.  Unknown fields stay in ``extra_body`` so
+        the backend remains configurable without coupling the core engine to
+        one serving implementation.
+        """
+        spec = self._adapter_spec(adapter)
+        if not spec:
+            return {}
+        if isinstance(spec, str):
+            return {"model": spec}
+        if not isinstance(spec, dict):
+            return {}
+        result: Dict[str, Any] = {}
+        if spec.get("model") or spec.get("model_name"):
+            result["model"] = spec.get("model") or spec.get("model_name")
+        extra = spec.get("extra_body")
+        if isinstance(extra, dict):
+            result["extra_body"] = dict(extra)
+        elif spec.get("lora_name") or spec.get("lora_adapter") or spec.get("adapter"):
+            result["extra_body"] = {
+                "lora_name": spec.get("lora_name")
+                or spec.get("lora_adapter")
+                or spec.get("adapter")
+            }
+        return result
+
+    def execute_prompt(self, full_prompt: str, parse_json: bool = True,
+                       response_format: Optional[Dict] = None,
+                       adapter: Optional[str] = None) -> Any:
         """Execute a formatted prompt and return the response.
         
         Args:
@@ -595,6 +676,7 @@ class OpenAIEnv:
             "messages": messages,
             "temperature": self.temperature,
         }
+        request_kwargs.update(self._request_overrides(adapter))
         
         if response_format:
             request_kwargs["response_format"] = response_format
@@ -604,7 +686,8 @@ class OpenAIEnv:
 
         t0 = time.perf_counter()
         print(
-            f"[OpenAIEnv] execute_prompt start model={self.model!r} parse_json={parse_json} "
+            f"[OpenAIEnv] execute_prompt start model={request_kwargs.get('model')!r} "
+            f"adapter={adapter!r} parse_json={parse_json} "
             f"prompt_chars={len(full_prompt)}",
             flush=True,
         )
@@ -659,7 +742,7 @@ class OpenAIEnv:
             print(f"Error determining data dependency with OpenAI: {e}")
         return False
 
-    def generate_response(self, query: str):
+    def generate_response(self, query: str, adapter: Optional[str] = None):
         t0 = time.perf_counter()
         qchars = len(query) if query else 0
         print(
@@ -667,11 +750,13 @@ class OpenAIEnv:
             flush=True,
         )
         try:
-            resp = self.client.chat.completions.create(
-                model=self.model,
-                messages=[{"role": "user", "content": query}],
-                temperature=self.temperature,
-            )
+            request_kwargs = {
+                "model": self.model,
+                "messages": [{"role": "user", "content": query}],
+                "temperature": self.temperature,
+            }
+            request_kwargs.update(self._request_overrides(adapter))
+            resp = self.client.chat.completions.create(**request_kwargs)
             text = resp.choices[0].message.content
             elapsed = time.perf_counter() - t0
             olen = len(text) if text else 0
@@ -1034,11 +1119,30 @@ class Reasoner:
 
         self.config = config
         provider = (config.llm.provider or "ollama").lower()
+        self.react_config = config.react or {}
+        raw_backend = getattr(config.llm, "backend", {})
+        backend_cfg = raw_backend if isinstance(raw_backend, dict) else {}
+        adapter_specs = (
+            config.llm.adapters
+            or getattr(config.llm, "lora_adapters", {})
+            or backend_cfg.get("adapters", {})
+            or backend_cfg.get("lora_adapters", {})
+            or {}
+        )
+        if isinstance(adapter_specs, list):
+            adapter_specs = {
+                str(item.get("name")): item
+                for item in adapter_specs
+                if isinstance(item, dict) and item.get("name")
+            }
+        elif not isinstance(adapter_specs, dict):
+            adapter_specs = {}
+        default_adapter = config.llm.default_adapter
 
         if provider == "ollama":
             ollama_cfg = config.llm.ollama or {}
             self.env = OllamaEnv(
-                llm_mode_name=ollama_cfg.get("model_name", "llama3.1:70b"),
+                llm_mode_name=ollama_cfg.get("model_name") or backend_cfg.get("base_model", "llama3.1:70b"),
                 llm_embed_name="BAAI/bge-large-en-v1.5",
                 chunk_size=ollama_cfg.get("chunk_size", 512),
                 chunk_overlap=ollama_cfg.get("chunk_overlap", 20),
@@ -1047,12 +1151,14 @@ class Reasoner:
                 timeout=ollama_cfg.get("timeout", 150000),
                 port=ollama_cfg.get("port", 11434),
                 verbose=ollama_cfg.get("verbose", False),
+                adapters=adapter_specs,
+                default_adapter=default_adapter,
             )
-        elif provider == "openai":
+        elif provider in {"openai", "vllm", "openai_compatible", "openai-compatible", "shared"}:
             openai_cfg = config.llm.openai or {}
-            base_url = openai_cfg.get("base_url") or "https://api.openai.com/v1"
-            api_key = openai_cfg.get("api_key")
-            model = openai_cfg.get("model") or "gpt-4o"
+            base_url = backend_cfg.get("base_url") or openai_cfg.get("base_url") or "https://api.openai.com/v1"
+            api_key = backend_cfg.get("api_key") or openai_cfg.get("api_key")
+            model = openai_cfg.get("model") or backend_cfg.get("base_model") or "gpt-4o"
             temperature = openai_cfg.get("temperature", 0.0)
             if not api_key:
                 # Allow environment variable fallback
@@ -1064,9 +1170,165 @@ class Reasoner:
                 api_key=api_key,
                 model_name=model,
                 temperature=temperature,
+                adapters=adapter_specs,
+                default_adapter=default_adapter,
             )
         else:
             raise ValueError(f"Unsupported provider: {provider}")
+
+    def adapter_for(self, role: str) -> Optional[str]:
+        """Resolve a ReAct role to a LoRA adapter key.
+
+        The role map lives under ``reasoner.react.adapters`` while adapter
+        implementation details live under ``reasoner.llm.adapters``.  This
+        keeps prompts and routing independently versionable on one backend.
+        """
+        role_map = self.react_config.get("adapters", {}) or {}
+        value = role_map.get(role)
+        if isinstance(value, dict):
+            return value.get("name") or value.get("adapter") or value.get("lora_name")
+        if value:
+            return str(value)
+        return self.config.llm.default_adapter
+
+    def _execute_prompt(self, prompt: str, *, parse_json: bool = True,
+                        adapter: Optional[str] = None) -> Any:
+        """Call an environment with adapter routing and legacy fallback."""
+        try:
+            return self.env.execute_prompt(
+                prompt,
+                parse_json=parse_json,
+                adapter=adapter,
+            )
+        except TypeError as exc:
+            # Lightweight test doubles and third-party environments may still
+            # expose the pre-adapter signature.  Adapter routing is additive.
+            if "adapter" not in str(exc):
+                raise
+            return self.env.execute_prompt(prompt, parse_json=parse_json)
+
+    def react_decide(
+        self,
+        goal: str,
+        state: Dict[str, Any],
+        available_tools: List[Dict[str, Any]],
+        graph_schema: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        """Choose exactly one next action for the ReAct controller.
+
+        The model is deliberately limited to a small JSON action schema.  It
+        never mutates the run state or the DAG; the Python controller applies
+        the action and records the resulting observation.
+        """
+        prompt = DECISION_INSTRUCTIONS + f"""
+User goal:
+{goal}
+Actual graph schema:
+{graph_schema or "Not available"}
+Available tools:
+{json.dumps(available_tools, ensure_ascii=False, indent=2)}
+Current run state, previews and remaining budget:
+{json.dumps(state, ensure_ascii=False, indent=2, default=str)}
+"""
+        result = self._execute_prompt(
+            prompt,
+            parse_json=True,
+            adapter=self.adapter_for("decision"),
+        )
+        if not isinstance(result, dict):
+            raise ValueError("ReAct decision must be a JSON object")
+        return result
+
+    def react_observe(
+        self,
+        goal: str,
+        action: Dict[str, Any],
+        tool_result: Any,
+        artifacts: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Compress a tool result into a bounded observation for the next turn."""
+        prompt = OBSERVER_INSTRUCTIONS + f"""
+User goal:
+{goal}
+Action:
+{json.dumps(action, ensure_ascii=False, default=str)}
+Actual tool output:
+{json.dumps(tool_result, ensure_ascii=False, default=str)}
+Existing artifact IDs:
+{json.dumps(list(artifacts), ensure_ascii=False)}
+"""
+        try:
+            result = self._execute_prompt(
+                prompt,
+                parse_json=True,
+                adapter=self.adapter_for("observer"),
+            )
+            if isinstance(result, dict) and isinstance(result.get("summary"), str):
+                return result
+        except Exception as exc:
+            logger.debug("ReAct observer failed; using deterministic summary: %s", exc)
+        return {
+            "summary": str(tool_result)[:1000],
+            "evidence": [],
+            "usable_fields": list(tool_result.keys()) if isinstance(tool_result, dict) else [],
+            "empty": not bool(tool_result),
+        }
+
+    def react_review_completion(self, goal: str, observations: List[Dict[str, Any]],
+                                artifacts: Dict[str, Any], graph_schema: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+        """Check requested deliverables against computed evidence, not the DAG."""
+        prompt = COMPLETION_INSTRUCTIONS + f"""
+User goal:
+{goal}
+Execution observations:
+{json.dumps(observations, ensure_ascii=False, default=str)}
+Artifact evidence:
+{json.dumps(artifacts, ensure_ascii=False, default=str)}
+Actual schema and identity conventions:
+{json.dumps(graph_schema or {}, ensure_ascii=False, default=str)}
+"""
+        result = self._execute_prompt(prompt, parse_json=True, adapter=self.adapter_for("decision"))
+        if not isinstance(result, dict):
+            raise ValueError("Completion review must return JSON")
+        return result
+
+    def react_review_report(self, goal: str, report: str, artifacts: Dict[str, Any]) -> Dict[str, Any]:
+        prompt = REPORT_REVIEW_INSTRUCTIONS + f"""
+User goal:
+{goal}
+Report to verify:
+{report}
+Original and derived artifacts with evidence scope:
+{json.dumps(artifacts, ensure_ascii=False, default=str)}
+"""
+        return self._execute_prompt(prompt, parse_json=True, adapter=self.adapter_for("observer"))
+
+    def react_write_report(
+        self,
+        goal: str,
+        observations: List[Dict[str, Any]],
+        artifacts: Dict[str, Any],
+        execution_outcome: Optional[Dict[str, Any]] = None,
+    ) -> str:
+        """Write the final report with explicit observation/artifact evidence."""
+        prompt = REPORT_INSTRUCTIONS + f"""
+User goal:
+{goal}
+Execution observations:
+{json.dumps(observations, ensure_ascii=False, indent=2, default=str)}
+Artifact evidence:
+{json.dumps(artifacts, ensure_ascii=False, indent=2, default=str)}
+Controller outcome:
+{json.dumps(execution_outcome or {}, ensure_ascii=False)}
+"""
+        result = self._execute_prompt(
+            prompt,
+            parse_json=False,
+            adapter=self.adapter_for("writer"),
+        )
+        if not isinstance(result, str) or not result.strip():
+            raise ValueError("The report model returned empty output")
+        return result
 
 
     def plan_subqueries(self, decompose: bool, query: str) -> dict:
@@ -1078,7 +1340,11 @@ class Reasoner:
                         "depends_on": []
                     }]}  
         full_prompt = plan_subqueries_prompt.format(query=query)
-        return self.env.execute_prompt(full_prompt, parse_json=True)
+        return self._execute_prompt(
+            full_prompt,
+            parse_json=True,
+            adapter=self.adapter_for("decision"),
+        )
 
     def plan_expert_subqueries_with_algorithms(
         self,
@@ -1180,21 +1446,30 @@ class Reasoner:
             algo_desc=current_algo_desc,
             dependency_items=json.dumps(dependency_items, ensure_ascii=False, indent=2)
         )
-        return self.env.execute_prompt(full_prompt, parse_json=True)
+        return self._execute_prompt(
+            full_prompt,
+            parse_json=True,
+            adapter=self.adapter_for("binder"),
+        )
 
     def generate_graph_conversion_code(self, current_question: str, dependency_items: List[Dict[str, Any]])-> Dict[str, Any]:
         full_prompt = generate_graph_conversion_code_prompt.format(
             current_question=current_question,
             dependency_items=json.dumps(dependency_items, ensure_ascii=False, indent=2)
         )
-        return self.env.execute_prompt(full_prompt, parse_json=True)
+        return self._execute_prompt(
+            full_prompt,
+            parse_json=True,
+            adapter=self.adapter_for("binder"),
+        )
 
     def generate_numeric_analysis_code(
         self, 
         question: str, 
         dependency_items: List[Dict[str, Any]], 
         vertex_schema: Dict[str, str], 
-        edge_schema: Dict[str, str]
+        edge_schema: Dict[str, str],
+        error_history: Optional[List[Dict[str, Any]]] = None,
     ) -> Dict[str, Any]:
         full_prompt = generate_numeric_analysis_code_prompt.format(
             question=question,
@@ -1202,7 +1477,29 @@ class Reasoner:
             vertex_schema=json.dumps(vertex_schema, ensure_ascii=False, indent=2),
             edge_schema=json.dumps(edge_schema, ensure_ascii=False, indent=2)
         )
-        return self.env.execute_prompt(full_prompt, parse_json=True)
+        full_prompt += (
+            "\nUse the complete input values at execution time, not the displayed previews. "
+            "Keep parallel transactions distinct. When combining multiple paths, deduplicate by relationship ID "
+            "or original edge index before summing the same transaction. State the amount basis explicitly. "
+            "An origin-specific outflow estimate counts qualifying transfers leaving that origin once; "
+            "do not substitute the sum of all legs of overlapping paths. "
+            "For path/loop enumeration, bound hops and output size; do not enumerate every cycle of a large graph."
+            " For temporal paths and flow rankings, use the trusted function "
+            "from aag.computing_engine.temporal_paths import analyze_temporal_paths. "
+            "Call analyze_temporal_paths(global_graph, center=<canonical vertex id>, via=<ordered nodes after center>, "
+            "incoming_hops=1, outgoing_hops=2, sample_size=10). It returns connected chronological paths, "
+            "For screening, add require_path_flag=True and actual edge_flag_field/node_flag_field "
+            "or flagged_nodes; do not reconstruct the joins manually to filter flags. "
+            "deduplicated center outflows and account_rankings. Use these verified totals; do not rejoin "
+            "independent transaction lists by time or resummate overlapping path legs."
+        )
+        if error_history:
+            full_prompt = enhance_prompt(base_prompt=full_prompt, error_history=error_history)
+        return self._execute_prompt(
+            full_prompt,
+            parse_json=True,
+            adapter=self.adapter_for("binder"),
+        )
 
     def get_question_entity(self, question, language="en"):
         if hasattr(self.env, "get_question_entity"):
@@ -1241,7 +1538,11 @@ class Reasoner:
                 error_history=error_history
             )
 
-        return self.env.execute_prompt(full_prompt, parse_json=True)
+        return self._execute_prompt(
+            full_prompt,
+            parse_json=True,
+            adapter=self.adapter_for("binder"),
+        )
 
     def merge_parameters_from_dependencies(
         self, 
@@ -1269,7 +1570,11 @@ class Reasoner:
             )
 
 
-        return self.env.execute_prompt(full_prompt, parse_json=True)
+        return self._execute_prompt(
+            full_prompt,
+            parse_json=True,
+            adapter=self.adapter_for("binder"),
+        )
 
     def chat(self, messages: list):
         if hasattr(self.env, "chat"):
@@ -1322,7 +1627,7 @@ class Reasoner:
                 params=json.dumps(params, ensure_ascii=False, indent=2),
                 cypher=cypher
             )
-        return self.execute_prompt(full_prompt, parse_json=True)
+        return self._execute_prompt(full_prompt, parse_json=True, adapter=self.adapter_for("binder"))
 
     def rewrite_query(
         self,

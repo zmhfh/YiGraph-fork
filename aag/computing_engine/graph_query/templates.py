@@ -12,7 +12,7 @@ QUERY_TEMPLATES = {
         "method": "filter_relationships",
         "required_params": ["rel_type"],
         "optional_params": ["start_label", "end_label", "rel_conditions", "return_fields", "aggregate"],
-        "example": "Find transactions with amount greater than 400 or List the count of transactions where is_sar is False",
+        "example": "Filter or count relationships using properties declared in the current schema",
         "note": "Used for relationship property filtering, relationship statistics, etc., not for node queries or path queries"
     },
     "aggregation_query": {
@@ -35,7 +35,7 @@ QUERY_TEMPLATES = {
         "description": "Query paths between two nodes",
         "method": "paths_between",
         "required_params": ["label", "key", "v1", "v2"],
-        "optional_params": ["rel_type", "direction", "min_hops", "max_hops"],
+        "optional_params": ["rel_type", "direction", "min_hops", "max_hops", "amount_field"],
         "example": "Path from Collins Steven to Nunez Mitchell"
     },
     "common_neighbor": {
@@ -70,7 +70,7 @@ QUERY_MODIFIERS = {
     "order_by": {
         "description": "Sort field (relationship property or node property)",
         "format": "firstRel.property_name or nbr.property_name",
-        "example": "firstRel.base_amt, nbr.name"
+        "example": "firstRel.<relationship_property>, nbr.<node_property>"
     },
     "order_direction": {
         "description": "Sort direction",
@@ -95,6 +95,6 @@ QUERY_MODIFIERS = {
     "aggregate_field": {
         "description": "Aggregation field (required only when aggregate is not COUNT)",
         "format": "rel.property_name or neighbor.property_name",
-        "example": "rel.base_amt"
+        "example": "rel.<relationship_property>"
     }
 }

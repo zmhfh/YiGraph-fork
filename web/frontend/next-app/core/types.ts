@@ -52,6 +52,8 @@ export interface DagNode {
   status: NodeStatus
   /** 无算法时的任务类型标签（如 "数值分析"、"图算法"） */
   taskType?: string
+  toolName?: string
+  executionRecord?: Record<string, unknown>
   /** Simulated execution output */
   result?: NodeResult
   /** 执行失败时的错误信息（真实后端执行时下发） */
@@ -67,6 +69,7 @@ export interface DagEdge {
   id: string
   source: string
   target: string
+  kind?: "data" | "sequence" | "summary"
 }
 
 export interface NodeResult {
@@ -107,7 +110,65 @@ export interface ChartPoint {
   value2?: number
 }
 
+export type ReactStage =
+  | "deciding"
+  | "binding"
+  | "executing"
+  | "observing"
+  | "reporting"
+  | "complete"
+  | "incomplete"
+  | "error"
+
+export interface ReactAction {
+  type: "algorithm" | "graph_query" | "numeric_analysis" | "finish"
+  name: string
+  parameters: Record<string, unknown>
+  consumed: { artifact_id: string; field?: string; use_as?: string }[]
+}
+
+export interface ReactArtifact {
+  artifact_id: string
+  source?: string
+  summary?: string
+  fields?: Record<string, unknown>
+  value?: unknown
+}
+
+export interface ReactObservation {
+  summary: string
+  success?: boolean
+  empty?: boolean
+  error?: string
+  evidence?: string[]
+  artifact_id?: string
+}
+
+export interface ReactRound {
+  step: number
+  stage: ReactStage
+  thought?: string
+  action?: ReactAction
+  observation?: ReactObservation
+  artifacts: ReactArtifact[]
+}
+
+export interface ReactRun {
+  stage: ReactStage
+  step: number
+  maxSteps?: number
+  checklist: string[]
+  rounds: ReactRound[]
+  outcome?: "running" | "completed" | "incomplete" | "failed"
+  runId?: string
+  terminationReason?: string
+  missingGoals?: string[]
+}
+
 export interface WorkflowPlan {
+  /** ReAct replies render a live timeline; legacy plans retain their DAG UI. */
+  executionMode?: "react" | "dag"
+  react?: ReactRun
   /** High level understanding of the user question */
   understanding: string
   subProblems: SubProblem[]
@@ -122,6 +183,8 @@ export interface WorkflowPlan {
     | "selecting"
     | "dag-ready"
     | "executing"
+    | "react-running"
+    | "reporting"
     | "executed"
   /** streaming progress for each phase 0-1 */
   progress: {

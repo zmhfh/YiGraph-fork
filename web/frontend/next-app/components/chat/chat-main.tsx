@@ -12,8 +12,6 @@ import { MessageAssistant } from "./message-assistant"
 export function ChatMain({
   session,
   onSubmit,
-  onExecute,
-  onModify,
   onLayoutChange,
   settings,
   onSettingsChange,
@@ -22,8 +20,6 @@ export function ChatMain({
 }: {
   session: ChatSession | null
   onSubmit: (q: string) => void
-  onExecute: (messageId: string) => void
-  onModify: (messageId: string, modificationText: string) => void
   onLayoutChange: (
     messageId: string,
     layout: Record<string, { x: number; y: number }>,
@@ -59,13 +55,13 @@ export function ChatMain({
               {session?.title || t("chat.heading", "新的分析会话")}
             </h1>
             <p className="text-xs text-muted-foreground">
-              {t("chat.subheading", "自然语言提问 · 自动规划 DAG · 生成可视化报告")}
+              {t("chat.subheading", "自然语言提问 · ReAct 逐轮分析 · 生成报告")}
             </p>
           </div>
         </div>
         <div className="hidden items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground md:flex">
           <span className="size-1.5 rounded-full bg-accent" />
-          {t("chat.engineOnline", "规划引擎在线")}
+          {t("react.autoMode", "ReAct 自动分析")}
         </div>
       </header>
 
@@ -86,10 +82,7 @@ export function ChatMain({
                       .slice(0, i)
                       .findLast((p) => p.role === "user")?.content ?? ""
                   }
-                  onExecute={() => onExecute(m.id)}
-                  onModify={(text) => onModify(m.id, text)}
                   onLayoutChange={(layout) => onLayoutChange(m.id, layout)}
-                  interactive={m.plan?.interactive ?? false}
                 />
               ),
             )}
@@ -116,7 +109,8 @@ function isBusy(session: ChatSession | null) {
   const last = session.messages[session.messages.length - 1]
   if (!last || last.role !== "assistant") return false
   const p = last.plan?.phase
-  return p === "understanding" || p === "decomposing" || p === "selecting" || p === "executing"
+  return !last.plan?.error && (p === "understanding" || p === "decomposing" || p === "selecting" ||
+    p === "executing" || p === "react-running" || p === "reporting")
 }
 
 /**
@@ -133,6 +127,9 @@ function buildScrollSignal(session: ChatSession | null): string {
     messages.length,
     last?.content.length ?? 0,
     plan.phase,
+    plan.react?.stage,
+    ...((plan.react?.rounds ?? []).map((round) =>
+      `${round.step}:${round.stage}:${round.thought?.length}:${round.observation?.summary.length}:${round.artifacts.length}`)),
     plan.progress.understanding,
     plan.progress.decomposing,
     plan.progress.selecting,

@@ -1,6 +1,8 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 import json
-from typing import Dict, Any
+import os
+from pathlib import Path
+from typing import Dict, Any, Optional
 import yaml
 
 @dataclass
@@ -8,10 +10,22 @@ class LLMConfig:
     provider: str
     ollama: Dict[str, Any]
     openai: Dict[str, Any]
+    # A single serving backend can expose several LoRA adapters.  The
+    # provider specific dictionaries keep the old configuration compatible;
+    # these fields only describe adapter routing on top of that backend.
+    backend: Dict[str, Any] = field(default_factory=dict)
+    adapters: Dict[str, Any] = field(default_factory=dict)
+    # ``lora_adapters`` is accepted as a descriptive alias for deployments
+    # that prefer to spell out the adapter type in YAML.
+    lora_adapters: Dict[str, Any] = field(default_factory=dict)
+    default_adapter: Optional[str] = None
 
 @dataclass
 class ReasonerConfig:
     llm: LLMConfig
+    # ReAct controller settings.  Kept as a dictionary so new controller
+    # guards can be added without changing the public config API.
+    react: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class DatabaseConfig:
@@ -38,6 +52,23 @@ class EngineConfig:
     retrieval: RetrievalConfig
     monitoring: Dict[str, Any]
     output: Dict[str, Any]
+    # Graph analysis uses ReAct. This section configures its runtime guards.
+    execution: Dict[str, Any] = field(default_factory=dict)
+
+
+def resolve_neo4j_config(settings: Dict[str, Any], config_dir: Optional[Path] = None) -> Dict[str, Any]:
+    """Resolve local credentials without storing the password in tracked YAML."""
+    resolved = dict(settings or {})
+    for name in ("uri", "user", "password"):
+        override = os.environ.get(f"YIGRAPH_NEO4J_{name.upper()}")
+        if override is not None:
+            resolved[name] = override
+    if not resolved.get("password") and resolved.get("password_file"):
+        password_path = Path(resolved["password_file"]).expanduser()
+        if not password_path.is_absolute() and config_dir is not None:
+            password_path = config_dir / password_path
+        resolved["password"] = password_path.read_text(encoding="utf-8").strip()
+    return resolved
 
 
 def load_config_from_yaml(config_path: str) -> EngineConfig:
@@ -52,12 +83,20 @@ def load_config_from_yaml(config_path: str) -> EngineConfig:
 
         # reasoner.llm
         llm_section = (config_data or {}).get("reasoner", {}).get("llm", {})
+        adapter_section = llm_section.get("adapters", llm_section.get("lora_adapters", {})) or {}
         llm_config = LLMConfig(
             provider=llm_section.get("provider", "ollama"),
             ollama=llm_section.get("ollama", {}) or {},
-            openai=llm_section.get("openai", {}) or {}
+            openai=llm_section.get("openai", {}) or {},
+            backend=llm_section.get("backend", {}) or {},
+            adapters=adapter_section,
+            lora_adapters=llm_section.get("lora_adapters", {}) or {},
+            default_adapter=llm_section.get("default_adapter"),
         )
-        reasoner_config = ReasonerConfig(llm=llm_config)
+        reasoner_config = ReasonerConfig(
+            llm=llm_config,
+            react=(config_data.get("reasoner", {}).get("react", {}) or {}),
+        )
 
         # retrieval
         retrieval_section = (config_data or {}).get("retrieval", {})
@@ -67,7 +106,10 @@ def load_config_from_yaml(config_path: str) -> EngineConfig:
         database_config = DatabaseConfig(
             graph=database_section.get("graph", {}) or {},
             vector=database_section.get("vector", {}) or {},
-            neo4j=database_section.get("neo4j", ) or {}
+            neo4j=resolve_neo4j_config(
+                database_section.get("neo4j", {}) or {},
+                config_dir=Path(config_path).expanduser().resolve().parent,
+            )
         )
         rag_config = RagConfig(
             graph=rag_section.get("graph", {}) or {},
@@ -81,6 +123,16 @@ def load_config_from_yaml(config_path: str) -> EngineConfig:
 
         monitoring_config = config_data.get("monitoring", {}) or {}
         output_config = config_data.get("output", {}) or {}
+        execution_config = config_data.get("execution", {}) or {}
+        if isinstance(execution_config, str):
+            execution_config = {"mode": execution_config}
+        if isinstance(execution_config, dict):
+            execution_react = execution_config.setdefault("react", {})
+            if isinstance(execution_react, dict):
+                execution_react.setdefault(
+                    "adapters",
+                    (config_data.get("reasoner", {}).get("react", {}) or {}).get("adapters", {}),
+                )
 
         return EngineConfig(
             version=version,
@@ -88,7 +140,8 @@ def load_config_from_yaml(config_path: str) -> EngineConfig:
             reasoner=reasoner_config,
             retrieval=retrieval_config,
             monitoring=monitoring_config,
-            output=output_config
+            output=output_config,
+            execution=execution_config,
         )
     except Exception as e:
         raise ValueError(f"Failed to load config from {config_path}: {e}")
@@ -107,6 +160,9 @@ def create_engine_config(
     
     # reasoner.llm
     provider = kwargs.get("llm_provider", "ollama")
+    adapter_specs = kwargs.get("llm_adapters", kwargs.get("lora_adapters", kwargs.get("adapters", {}))) or {}
+    default_adapter = kwargs.get("llm_default_adapter")
+    backend = kwargs.get("llm_backend", {}) or {}
     if provider == "openai":
         llm = LLMConfig(
             provider="openai",
@@ -122,6 +178,10 @@ def create_engine_config(
                 "model": kwargs.get("openai_model", "gpt-4o"),
                 "temperature": kwargs.get("openai_temperature", 0.0),
             },
+            backend=backend,
+            adapters=adapter_specs,
+            lora_adapters=adapter_specs,
+            default_adapter=default_adapter,
         )
     else:
         llm = LLMConfig(
@@ -138,9 +198,16 @@ def create_engine_config(
                 "model": kwargs.get("openai_model", "gpt-4o"),
                 "temperature": kwargs.get("openai_temperature", 0.0),
             },
+            backend=backend,
+            adapters=adapter_specs,
+            lora_adapters=adapter_specs,
+            default_adapter=default_adapter,
         )
 
-    reasoner = ReasonerConfig(llm=llm)
+    reasoner = ReasonerConfig(
+        llm=llm,
+        react=kwargs.get("react", {}) or {},
+    )
 
     database = DatabaseConfig(
         graph={
@@ -156,7 +223,7 @@ def create_engine_config(
             "host": kwargs.get("vector_host", "localhost"),
             "port": kwargs.get("vector_port", 19530),
         },
-        neo4j=kwargs.get("neo4j", {}) or {},
+        neo4j=resolve_neo4j_config(kwargs.get("neo4j", {}) or {}),
     )
 
     rag = RagConfig(
@@ -194,12 +261,24 @@ def create_engine_config(
         "log_file": kwargs.get("log_file", "./engine.log"),
     }
 
+    react_settings = kwargs.get("react", {}) or {}
+    execution = kwargs.get("execution", {}) or {
+        "mode": kwargs.get("execution_mode", "react"),
+        "react": kwargs.get("react_execution", {}) or {},
+    }
+    if isinstance(execution, dict):
+        execution.setdefault("react", {})
+        if isinstance(execution["react"], dict):
+            execution["react"].setdefault("adapters", react_settings.get("adapters", {}))
+
     return EngineConfig(
         version=str(kwargs.get("version", "1.0")),
+        mode=str(kwargs.get("mode", "interactive")),
         reasoner=reasoner,
         retrieval=retrieval,
         monitoring=monitoring,
         output=output,
+        execution=execution,
     )
 
 

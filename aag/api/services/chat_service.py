@@ -29,7 +29,7 @@ def _is_scheduler_error_text(text: str) -> bool:
     if not text or not isinstance(text, str):
         return False
     t = text.strip()
-    return t.startswith("⚠️") or t.startswith("❌") or "错误：" in t or "Error:" in t
+    return t.startswith(("⚠️", "❌", "错误：", "Error:"))
 
 
 class ChatService:
@@ -64,8 +64,7 @@ class ChatService:
             Result dict.
         """
         try:
-            if expert_mode:
-                mode = "interact"
+            mode = "normal"
 
             engine = self.engine_service.get_engine()
 
@@ -170,8 +169,7 @@ class ChatService:
             callback: Callback for streaming chunks; signature callback(data: Dict[str, Any]).
         """
         try:
-            if expert_mode:
-                mode = "interact"
+            mode = "normal"
 
             engine = self.engine_service.get_engine()
 
@@ -183,8 +181,8 @@ class ChatService:
                     "placeholder": True
                 })
 
-            # 包装回调：调度器在规划阶段已通过 callback 流式下发过 DAG，
-            # 这里跟踪并避免 engine.run 返回后重复发送
+            # 包装回调：ReAct 会先流式下发动作/观测，执行结束后再发送
+            # 由 trace 投影的 DAG；这里跟踪并避免重复发送。
             streamed_dag = {"value": False}
 
             def wrapped_callback(data_chunk):
@@ -204,55 +202,20 @@ class ChatService:
 
             result = await engine.run(message, mode=mode, callback=engine_callback)
 
-            if mode in {"interact", "expert"} and isinstance(result, dict) and "dag_info" in result:
-                if callback and not streamed_dag["value"]:
-                    dag_content = self._convert_dag_to_frontend_format(result)
+            if isinstance(result, dict):
+                if callback and result.get("dag_info") and not streamed_dag["value"]:
                     callback({
-                        "type": "result",
-                        "contentType": "dag",
-                        "content": dag_content
+                        "type": "result", "contentType": "dag",
+                        "content": self._convert_dag_to_frontend_format(result),
                     })
-            elif mode in {"interact", "expert"} and isinstance(result, dict) and "error" in result:
-                if callback:
-                    callback({
-                        "type": "result",
-                        "contentType": "text",
-                        "content": CHAT_FRIENDLY_ERROR_MSG
-                    })
-            elif mode == "normal" and isinstance(result, dict) and "dag_info" in result:
-                # Normal mode: result has DAG info — scheduler has already streamed it;
-                # only send here as fallback (e.g. old scheduler without streaming)
-                if callback and not streamed_dag["value"]:
-                    dag_content = self._convert_dag_to_frontend_format({
-                        "dag_info": result.get("dag_info", {})
-                    })
-                    callback({
-                        "type": "result",
-                        "contentType": "dag",
-                        "content": dag_content
-                    })
-
-                result_text = result.get("analysis_result", "")
-                if callback and result_text:
-                    paragraphs = [p.strip() for p in result_text.split('\n') if p.strip()]
-                    for para in paragraphs:
-                        callback({
-                            "type": "result",
-                            "contentType": "text",
-                            "content": para
-                        })
+                result_text = result.get("analysis_result") or result.get("error") or ""
             else:
                 result_text = str(result) if result else "No result."
-                if _is_scheduler_error_text(result_text):
-                    result_text = CHAT_FRIENDLY_ERROR_MSG
-                if callback:
-                    paragraphs = [p.strip() for p in result_text.split('\n') if p.strip()]
-                    for para in paragraphs:
-                        callback({
-                            "type": "result",
-                            "contentType": "text",
-                            "content": para
-                        })
+            if _is_scheduler_error_text(result_text):
+                result_text = CHAT_FRIENDLY_ERROR_MSG
+            if callback and result_text:
+                # Preserve Markdown tables, lists and code blocks in the report.
+                callback({"type": "result", "contentType": "text", "content": result_text})
             if callback:
                 callback({
                     "type": "stream_end"
@@ -293,26 +256,5 @@ class ChatService:
         dag_confirm: str,
         callback: Optional[Callable[[Dict[str, Any]], None]] = None
     ) -> Dict[str, Any]:
-        """
-        Handle DAG confirmation (yes/no).
-
-        Args:
-            dag_confirm: "yes" or "no".
-            callback: Callback for streaming.
-
-        Returns:
-            Result dict.
-        """
-        if dag_confirm == "yes":
-            return self.start_expert_analysis()
-        else:
-            if callback:
-                callback({
-                    "type": "result",
-                    "contentType": "text",
-                    "content": "DAG rejected. Please modify and resubmit."
-                })
-            return {
-                "success": True,
-                "message": "DAG rejected"
-            }
+        """Reject retired DAG controls without re-executing a trace."""
+        return {"success": False, "error": "Only ReAct execution is supported. Submit a new analysis question."}

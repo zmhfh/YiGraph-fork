@@ -1,48 +1,45 @@
-# =============================================================================
-# AAG (Analysis-Augmented Graph) Engine Configuration
-# =============================================================================
-
-version: 1.0   # Config version
-
-# -----------------------------------------------------------------------------
-# Reasoner - LLM inference
-# -----------------------------------------------------------------------------
+# Set OPENAI_API_KEY and YIGRAPH_NEO4J_PASSWORD locally before running.
+version: 2.0.0
+execution:
+  mode: react
+  react:
+    max_steps: 16
+    max_retries_per_action: 2
+    observation_chars: 6000
+    timeout_seconds: 600
+    record_dag: true
 reasoner:
+  react:
+    adapters: {}
   llm:
-    # LLM provider: ollama (local) or openai (OpenAI-compatible API, e.g. DeepSeek)
-    provider: "openai"
-    # Ollama config (used when provider is ollama)
+    provider: openai
     ollama:
-      model_name: "llama3.1:70b"
-      device: "cuda:0"
+      model_name: llama3.1:70b
+      device: cuda:0
       timeout: 150000
       port: 11434
-    # OpenAI-compatible API (used when provider is openai; e.g. OpenAI / DeepSeek / self-hosted)
     openai:
-      base_url: "https://your-api-endpoint.com/v1/"   # OpenAI-compatible API base URL; must end with /
-      api_key: "your-api-key-here"                    # API key from your provider
-      model: "gpt-4o-mini"                            # Model name (e.g. gpt-4o-mini, deepseek-chat)
-
-# -----------------------------------------------------------------------------
-# Retrieval - Vector DB and graph DB
-# -----------------------------------------------------------------------------
+      base_url: https://api.deepseek.com/
+      api_key: ''
+      model: deepseek-flash
+    backend: {}
+    default_adapter: null
+    adapters: {}
 retrieval:
   database:
-    # Vector DB (Milvus) for RAG text retrieval; requires a running Milvus instance (e.g. Docker)
     vector:
-      host: "localhost"
+      host: localhost
       port: 19530
-    # Neo4j for graph queries (e.g. Cypher in interactive mode)
     neo4j:
       enabled: true
-      uri: "bolt://localhost:7687"              # Neo4j Bolt URI; replace host/port with your instance
-      user: "neo4j"                             # Neo4j username
-      password: "your-neo4j-password-here"      # Neo4j password; do not commit real credentials
-
-  # Embedding model for RAG and vector retrieval
+      uri: bolt://127.0.0.1:7687
+      user: neo4j
+      password: ''
+      password_file: ''
   embedding:
-    model_name: "BAAI/bge-large-en-v1.5"
+    model_name: BAAI/bge-large-en-v1.5
     batch_size: 20
     chunk_size: 512
     chunk_overlap: 20
-    device: "cuda:2"
+    device: cpu
+mode: react

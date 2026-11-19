@@ -28,13 +28,15 @@ from aag.rag_engine.vector_rag import VectorRAG
 from aag.rag_engine.graph_rag import GraphRAG
 from aag.reasoner.prompt_template.llm_prompt_en import rag_prompt
 from aag.error_recovery.error_manager import ErrorRecovery
+from aag.engine.react_executor import ReActExecutor
+from aag.engine.react_trace import ReactTraceStore
 
 logger = logging.getLogger(__name__)
 
 class Scheduler:
     """
     Unified scheduler: retrieval / graph computation / graph learning / LLM.
-    Holds the DAG and runs steps according to dependencies.
+    Runs graph analysis through ReAct; DAGs are post-run execution records.
     """
 
     def __init__(self, config: EngineConfig):
@@ -43,6 +45,7 @@ class Scheduler:
         self.computing_engine: Optional[ComputingEngine] = None
         self.expert_search_engine: Optional[ExpertSearchEngine] = None
         self.dag: Optional[GraphWorkflowDAG] = None
+        self.react_trace: List[Dict[str, Any]] = []
         self.rag_engine: Optional[VectorRAG] = None
         self.graph_rag_engine: Optional[GraphRAG] = None
         
@@ -217,6 +220,9 @@ class Scheduler:
                 self.current_dataset_name,
                 neo4j_config_dict
             )
+            query_engine = getattr(self.computing_engine, "nl_query_engine", None)
+            if query_engine:
+                query_engine.schema_analyzer.invalidate()
         else:
             # Text/table dataset
             self.current_graph_dataset = None
@@ -225,17 +231,10 @@ class Scheduler:
         return self.current_dataset
 
     def _normalize_graph_mode(self, mode: str) -> str:
-        """
-        Normalize graph execution mode.
-        Supported modes: normal | interact | expert
-        """
-        normalized = (mode or "normal").strip().lower()
-        allowed_modes = {"normal", "interact", "expert"}
-        if normalized not in allowed_modes:
-            raise ValueError(
-                f"Unsupported mode '{mode}'; use normal / interact / expert"
-            )
-        return normalized
+        """Keep old client values as aliases for the single ReAct flow."""
+        if (mode or "normal").strip().lower() not in {"normal", "react", "interact", "expert"}:
+            raise ValueError("Only ReAct execution is supported")
+        return "normal"
 
     async def execute(
         self, 
@@ -250,12 +249,12 @@ class Scheduler:
         Args:
             query: User query.
             decompose: Whether to decompose the query.
-            mode: "normal" | "interact" | "expert".
+            mode: "normal" or "react"; legacy aliases also use ReAct.
             callback: Optional callback for streaming (e.g. DAG); signature callback(data: Dict).
 
         Returns:
             Normal: analysis result string.
-            Interact/expert: dict with dag_info, message, etc.
+            Streaming: report and execution record.
 
         Validates:
             1. RAG query + graph dataset → Error (graph data cannot do retrieval)
@@ -280,16 +279,7 @@ class Scheduler:
             else:
                 return await self._execute_rag(query)
 
-        elif decision.query_type == QueryType.GRAPH_QUERY:
-            if original_type != "graph":
-                converted_graph_config = self.dataset_manager.get_converted_graph_dataset(self.current_dataset_name)
-                if not converted_graph_config:
-                    return "❌ Error: Graph query requires graph data; current dataset is not graph and has no converted graph."
-                self.current_graph_dataset = converted_graph_config
-            
-            return await self._execute_graph_query(query)
-        
-        elif decision.query_type == QueryType.GRAPH:
+        elif decision.query_type in {QueryType.GRAPH, QueryType.GRAPH_QUERY}:
             if original_type == "text":
                 converted_graph_config = self.dataset_manager.get_converted_graph_dataset(self.current_dataset_name)
                 if not converted_graph_config:
@@ -319,12 +309,12 @@ class Scheduler:
         Args:
             query: User query.
             decompose: Whether to decompose the query.
-            mode: "normal" | "interact" | "expert".
+            mode: retained for compatibility; graph execution always uses ReAct.
             callback: Optional callback for streaming (e.g. DAG); signature callback(data: Dict).
 
         Returns:
             Normal: analysis result string.
-            Interact/expert: DAG info dict.
+            Streaming: report, execution record and ReAct trace.
 
         Uses self.current_graph_dataset (which may be converted graph for text datasets).
         """
@@ -339,48 +329,63 @@ class Scheduler:
 
         mode = self._normalize_graph_mode(mode)
 
-        if mode == "expert":
-            return self._execute_graph_expert_mode(query)
+        # Graph execution has one path. The DAG is projected only after this
+        # ReAct run and cannot drive a second execution or approval stage.
+        return await self._execute_graph_react(query, mode=mode, callback=callback)
 
-        self._build_dag_from_query(query, decompose, callback)
-        self._find_algorithm(callback=callback)
+    async def _execute_graph_react(
+        self,
+        query: str,
+        *,
+        mode: str = "normal",
+        callback: Optional[Callable[[Dict[str, Any]], None]] = None,
+    ) -> Union[str, Dict[str, Any]]:
+        """Run graph analysis without using a DAG as an execution planner."""
+        execution_config = getattr(self.config, "execution", {}) or {}
+        if isinstance(execution_config, str):
+            execution_config = {"mode": execution_config}
+        react_section = execution_config.get("react", {}) or {}
+        react_config = dict(react_section) if isinstance(react_section, dict) else {}
+        # Allow role maps/guards to live under reasoner.react as well; this is
+        # useful for deployments that share a reasoner configuration file.
+        reasoner_react = getattr(getattr(self.config, "reasoner", None), "react", {}) or {}
+        if isinstance(reasoner_react, dict):
+            for key, value in reasoner_react.items():
+                react_config.setdefault(key, value)
 
-        print("✅ Initial DAG build and algorithm selection done")
-        self.dag.print_dag_info()
+        executor = ReActExecutor(
+            reasoner=self.reasoner,
+            computing_engine=self.computing_engine,
+            dependency_resolver=self.data_dependency_resolver,
+            global_graph=self.global_graph,
+            current_graph_dataset=self.current_graph_dataset,
+            expert_search_engine=self.expert_search_engine,
+            config=react_config,
+            callback=callback,
+            trace_store=ReactTraceStore(),
+        )
+        result = await executor.run(
+            query,
+            dataset=self.current_dataset_name,
+            graph_schema=self._get_graph_schema_summary(),
+        )
 
-        # 规划完成后立即下发 DAG（拆解/选算法过程已通过 callback 逐条流式下发），
+        # Project the completed trace for the existing UI/API.  The object is
+        # deliberately created after execution; no planner or DAG dependency
+        # checks are called on this path.
+        self.dag = GraphWorkflowDAG.from_react_trace(result.get("react_trace", []))
+        self.react_trace = list(result.get("react_trace", []))
+        result["dag_info"] = self.dag.get_dag_info()
         if callback:
             callback({
                 "type": "result",
                 "contentType": "dag",
-                "content": dag_info_to_frontend_format(self.dag.get_dag_info()),
+                "content": dag_info_to_frontend_format(result["dag_info"]),
             })
 
-        if mode == "interact":
-            dag_info = self.dag.get_dag_info()
-            return {
-                "message": "DAG generated; please choose next action.",
-                "dag_info": dag_info
-            }
-        
-        self.dag.refresh_data_dependency(self.reasoner)
-        self.dag.print_data_dependency()
-        print("✅ DAG build and algorithm selection done; starting computation")
-
-        # Route node execution events (on_step_start/on_step_end) through the
-        # streaming callback. None clears stale hooks from a previous request.
-        self.on_step_start = self.on_step_end = callback
-
-        analysis_result = await self._run_algorithm_pipeline2()
-        
-        if callback and mode == "normal":
-            dag_info = self.dag.get_dag_info()
-            return {
-                "analysis_result": analysis_result,
-                "dag_info": dag_info
-            }
-        print(f"analysis_result: {analysis_result}")
-        return analysis_result
+        if mode == "normal" and not callback:
+            return result.get("analysis_result", "")
+        return result
 
     @staticmethod
     def _normalize_algorithm_token(raw_name: str) -> str:
@@ -645,59 +650,12 @@ class Scheduler:
         modification_request: str,
         callback: Optional[Callable[[Dict[str, Any]], None]] = None
     ) -> Dict[str, Any]:
-        """
-        Interact mode: modify DAG per user request.
-
-        Args:
-            modification_request: User modification request (natural language).
-            callback: Optional callback for streaming events
-                (subproblems after revision / algorithm_selected per step).
-
-        Returns:
-            Dict with updated DAG info.
-        """
-        if not self.dag:
-            return {
-                "error": "DAG not built yet; please enter a question to generate the DAG first."
-            }
-
-        try:
-            self.dag.modify_dag(self.reasoner, modification_request)
-            # 流式下发修改后的子问题列表
-            if callback:
-                subquery_plan = self.dag.get_subquery_plan()
-                if isinstance(subquery_plan, dict) and subquery_plan.get("subqueries"):
-                    callback({
-                        "type": "result",
-                        "contentType": "subproblems",
-                        "content": {"subqueries": subquery_plan.get("subqueries", [])},
-                    })
-            self._find_algorithm(callback=callback)
-            dag_info = self.dag.get_dag_info()
-            return {
-                "message": "DAG updated.",
-                "dag_info": dag_info
-            }
-        except Exception as e:
-            logger.error(f"DAG modification failed: {e}", exc_info=True)
-            return {
-                "error": f"DAG modification failed: {str(e)}"
-            }
+        """DAG control was retired; analysis runs directly through ReAct."""
+        raise RuntimeError("Only ReAct execution is supported. Submit a new analysis question.")
 
     async def expert_start_analysis(self) -> str:
-        """
-        Interact/expert mode: start analysis.
-
-        Returns:
-            Analysis result string.
-        """
-        if not self.dag:
-            return "❌ Error: DAG not built yet; please enter a question to generate the DAG first."
-                
-        self.dag.refresh_data_dependency(self.reasoner)
-        self.dag.print_data_dependency()
-        print("✅ DAG build and algorithm selection done; starting computation")
-        return await self._run_algorithm_pipeline2()
+        """DAG control was retired; analysis runs directly through ReAct."""
+        raise RuntimeError("Only ReAct execution is supported. Submit a new analysis question.")
 
     async def _execute_graph_rag(self, query: str) -> str:
         """Execute GraphRAG retrieval + generation pipeline."""
@@ -896,8 +854,8 @@ class Scheduler:
             schema_info.append(f"Dataset: {self.current_dataset_name}")
             
             # Graph properties
-            if hasattr(self.current_graph_dataset.schema, 'graph'):
-                graph_props = self.current_graph_dataset.schema.graph
+            graph_props = getattr(self.current_graph_dataset.schema, "graph_structure", None) or getattr(self.current_graph_dataset.schema, "graph", None)
+            if graph_props:
                 graph_type = []
                 if graph_props.directed:
                     graph_type.append("Directed")
@@ -918,6 +876,15 @@ class Scheduler:
             if hasattr(self.current_graph_dataset.schema, 'edge'):
                 edge_types = [e.type for e in self.current_graph_dataset.schema.edge]
                 schema_info.append(f"Edge Types: {', '.join(edge_types)}")
+
+            if self.global_graph:
+                schema_info.append("GraphData node properties: " + json.dumps(self.global_graph.get_vertex_properties_schema(), ensure_ascii=False))
+                schema_info.append("GraphData edge properties (on edge.properties): " + json.dumps(self.global_graph.get_edge_properties_schema(), ensure_ascii=False))
+                schema_info.append("GraphData node IDs are strings from vertex.vid; edge endpoints are edge.src/edge.dst. Keep parallel transactions when summing amounts.")
+            capability_reader = getattr(self.computing_engine, "graph_query_capabilities", None)
+            if callable(capability_reader):
+                actual = capability_reader().get("schema", {})
+                schema_info.append("Actual Neo4j schema; use these exact case-sensitive labels and properties: " + json.dumps(actual, ensure_ascii=False))
             
             return "\n".join(schema_info)
         except Exception as e:

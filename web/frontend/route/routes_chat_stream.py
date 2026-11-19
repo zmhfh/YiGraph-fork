@@ -20,11 +20,40 @@ from flask import Blueprint, Response, jsonify, request
 
 from aag.api.async_runtime import get_background_loop, get_chat_service
 from aag.api.services.chat_service import CHAT_FRIENDLY_ERROR_MSG
-from aag.models.graph_workflow_dag import workflow_step_to_frontend
+from aag.engine.react_trace import ReactTraceStore
 
 logger = logging.getLogger(__name__)
 
 bp = Blueprint("chat_stream", __name__)
+
+
+@bp.route("/api/chat/runs", methods=["GET"])
+def list_runs():
+    return jsonify({"success": True, "data": ReactTraceStore().recent()})
+
+
+@bp.route("/api/chat/runs/<run_id>", methods=["GET"])
+def get_run(run_id):
+    try:
+        return jsonify({"success": True, "data": ReactTraceStore().get(run_id)})
+    except FileNotFoundError:
+        return jsonify({"success": False, "error": "Run not found"}), 404
+    except ValueError:
+        return jsonify({"success": False, "error": "Invalid run id"}), 400
+
+
+@bp.route("/api/chat/runs/<run_id>/dag", methods=["GET"])
+def get_run_dag(run_id):
+    """Refresh an older display from saved evidence without executing its query."""
+    from aag.models.graph_workflow_dag import GraphWorkflowDAG, dag_info_to_frontend_format
+    try:
+        record = ReactTraceStore().get(run_id)
+        dag = GraphWorkflowDAG.from_react_trace(record.get("events", []))
+        return jsonify({"success": True, "data": dag_info_to_frontend_format(dag.get_dag_info())})
+    except FileNotFoundError:
+        return jsonify({"success": False, "error": "Run not found"}), 404
+    except ValueError:
+        return jsonify({"success": False, "error": "Invalid run id"}), 400
 
 # In-memory per-request event buffers for resume support.
 # request_id -> {"events": [...], "queues": set, "finished": bool, "lock": Lock}
@@ -76,47 +105,13 @@ async def _run_chat_stream(payload: Dict[str, Any], send) -> None:
         dataset_type = payload.get("dataset_type")
         dag_confirm = str(payload.get("dag_confirm") or "").strip()
         is_dag_modification = str(payload.get("is_dag_modification", "false")).lower() == "true"
-        modifications = payload.get("modifications", "") or ""
-        expert_mode = payload.get("expert_mode", False)
-        custom_mode = payload.get("mode")
 
-        if dag_confirm == "yes":
-            engine = chat_service.engine_service.get_engine()
-            engine.specific_dataset(dataset, dataset_type)
-            engine.scheduler.on_step_start = engine.scheduler.on_step_end = (
-                lambda step: send(workflow_step_to_frontend(step))
-            )
-            logger.info("DAG confirmed, starting expert mode analysis")
-            result = await chat_service.start_expert_analysis()
-
-            if result.get("success"):
-                result_text = result.get("result", "")
-                paragraphs = [p.strip() for p in result_text.split('\n') if p.strip()]
-                for i, para in enumerate(paragraphs):
-                    send({'type': 'result', 'contentType': 'text', 'content': para})
-                    await asyncio.sleep(0.5 if i < len(paragraphs) - 1 else 0.3)
-            else:
-                send({'error': result.get("error", "Analysis execution failed.")})
+        if dag_confirm or is_dag_modification:
+            send({'error': 'ReAct runs directly. Submit a new question to continue the analysis.'})
             send({'type': 'stream_end'})
             return
 
-        if is_dag_modification or (dag_confirm == "no" and modifications):
-            engine = chat_service.engine_service.get_engine()
-            engine.specific_dataset(dataset, dataset_type)
-            modification_request = modifications or user_message
-            logger.info(f"DAG modification request received: {modification_request[:50]}")
-
-            result = await chat_service.process_dag_modification(modification_request, callback=send)
-
-            if result.get("success"):
-                dag_content = chat_service._convert_dag_to_frontend_format(result)
-                send({'type': 'result', 'contentType': 'dag', 'content': dag_content})
-            else:
-                send({'error': result.get("error", "DAG modification failed.")})
-            send({'type': 'stream_end'})
-            return
-
-        mode = "interact" if custom_mode == "interact" else ("expert" if expert_mode else "normal")
+        mode = "normal"
         logger.info(f"Stream chat: mode={mode}, model={model}, message={user_message[:50]}...")
         await chat_service.process_streaming_chat(
             message=user_message,
@@ -124,7 +119,7 @@ async def _run_chat_stream(payload: Dict[str, Any], send) -> None:
             dataset=dataset,
             dataset_type=dataset_type,
             mode=mode,
-            expert_mode=expert_mode,
+            expert_mode=False,
             callback=send,
         )
     except Exception as exc:
@@ -199,9 +194,11 @@ def chat_stream():
     is_dag_modification = str(payload.get("is_dag_modification", "false")).lower() == "true"
     dataset = str(payload.get("dataset") or "").strip()
 
+    if dag_confirm or is_dag_modification:
+        return _error_response("ReAct runs directly. Submit a new question to continue the analysis.")
     if not request_id:
         return _error_response("Invalid request format. Please check parameters.")
-    if not user_message and not dag_confirm and not is_dag_modification:
+    if not user_message:
         return _error_response("Message content cannot be empty.")
     if not dataset:
         return _error_response("Dataset is empty. Please specify a dataset first.")

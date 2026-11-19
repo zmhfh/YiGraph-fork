@@ -6,7 +6,6 @@ import { ArrowUp, Loader2, Plus } from "lucide-react"
 import { useI18n } from "@/core/i18n/i18n-provider"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
 import {
   Select,
   SelectContent,
@@ -21,8 +20,6 @@ import type { Dataset, Model } from "@/core/types"
 export interface ChatSettings {
   model: string
   dataset: string
-  expertMode: boolean
-  interactiveMode: boolean
 }
 
 interface ChatInputProps {
@@ -65,8 +62,8 @@ export function ChatInput({
     <div className="border-t border-border bg-background/80 px-6 py-4 backdrop-blur">
       <div className="mx-auto mb-3 flex max-w-4xl flex-wrap items-center gap-3">
         <Select
-          value={settings.model}
-          onValueChange={(v) => onSettingsChange({ ...settings, model: v })}
+          value={settings.model || (models.length === 0 ? "__configured__" : "")}
+          onValueChange={(v) => onSettingsChange({ ...settings, model: v === "__configured__" ? "" : v })}
           open={modelOpen}
           onOpenChange={setModelOpen}
         >
@@ -75,9 +72,7 @@ export function ChatInput({
           </SelectTrigger>
           <SelectContent>
             {models.length === 0 ? (
-              <div className="px-2 py-1.5 text-xs text-muted-foreground">
-                {t("chat.noModels", "暂无模型")}
-              </div>
+              <SelectItem value="__configured__">{t("chat.defaultModel", "默认模型")}</SelectItem>
             ) : (
               models.map((m) => (
                 <SelectItem key={m.id} value={m.id}>
@@ -125,35 +120,9 @@ export function ChatInput({
           </SelectContent>
         </Select>
 
-        <div className="flex items-center gap-1.5">
-          <Switch
-            id="expert-mode"
-            checked={settings.expertMode}
-            disabled={settings.interactiveMode}
-            onCheckedChange={(v) => onSettingsChange({ ...settings, expertMode: v })}
-          />
-          <label
-            htmlFor="expert-mode"
-            className={cn("select-none text-xs", settings.interactiveMode ? "text-muted-foreground/50" : "text-muted-foreground")}
-          >
-            {t("chat.expertMode", "专家模式")}
-          </label>
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          <Switch
-            id="interactive-mode"
-            checked={settings.interactiveMode}
-            disabled={settings.expertMode}
-            onCheckedChange={(v) => onSettingsChange({ ...settings, interactiveMode: v })}
-          />
-          <label
-            htmlFor="interactive-mode"
-            className={cn("select-none text-xs", settings.expertMode ? "text-muted-foreground/50" : "text-muted-foreground")}
-          >
-            {t("chat.interactiveMode", "交互模式")}
-          </label>
-        </div>
+        <span className="rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1 text-xs font-medium text-primary">
+          {t("react.autoMode", "ReAct 自动分析")}
+        </span>
       </div>
 
       <div
@@ -187,7 +156,7 @@ export function ChatInput({
       </div>
       <div className="mx-auto mt-2 flex max-w-4xl items-center justify-between text-[11px] text-muted-foreground">
         <span>{t("chat.shortcut", "按 Enter 发送，Shift+Enter 换行")}</span>
-        <span>{t("chat.autoPlan", "易图 会基于当前算法库自动规划最佳工作流")}</span>
+        <span>{t("chat.autoPlan", "根据每轮结果自动选择下一步分析")}</span>
       </div>
     </div>
   )

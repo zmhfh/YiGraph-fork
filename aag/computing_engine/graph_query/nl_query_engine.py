@@ -30,6 +30,7 @@ from aag.config.engine_config import ReasonerConfig
 from aag.computing_engine.graph_query.graph_query import Neo4jGraphClient, Neo4jConfig
 #from graph_query import Neo4jGraphClient, Neo4jConfig
 from aag.computing_engine.graph_query.nl_query_engine_refactored import ParameterExtractorRouter
+from aag.computing_engine.graph_query.parameters import normalize_query_parameters
 # add gjq
 # Removed direct OpenAI client initialization
 # Set OPENAI_API_KEY through your environment or configuration.
@@ -234,6 +235,9 @@ class SchemaAnalyzer:
         if self._schema_cache is None:
             self._schema_cache = self.client.get_schema()
         return self._schema_cache
+
+    def invalidate(self) -> None:
+        self._schema_cache = None
     
     def format_for_llm(self) -> str:
         """格式化 Schema 信息给 LLM（增强版）"""
@@ -370,10 +374,9 @@ ORDER BY c.acct_id
             return result
         except Exception as e:
             logging.error(f"Cypher validation failed: {e}")
-            # When error occurs, default to valid to avoid blocking queries
             return {
-                "is_valid": True,
-                "issues": [],
+                "is_valid": False,
+                "issues": [f"Query validation unavailable: {e}"],
                 "suggestions": [],
                 "corrected_cypher": None
             }
@@ -420,9 +423,15 @@ class QueryExecutor:
         for item in results:
             try:
                 # 支持嵌套访问，如 "rel.base_amt"
-                value = item
-                for key in aggregate_field.split('.'):
-                    value = value.get(key, {})
+                flat = aggregate_field.replace(".", "_")
+                if flat in item:
+                    value = item[flat]
+                elif "rel_" + flat in item:
+                    value = item["rel_" + flat]
+                else:
+                    value = item
+                    for key in aggregate_field.split('.'):
+                        value = value.get(key, {})
                 
                 if isinstance(value, (int, float)):
                     values.append(value)
@@ -454,6 +463,11 @@ class QueryExecutor:
     # add gjq
     def execute(self, query_type: str, params: Dict) -> Dict:
         """根据类型和参数执行查询（支持聚合）"""
+        try:
+            schema = self.schema_analyzer.get_schema() if self.schema_analyzer else None
+            params = normalize_query_parameters(query_type, params, schema)
+        except ValueError as exc:
+            return {"success": False, "error": str(exc), "query_type": query_type, "params": params}
         template = QUERY_TEMPLATES[query_type]
         
         # ⚠️ CRITICAL: 对于 aggregation_query，不要 pop aggregate_field
@@ -705,6 +719,7 @@ class QueryExecutor:
                     max_hops=params.get("max_hops", 5),
                     where=params.get("where"),
                     return_fields=params.get("return_fields"),
+                    amount_field=params.get("amount_field"),
                     order_by=params.get("order_by"),
                     order_direction=params.get("order_direction", "ASC"),
                     limit=params.get("limit")

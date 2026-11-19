@@ -83,18 +83,18 @@ BACKBONE_CONFIGS = {
     "gcn": {
         "conv_class": GCNConv,
         "conv_kwargs": {},
-        "description": "GCN (Graph Convolutional Network) - 适合同质图，计算高效",
+        "description": "GCN with GCNConv layers",
     },
     "gat": {
         "conv_class": GATConv,
         # concat=False：多头输出取均值而非拼接，保持输出维度统一
         "conv_kwargs": {"heads": 4, "concat": False},
-        "description": "GAT (Graph Attention Network) - 通过注意力机制自适应聚合邻居",
+        "description": "GAT with four attention heads and averaged head outputs",
     },
     "graphsage": {
         "conv_class": SAGEConv,
         "conv_kwargs": {},
-        "description": "GraphSAGE - 邻居采样聚合，支持大图归纳学习",
+        "description": "GraphSAGE with SAGEConv aggregation on the supplied graph",
     },
 }
 
@@ -102,15 +102,17 @@ TASK_NAMES = ["node_classification", "link_prediction"]
 
 TASK_DESCRIPTIONS = {
     "node_classification": (
-        "使用 {backbone} backbone 进行节点分类。"
-        "必须提供 node_labels_field 参数（节点属性字段名字符串，如 \"prior_sar_count\" 或 \"is_fraud\"），"
-        "系统将自动从图中读取该字段作为分类标签。请勿传入 node_labels 字典，应使用 node_labels_field 字段名。"
-        "自动划分训练/测试集，返回测试准确率和每个已标注节点的预测类别。"
+        "Train a multilayer {backbone} backbone and classification head on a random train/test split. "
+        "Requires existing labels through node_labels_field (an actual node property name) or an explicit "
+        "node_labels mapping. Numeric node attributes supply features when node_features is omitted; "
+        "degree features are used if no numeric columns are available. Returns held-out accuracy and "
+        "predictions for labeled nodes. This supervised result does not establish new business labels."
     ),
     "link_prediction": (
-        "使用 {backbone} backbone 进行链接预测（预测图中未来可能出现的边）。"
-        "无需外部标签，自动从现有边划分训练/测试集并采样负例。"
-        "返回 AUC 评分和 Top-10 最可能出现的新边。"
+        "Train a multilayer {backbone} backbone with a dot-product decoder using an edge train/test split "
+        "and sampled negative edges. Does not require external node labels. Returns held-out AUC and up "
+        "to ten highest-scoring links among sampled negative pairs; this is not an exhaustive ranking of "
+        "all missing edges or a chronological forecast."
     ),
 }
 

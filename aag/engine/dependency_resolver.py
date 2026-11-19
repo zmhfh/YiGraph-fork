@@ -67,6 +67,126 @@ class DataDependencyResolver:
     def set_global_graph(self, graph_nodes: List[str] , graph_edges: List[Tuple[str, str]]):
         self.global_vertices = graph_nodes
         self.global_edges = graph_edges
+
+    async def prepare_react_inputs(
+        self,
+        *,
+        current_question: str,
+        alg_des_info: Optional[Dict[str, Any]],
+        consumed: Optional[List[Dict[str, Any]]],
+        artifacts: Dict[str, Dict[str, Any]],
+        base_parameters: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """Bind ReAct artifact references to the next tool invocation.
+
+        This is the adapter boundary used by the new controller.  The model
+        explicitly supplies ``consumed`` references, so the resolver does not
+        infer or validate a DAG and does not call ``refresh_data_dependency``.
+        It invokes the project's graph/parameter conversion routines when a
+        reference requests ``use_as=graph`` or ``use_as=parameter``.
+        """
+        base_parameters = dict(base_parameters or {})
+        consumed = consumed or []
+        graph_items: List[SingleDependencyItem] = []
+        parameter_items: List[SingleDependencyItem] = []
+        parent_steps: Dict[int, WorkflowStep] = {}
+        errors: List[str] = []
+
+        for index, reference in enumerate(consumed, start=1):
+            if isinstance(reference, str):
+                reference = {"artifact_id": reference}
+            if not isinstance(reference, dict):
+                errors.append(f"consumed[{index}] must be an object")
+                continue
+            artifact_id = str(reference.get("artifact_id") or reference.get("id") or "")
+            artifact = artifacts.get(artifact_id)
+            if not artifact:
+                errors.append(f"artifact '{artifact_id}' was not found")
+                continue
+
+            raw_value = artifact.get("value")
+            field_key = reference.get("field")
+            if field_key and isinstance(raw_value, dict):
+                if field_key not in raw_value:
+                    errors.append(f"artifact '{artifact_id}' has no field '{field_key}'")
+                    continue
+                value = raw_value[field_key]
+            else:
+                value = raw_value
+                field_key = field_key or "value"
+
+            try:
+                source_step_id = int(artifact.get("source_step_id") or index)
+            except (TypeError, ValueError):
+                source_step_id = index
+            parent_steps[source_step_id] = WorkflowStep(
+                step_id=source_step_id,
+                question=str(artifact.get("question") or artifact.get("source") or artifact_id),
+            )
+            schema = artifact.get("fields") or {}
+            field_schema = schema.get(field_key, {}) if isinstance(schema, dict) else {}
+            try:
+                output_id = int(artifact.get("output_id") or index)
+            except (TypeError, ValueError):
+                output_id = index
+            item = SingleDependencyItem(
+                parent_step_id=source_step_id,
+                parent_step_output_id=output_id,
+                field_key=str(field_key),
+                field_type=field_schema.get("type") if isinstance(field_schema, dict) else None,
+                field_desc=(field_schema.get("description") or field_schema.get("field_description"))
+                if isinstance(field_schema, dict) else None,
+                use_as=str(reference.get("use_as") or "parameter").lower(),
+                value=value,
+                reason=str(reference.get("reason") or "explicit ReAct consumed reference"),
+            )
+            if item.use_as == "graph":
+                graph_items.append(item)
+            else:
+                parameter_items.append(item)
+
+        alg_des_doc = ""
+        if alg_des_info:
+            alg_des_doc = (
+                f"alg_name:{alg_des_info.get('name')}, running on engine:{alg_des_info.get('engine')}\n"
+                f"**Input Parameters**:\n```json\n"
+                f"{json.dumps(alg_des_info.get('input_params'), indent=2, ensure_ascii=False)}\n```"
+            )
+
+        graph_adapter_result = None
+        parameter_adapter_result: Dict[str, Any] = {}
+        if graph_items:
+            converted = await self._convert_graph_dependencies(
+                current_question=current_question,
+                graph_items=graph_items,
+                parent_steps=parent_steps,
+            )
+            graph_adapter_result = converted.get("converted_graph")
+            if graph_adapter_result is None:
+                errors.append(converted.get("description") or "graph dependency conversion returned empty")
+        if parameter_items:
+            mapped = await self._convert_parameter_dependencies(
+                current_question=current_question,
+                alg_des_doc=alg_des_doc,
+                param_items=parameter_items,
+                parent_steps=parent_steps,
+            )
+            parameter_adapter_result = mapped.get("mapped_params") or {}
+            if mapped.get("reasoning") and not parameter_adapter_result:
+                errors.append(str(mapped["reasoning"]))
+
+        # Explicit artifact mappings win for colliding keys; model-provided
+        # scalar parameters remain available for keys that do not come from an
+        # upstream artifact.
+        parameters = dict(base_parameters)
+        parameters.update(parameter_adapter_result)
+        return {
+            "parameters": parameters,
+            "graph_adapter_result": graph_adapter_result,
+            "graph_dependencies": graph_items,
+            "parameter_dependencies": parameter_items,
+            "errors": errors,
+        }
     
     async def resolve_dependencies(
         self,

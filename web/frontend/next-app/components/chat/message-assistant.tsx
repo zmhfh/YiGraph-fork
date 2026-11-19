@@ -3,26 +3,19 @@
 import * as React from "react"
 import { Sparkles } from "lucide-react"
 import { useI18n } from "@/core/i18n/i18n-provider"
-import type { ChatMessage, WorkflowPlan } from "@/core/types"
-import { ThinkingSteps } from "./thinking-steps"
+import type { ChatMessage } from "@/core/types"
 import { DagPanel } from "./dag-panel"
-import { ExecutionPanel } from "./execution-panel"
 import { AnalysisReport } from "./analysis-report"
+import { ReActTimeline } from "./react-timeline"
 
 export function MessageAssistant({
   message,
   userQuestion,
-  onExecute,
-  onModify,
   onLayoutChange,
-  interactive,
 }: {
   message: ChatMessage
   userQuestion: string
-  onExecute: () => void
-  onModify: (modificationText: string) => void
   onLayoutChange: (layout: Record<string, { x: number; y: number }>) => void
-  interactive: boolean
 }) {
   const { t } = useI18n()
   const plan = message.plan
@@ -37,9 +30,9 @@ export function MessageAssistant({
       </div>
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-center gap-2 text-xs font-medium text-muted-foreground">
-          <span className="text-foreground">{t("chat.engine", "易图 规划引擎")}</span>
+          <span className="text-foreground">{t("chat.engine", "易图 ReAct 智能体")}</span>
           <span>·</span>
-          <span>{phaseLabel(phase, t)}</span>
+          <span>{plan.react ? t(`react.stage.${plan.react.stage}`, plan.react.stage) : t("react.stage.complete", "分析已结束")}</span>
         </div>
 
         <div className="flex flex-col gap-4">
@@ -48,43 +41,22 @@ export function MessageAssistant({
               {plan.error}
             </div>
           )}
-          <ThinkingSteps plan={plan} />
-
-          {(phase === "dag-ready" ||
-            phase === "executing" ||
-            phase === "executed") && (
-            <DagPanel
-              plan={plan}
-              userQuestion={userQuestion}
-              onExecute={onExecute}
-              onModify={onModify}
-              onLayoutChange={onLayoutChange}
-              interactive={interactive}
-            />
-          )}
-
-          {(phase === "executing" || phase === "executed") && (
-            <ExecutionPanel plan={plan} />
-          )}
+          {plan.react && <ReActTimeline run={plan.react} />}
 
           {/* Markdown from backend, or structured report from mock */}
           {(plan.markdown || plan.report) && (
             <AnalysisReport report={plan.report} markdown={plan.markdown} userQuestion={userQuestion} />
           )}
+          {phase === "executed" && plan.nodes.length > 0 && (
+            <details className="rounded-lg border border-border bg-muted/10">
+              <summary className="cursor-pointer px-4 py-3 text-xs font-medium text-muted-foreground hover:text-foreground">
+                {t("react.viewRecord", "查看执行记录图")}
+              </summary>
+              <DagPanel plan={plan} userQuestion={userQuestion} onLayoutChange={onLayoutChange} />
+            </details>
+          )}
         </div>
       </div>
     </div>
   )
-}
-
-function phaseLabel(phase: WorkflowPlan["phase"], t: (k: string, f?: string) => string) {
-  switch (phase) {
-    case "understanding": return t("dag.phaseUnderstanding", "正在理解问题")
-    case "decomposing":   return t("dag.phaseDecomposing", "正在拆解子问题")
-    case "selecting":     return t("dag.phaseSelecting", "正在选择算法")
-    case "dag-ready":     return t("dag.phaseReady", "DAG 构建完成")
-    case "executing":     return t("dag.phaseExecuting", "工作流执行中")
-    case "executed":      return t("dag.phaseExecuted", "分析报告已生成")
-    default:              return t("dag.phaseThinking", "思考中")
-  }
 }

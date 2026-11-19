@@ -152,3 +152,6 @@ docs/_build
 web/frontend/models.json
 
 node_modules
+
+# Local ReAct execution records (goals, observations and artifacts).
+/output/react-runs/

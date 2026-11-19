@@ -65,17 +65,17 @@ class AAGEngine:
         callback: Optional[Callable[[Dict[str, Any]], None]] = None
     ) -> Union[str, Dict[str, Any]]:
         """
-        Run a query (normal or expert mode).
+        Run a query through the ReAct flow.
 
         Args:
             query: User query.
-            mode: "normal" | "interact" | "expert".
+            mode: "normal" | "react"; legacy mode names also enter ReAct.
             callback: Optional callback for streaming (e.g. DAG); signature callback(data: Dict).
                      Used in Web flow only; omit for CLI.
 
         Returns:
             Normal: analysis result string.
-            Interact/expert: dict with dag_info, message, etc.
+            Streaming: dict with analysis_result, execution record and trace.
         """
         return await self.scheduler.execute(query, mode=mode, callback=callback)
     
@@ -84,27 +84,12 @@ class AAGEngine:
         modification_request: str,
         callback: Optional[Callable[[Dict[str, Any]], None]] = None
     ) -> Dict[str, Any]:
-        """
-        Expert mode: modify the DAG.
-
-        Args:
-            modification_request: User modification request.
-            callback: Optional callback for streaming (subproblems / algorithm_selected).
-                     Used in Web flow only; omit for CLI.
-
-        Returns:
-            Dict with updated DAG info.
-        """
-        return await self.scheduler.expert_modify_dag(modification_request, callback=callback)
+        """DAG control was retired; analysis runs directly through ReAct."""
+        raise RuntimeError("Only ReAct execution is supported. Submit a new analysis question.")
     
     async def expert_start_analysis(self) -> str:
-        """
-        Expert mode: start analysis.
-
-        Returns:
-            Analysis result string.
-        """
-        return await self.scheduler.expert_start_analysis()
+        """DAG control was retired; analysis runs directly through ReAct."""
+        raise RuntimeError("Only ReAct execution is supported. Submit a new analysis question.")
 
         
     def list_datasets(self, dtype: Optional[str] = None) -> Dict[str, List[str]]:
@@ -137,6 +122,15 @@ class AAGEngine:
             "avg_generation_time": sum(self.metrics["generation_time"]) / len(self.metrics["generation_time"]),
             "avg_total_time": sum(self.metrics["total_time"]) / len(self.metrics["total_time"]),
             "total_time": sum(self.metrics["total_time"])
+        }
+
+    def get_execution_trace(self) -> Dict[str, Any]:
+        """Return the latest ReAct trace and its post-run DAG projection."""
+        scheduler = self.scheduler
+        dag = getattr(scheduler, "dag", None) if scheduler else None
+        return {
+            "react_trace": list(getattr(scheduler, "react_trace", []) or []),
+            "dag_info": dag.get_dag_info() if dag is not None else None,
         }
     
     def clear_metrics(self):

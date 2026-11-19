@@ -15,8 +15,11 @@ from typing import Callable, Dict, Any, Optional, get_type_hints, get_origin, ge
 from functools import wraps
 from pydantic import BaseModel, Field
 import networkx as nx
+from collections.abc import Iterator, Mapping
+from itertools import islice
 
 logger = logging.getLogger(__name__)
+MAX_ITERATOR_ITEMS = 10000
 
 # ============================================================================
 # 1. Tool output model
@@ -443,7 +446,24 @@ def _serialize_result(result: Any) -> Any:
             "num_edges": result.number_of_edges()
         }
     
-    # Handle all other non-serializable results
+    if isinstance(result, Mapping):
+        return {str(key): _serialize_result(value) for key, value in result.items()}
+    if isinstance(result, (set, frozenset)):
+        return [_serialize_result(value) for value in sorted(result, key=str)]
+    if isinstance(result, (list, tuple)):
+        return [_serialize_result(value) for value in result]
+    if isinstance(result, Iterator):
+        values = list(islice(result, MAX_ITERATOR_ITEMS + 1))
+        serialized = [_serialize_result(value) for value in values[:MAX_ITERATOR_ITEMS]]
+        if len(values) > MAX_ITERATOR_ITEMS:
+            return {"items": serialized, "truncated": True, "count_is_exact": False,
+                    "returned_items": len(serialized),
+                    "note": "Iterator result reached the serialization limit. Items are partial; use a smaller graph or tighter algorithm scope for a complete result."}
+        return serialized
+    if hasattr(result, "tolist"):
+        return _serialize_result(result.tolist())
+
+    # Unsupported objects keep their textual representation.
     try:
         import json
         json.dumps(result)

@@ -14,6 +14,11 @@ datasets:
       target_field: bene_acct
       type: transfer
       weight_field: null
+      semantic_roles:
+        value: base_amt
+        timestamp: tran_timestamp
+        timestamp_unit: iso8601
+        screen_flag: is_sar
     graph:
       directed: true
       heterogeneous: false
@@ -36,6 +41,8 @@ datasets:
       path: ../../data/AMLSim1K/process_graph/transactions.csv_vertices.csv
       original_path: ../../data/AMLSim1K/graph/accounts.csv
       type: account
+      semantic_roles:
+        screen_flag: prior_sar_count
   type: graph
 
 

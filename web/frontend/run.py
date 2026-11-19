@@ -29,6 +29,9 @@ def find_free_port(start_port=5089, max_tries=50):
     port = start_port
     for _ in range(max_tries):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            # Match Werkzeug's reuse behavior when a stopped instance leaves
+            # connections in TIME_WAIT; do not mistake that for a live server.
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             try:
                 s.bind(("0.0.0.0", port))
                 return port  # This port is free

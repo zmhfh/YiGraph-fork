@@ -14,6 +14,7 @@ class VertexSchemaConfig:
     id_field: str
     label_field: Optional[str] = None
     attribute_fields: List[str] = field(default_factory=list)  # 节点属性字段列表
+    semantic_roles: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class EdgeSchemaConfig:
@@ -26,6 +27,7 @@ class EdgeSchemaConfig:
     weight_field: Optional[str] = None
     rank_field: Optional[str] = None  # for multiple edges with the same source and target
     attribute_fields: List[str] = field(default_factory=list)  # 边属性字段列表
+    semantic_roles: Dict[str, Any] = field(default_factory=dict)
 
 @dataclass
 class GraphStructureConfig:
@@ -224,7 +226,8 @@ def load_data_upload_config(yaml_path: str, validate_files: bool = False) -> Dat
                         id_field=v.get("id_field", ""),
                         query_field=v.get("query_field", ""),
                         label_field=v.get("label_field"),
-                        attribute_fields=v.get("attribute_fields", [])
+                        attribute_fields=v.get("attribute_fields", []),
+                        semantic_roles=v.get("semantic_roles", {})
                     ) for v in vertex_items
                 ]
                 edge_schema = [
@@ -236,7 +239,9 @@ def load_data_upload_config(yaml_path: str, validate_files: bool = False) -> Dat
                         target_field=e.get("target_field", ""),
                         label_field=e.get("label_field"),
                         weight_field=e.get("weight_field"),
-                        attribute_fields=e.get("attribute_fields", [])
+                        rank_field=e.get("rank_field"),
+                        attribute_fields=e.get("attribute_fields", []),
+                        semantic_roles=e.get("semantic_roles", {})
                     ) for e in edge_items
                 ]
                 graph_structure = GraphStructureConfig(**schema_block.get("graph", {}))

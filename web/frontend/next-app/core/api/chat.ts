@@ -22,7 +22,16 @@ export interface ChatResponse {
     | "algorithm_selected"
     | "node_status"
     | "node_result"
+    | "react_status"
+    | "react_thought"
+    | "react_action"
+    | "react_observation"
+    | "react_artifact"
   content?: unknown
+  step?: number
+  event_id?: string
+  thought?: string
+  checklist?: string[]
   error?: string
   /** 标记为占位提示（如开头的 "Analyzing your question..."），真实文本到达后应被替换 */
   placeholder?: boolean
@@ -34,16 +43,24 @@ export interface OldDagNode {
   id: string
   label: string
   tasktype: string
+  status?: "pending" | "running" | "success" | "failed"
+  algorithm?: string | null
+  record_type?: string
+  record?: Record<string, unknown>
+  summary?: string
+  error?: string | null
 }
 
 export interface OldDagEdge {
   from: string
   to: string
+  kind?: "data" | "sequence" | "summary"
 }
 
 export interface OldDag {
   nodes: OldDagNode[]
   edges: OldDagEdge[]
+  execution_driver?: "react" | "dag"
 }
 
 /** subproblems 事件：拆解出的子问题列表（与后端 subquery_plan 一致） */
@@ -99,12 +116,7 @@ export interface ChatRequest {
   model: string
   dataset: string
   dataset_type?: string
-  mode?: "normal" | "interact"
-  expert_mode?: boolean
-  dag_confirm?: "yes" | "no"
-  is_dag_modification?: boolean
-  dag_id?: string
-  modifications?: string
+  mode?: "normal" | "react"
   request_id?: string
 }
 
@@ -125,6 +137,15 @@ const RESUME_MAX_DELAY_MS = 10000
 /** 后端是否在线（决定真实流 vs 客户端模拟回退） */
 export function isChatConnected(): boolean {
   return isBackendLive()
+}
+
+/** Rebuild a saved display from its trace; this endpoint never runs the analysis. */
+export async function fetchRunDag(runId: string): Promise<OldDag> {
+  const baseUrl = await getBaseUrl()
+  const response = await fetch(`${baseUrl}/api/chat/runs/${encodeURIComponent(runId)}/dag`)
+  const result = await response.json()
+  if (!response.ok || !result.success) throw new Error(result.error || "Cannot load execution graph")
+  return result.data as OldDag
 }
 
 export function sendChatRequest(

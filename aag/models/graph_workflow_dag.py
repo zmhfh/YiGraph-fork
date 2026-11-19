@@ -239,6 +239,38 @@ class GraphWorkflowDAG:
         self.data_dependency: Dict[int, Set[int]] = collections.defaultdict(set)
         self.next_step_id: int = 1
         self.query_id_mapping: Dict[str, int] = {}
+        # ReAct execution is driven by its RunState.  This trace is attached
+        # to the DAG only after execution so the legacy UI can still render a
+        # process record without making DAG validation part of the control
+        # flow.
+        self.react_trace: List[Dict[str, Any]] = []
+        self.react_edge_kinds: Dict[tuple, str] = {}
+
+    @classmethod
+    def from_react_trace(cls, trace: List[Dict[str, Any]]) -> "GraphWorkflowDAG":
+        """Group recorded analysis tasks for display after ReAct execution."""
+        from aag.models.react_dag_projection import project_react_trace
+
+        dag = cls()
+        dag.react_trace = copy.deepcopy(trace or [])
+        projection = project_react_trace(dag.react_trace)
+        for node in projection["nodes"]:
+            step_id = dag.add_step(question=node["question"], graph_algorithm=node["name"])
+            step = dag.steps[step_id]
+            step.record_type = node["record_type"]
+            step.react_data = node["record"]
+            step.task_type = {"algorithm": GraphAnalysisType.GRAPH_ALGORITHM,
+                              "graph_query": GraphAnalysisType.GRAPH_QUERY,
+                              "numeric_analysis": GraphAnalysisType.NUMERIC_ANALYSIS}.get(node["action_type"])
+            step.status = node["status"]
+            step.error = node["error"]
+            step.llm_analysis = node["summary"]
+        for edge in projection["edges"]:
+            parent_id, child_id = int(edge["from"]), int(edge["to"])
+            dag.out_edges[parent_id].add(child_id)
+            dag.in_edges[child_id].add(parent_id)
+            dag.react_edge_kinds[parent_id, child_id] = edge["kind"]
+        return dag
     
     def add_step(self, question: str, graph_algorithm: Optional[str] = None) -> int:
         """
@@ -404,7 +436,7 @@ class GraphWorkflowDAG:
             raise ValueError(f"步骤 {step_id} 不存在")
         
         step = self.steps[step_id]
-        return {
+        info = {
             "step_id": step.step_id,
             "question": step.question,
             "graph_algorithm": step.graph_algorithm,
@@ -414,6 +446,13 @@ class GraphWorkflowDAG:
             "children": list(self.out_edges[step_id]),
             "result": step.result
         }
+        if hasattr(step, "record_type"):
+            info.update({
+                "record_type": step.record_type,
+                "event_id": getattr(step, "react_event_id", None),
+                "record": copy.deepcopy(getattr(step, "react_data", {})),
+            })
+        return info
     
     def print_dag_info(self):
         """打印DAG的详细信息"""
@@ -450,7 +489,12 @@ class GraphWorkflowDAG:
         topological_order = []
         
         try:
-            topological_order = self.topological_order()
+            # A ReAct projection is an append-only audit record.  Preserve
+            # recorded event order and avoid treating it as a plan that needs
+            # cycle/validity checks.
+            topological_order = (
+                list(self.steps.keys()) if self.react_trace else self.topological_order()
+            )
             for step_id in topological_order:
                 step = self.steps[step_id]
                 # 将枚举对象转换为底层字符串值（如 "graph_algorithm"），确保 JSON 可序列化
@@ -465,6 +509,12 @@ class GraphWorkflowDAG:
                     "algorithm": step.graph_algorithm if step.graph_algorithm else None,
                     "status": step.status.value if hasattr(step.status, 'value') else str(step.status)
                 }
+                if hasattr(step, "record_type"):
+                    steps_info[str(step_id)]["record_type"] = step.record_type
+                    steps_info[str(step_id)]["event_id"] = getattr(step, "react_event_id", None)
+                    steps_info[str(step_id)]["record"] = copy.deepcopy(getattr(step, "react_data", {}))
+                    steps_info[str(step_id)]["summary"] = step.llm_analysis
+                    steps_info[str(step_id)]["error"] = step.error
         except Exception as e:
             # 如果获取信息时出错，返回部分信息
             print(f"获取DAG信息时出错: {e}")
@@ -475,15 +525,22 @@ class GraphWorkflowDAG:
             for child_id in children:
                 edges_info.append({
                     "from": str(parent_id),
-                    "to": str(child_id)
+                    "to": str(child_id),
+                    **({"kind": self.react_edge_kinds[parent_id, child_id]} if (parent_id, child_id) in self.react_edge_kinds else {}),
                 })
         
-        return {
+        dag_info = {
             "subquery_plan": self.get_subquery_plan(),
             "steps": steps_info,
             "topological_order": [str(sid) for sid in topological_order],
-            "edges": edges_info
+            "edges": edges_info,
         }
+        if self.react_trace:
+            dag_info.update({
+                "execution_driver": "react",
+                "react_trace": copy.deepcopy(self.react_trace),
+            })
+        return dag_info
 
     def export_as_dict(self) -> Dict[str, Any]:
         """将DAG转换为字典格式"""
@@ -497,12 +554,18 @@ class GraphWorkflowDAG:
             for child_id in children:
                 edges_info.append({"from": parent_id, "to": child_id})
         
-        return {
+        exported = {
             "nodes": steps_info,
             "edges": edges_info,
             "step_count": len(self.steps),
-            "edge_count": len(edges_info)
+            "edge_count": len(edges_info),
         }
+        if self.react_trace:
+            exported.update({
+                "execution_driver": "react",
+                "react_trace": copy.deepcopy(self.react_trace),
+            })
+        return exported
     
     def to_dot(self) -> str:
         """
@@ -687,27 +750,41 @@ def dag_info_to_frontend_format(dag_info: Dict[str, Any]) -> Dict[str, Any]:
             tasktype_str = f"Graph Algorithm ({algorithm})" if algorithm else "Graph Algorithm"
         elif task_type == "numeric_analysis":
             tasktype_str = "Numeric Analysis"
+        elif task_type == "graph_query":
+            tasktype_str = "Graph Query"
+        elif step_info.get("record_type") == "report":
+            tasktype_str = "Analysis Report"
+        elif step_info.get("record_type"):
+            tasktype_str = f"ReAct {step_info['record_type']}"
         else:
             tasktype_str = "Unknown"
 
-        nodes.append({
+        node = {
             "id": str(step_id),
             "label": step_info.get("question", ""),
             "tasktype": tasktype_str
-        })
+        }
+        if dag_info.get("execution_driver") == "react":
+            node["status"] = step_info.get("status", "success")
+            for key in ("algorithm", "record_type", "record", "summary", "error"):
+                node[key] = copy.deepcopy(step_info.get(key))
+        nodes.append(node)
 
     edges = dag_info.get("edges", [])
-    if not edges:
+    if not edges and dag_info.get("execution_driver") != "react":
         topological_order = dag_info.get("topological_order", [])
         edges = [
             {"from": str(topological_order[i]), "to": str(topological_order[i + 1])}
             for i in range(len(topological_order) - 1)
         ]
 
-    return {
+    result = {
         "nodes": nodes,
         "edges": edges
     }
+    if dag_info.get("execution_driver") == "react":
+        result["execution_driver"] = "react"
+    return result
 
 
 MAX_CHART_ITEMS = 10

@@ -2,8 +2,6 @@
 
 import * as React from "react"
 import {
-  Play,
-  Wrench,
   Workflow,
   Info,
   CheckCircle2,
@@ -12,48 +10,31 @@ import {
   ThumbsUp,
   ThumbsDown,
   RotateCcw,
+  XCircle,
 } from "lucide-react"
 import type { DagEdge, DagNode, WorkflowPlan } from "@/core/types"
 import { useI18n } from "@/core/i18n/i18n-provider"
 import { useAlgorithms } from "@/core/algorithms-store"
 import { submitFeedback } from "@/core/api/feedback"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/core/utils"
 import { AlgorithmInfoModal } from "./algorithm-info-modal"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
-
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { layoutDagNodes } from "@/core/dag-layout"
 export function DagPanel({
   plan,
   userQuestion,
-  onExecute,
-  onModify,
   onLayoutChange,
-  interactive,
 }: {
   plan: WorkflowPlan
   userQuestion: string
-  onExecute: () => void
-  onModify: (modificationText: string) => void
   onLayoutChange: (layout: Record<string, { x: number; y: number }>) => void
-  interactive: boolean
 }) {
   const { t } = useI18n()
   const [infoId, setInfoId] = React.useState<string | null>(null)
-  const [modifyOpen, setModifyOpen] = React.useState(false)
-  const [modifyText, setModifyText] = React.useState("")
   const [feedback, setFeedback] = React.useState<"like" | "dislike" | null>(null)
-  const phase = plan.phase
-  const readyToExecute = phase === "dag-ready" && interactive
+  const [detailId, setDetailId] = React.useState<string | null>(null)
+  const detailNode = plan.nodes.find(node => node.id === detailId)
   const layout = plan.layout ?? {}
   const hasCustomLayout = Object.keys(layout).length > 0
 
@@ -75,18 +56,18 @@ export function DagPanel({
   }
 
   return (
-    <Card className="overflow-hidden p-0">
+    <Card role="region" aria-label={t("react.recordGraph", "执行记录图")} className="overflow-hidden p-0">
       <div className="flex items-center justify-between border-b border-border px-5 py-3">
         <div className="flex items-center gap-2">
           <Workflow className="size-4 text-primary" />
-          <span className="text-sm font-semibold">{t("dag.panelTitle", "工作流 DAG")}</span>
+          <span className="text-sm font-semibold">{t("react.recordGraph", "执行记录图")}</span>
           <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
             {plan.nodes.length} {t("dag.nodes", "节点")} · {plan.edges.length} {t("dag.edges", "边")}
           </span>
         </div>
         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
           <Info className="size-3" />
-          {t("dag.inspectHint", "点击算法节点查看详情")}
+          {plan.executionMode === "react" ? t("react.taskGraphHint", "节点代表分析任务，可查看执行详情") : t("dag.inspectHint", "点击算法节点查看详情")}
           {hasCustomLayout && (
             <>
               <span className="mx-1 text-border">|</span>
@@ -133,91 +114,35 @@ export function DagPanel({
         <DagCanvas
           plan={plan}
           onInspect={setInfoId}
+          onInspectTask={setDetailId}
           onMoveNode={(nodeId, pos) =>
             onLayoutChange({ ...layout, [nodeId]: pos })
           }
         />
       </div>
-
-      {readyToExecute && (
-        <div className="flex items-center justify-between gap-3 border-t border-border bg-muted/30 px-5 py-3">
-          <p className="text-xs text-muted-foreground">
-            {t("dag.readyHint", "规划完成。请确认执行或修改 DAG。")}
-          </p>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              className="gap-1.5"
-              onClick={() => {
-                setModifyText("")
-                setModifyOpen(true)
-              }}
-            >
-              <Wrench className="size-4" />
-              {t("dag.modifyDag", "修改 DAG")}
-            </Button>
-            <Button className="gap-1.5" onClick={onExecute}>
-              <Play className="size-4" />
-              {t("dag.confirmExecute", "确定执行")}
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {phase === "executing" && (
-        <div className="flex items-center gap-2 border-t border-border bg-primary/5 px-5 py-3 text-xs text-primary">
-          <Loader2 className="size-3.5 animate-spin" />
-          {t("dag.executing", "执行中")}
-        </div>
-      )}
-
-      {phase === "executed" && (
-        <div className="flex items-center gap-2 border-t border-border bg-accent/10 px-5 py-3 text-xs text-accent-foreground">
-          <CheckCircle2 className="size-3.5" />
-          {t("dag.executed", "执行完成")}
-        </div>
-      )}
+      {plan.executionMode === "react" && <p className="border-t border-border px-5 py-2 text-[11px] text-muted-foreground">
+        {t("react.taskEdgeLegend", "实线：结果引用或汇总 · 虚线：执行顺序")}
+      </p>}
 
       <AlgorithmInfoModal
         algorithmId={infoId}
         onClose={() => setInfoId(null)}
       />
-
-      <Dialog open={modifyOpen} onOpenChange={setModifyOpen}>
-        <DialogContent>
+      <Dialog open={!!detailNode} onOpenChange={open => { if (!open) setDetailId(null) }}>
+        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>{t("dag.modifyTitle", "修改工作流 DAG")}</DialogTitle>
-            <DialogDescription>
-              {t("dag.modifyDesc", "请输入您的 DAG 修改建议")}
-            </DialogDescription>
+            <DialogTitle className="pr-6 text-base leading-6">{detailNode?.label}</DialogTitle>
+            <DialogDescription>{detailNode?.taskType || detailNode?.toolName} · {t(`react.taskStatus.${detailNode?.status}`, detailNode?.status ?? "")}</DialogDescription>
           </DialogHeader>
-          <div className="space-y-2">
-            <Textarea
-              id="dag-modify-text"
-              placeholder={t("dag.modifyPlaceholder", "描述您想要如何调整这个工作流…")}
-              value={modifyText}
-              onChange={(e) => setModifyText(e.target.value)}
-              rows={4}
-            />
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setModifyOpen(false)}>
-              {t("common.cancel", "取消")}
-            </Button>
-            <Button
-              onClick={() => {
-                if (modifyText.trim()) {
-                  onModify(modifyText.trim())
-                  setModifyOpen(false)
-                }
-              }}
-              disabled={!modifyText.trim()}
-            >
-              {t("common.confirm", "确认")}
-            </Button>
-          </DialogFooter>
+          {detailNode?.result?.summary && <p className="whitespace-pre-wrap break-words text-sm leading-6">{detailNode.result.summary}</p>}
+          {detailNode?.error && <p className="break-words text-sm text-destructive">{detailNode.error}</p>}
+          <details className="rounded-lg border border-border p-3 text-sm">
+            <summary className="cursor-pointer font-medium">{t("react.taskRecord", "查看输入、调用与观测记录")}</summary>
+            <pre className="mt-3 max-h-80 overflow-auto whitespace-pre-wrap break-all text-xs">{JSON.stringify(detailNode?.executionRecord, null, 2)}</pre>
+          </details>
         </DialogContent>
       </Dialog>
+
     </Card>
   )
 }
@@ -232,75 +157,10 @@ interface Pos {
 
 const NODE_W = 200
 const NODE_MIN_H = 78
-const COL_GAP = 260
-const ROW_GAP = 32
 const CANVAS_MIN_W = 400
 const CANVAS_PAD = 20
 /** 超过该位移才判定为拖动，避免和"点击算法详情"冲突 */
 const DRAG_THRESHOLD_PX = 4
-// 长标签换行的高度估算参数：中文每字约 14px，节点内可用宽度约 172px
-const LABEL_CHARS_PER_LINE = 10
-const LABEL_LINE_HEIGHT = 20
-const NODE_BASE_H = 58
-
-/** 根据标签长度估算节点高度（标签会换行显示） */
-function estimateNodeHeight(label: string): number {
-  const lines = Math.max(
-    1,
-    Math.ceil((label?.length ?? 0) / LABEL_CHARS_PER_LINE),
-  )
-  return Math.max(NODE_MIN_H, NODE_BASE_H + (lines - 1) * LABEL_LINE_HEIGHT)
-}
-
-/** 将一列节点自上而下堆叠，返回列底部的 y 坐标 */
-function stackColumn(
-  items: DagNode[],
-  x: number,
-  startY: number,
-  positions: Record<string, Pos>,
-  measuredHeights: Record<string, number>,
-): number {
-  let y = startY
-  for (const n of items) {
-    const h = measuredHeights[n.id] ?? estimateNodeHeight(n.label)
-    positions[n.id] = { x, y, h }
-    y += h + ROW_GAP
-  }
-  return y - ROW_GAP
-}
-
-function computeLayout(
-  nodes: DagNode[],
-  edges: DagEdge[],
-  measuredHeights: Record<string, number>,
-): Record<string, Pos> {
-  const positions: Record<string, Pos> = {}
-
-  // 后端 DAG 模式：根据拓扑自动分列
-  const incoming = new Set<string>()
-  const outgoing = new Set<string>()
-  edges.forEach((e) => {
-    outgoing.add(e.source)
-    incoming.add(e.target)
-  })
-
-  const sources = nodes.filter(
-    (n) => !incoming.has(n.id),
-  )
-  const sinks = nodes.filter(
-    (n) => !outgoing.has(n.id),
-  )
-  const intermediates = nodes.filter(
-    (n) => incoming.has(n.id) && outgoing.has(n.id),
-  )
-
-  stackColumn(sources, 20, 20, positions, measuredHeights)
-  stackColumn(intermediates, 20 + COL_GAP, 20, positions, measuredHeights)
-  stackColumn(sinks, 20 + COL_GAP * 2, 20, positions, measuredHeights)
-
-  return positions
-}
-
 interface DragSession {
   id: string
   pointerId: number
@@ -314,10 +174,12 @@ interface DragSession {
 function DagCanvas({
   plan,
   onInspect,
+  onInspectTask,
   onMoveNode,
 }: {
   plan: WorkflowPlan
   onInspect: (algoId: string) => void
+  onInspectTask: (nodeId: string) => void
   onMoveNode: (nodeId: string, pos: { x: number; y: number }) => void
 }) {
   const { getById } = useAlgorithms()
@@ -335,7 +197,7 @@ function DagCanvas({
 
   // 自动布局（按拓扑分列）；首次用估算值，挂载后改用节点的真实高度。
   const basePositions = React.useMemo(
-    () => computeLayout(plan.nodes, plan.edges, measuredHeights),
+    () => layoutDagNodes(plan.nodes, plan.edges, measuredHeights),
     [plan.nodes, plan.edges, measuredHeights],
   )
 
@@ -520,6 +382,7 @@ function DagCanvas({
               onClickCapture={handleClickCapture}
               onHeightChange={handleHeightChange}
               onInspect={() => onInspect(node.algorithmId)}
+              onInspectTask={() => onInspectTask(node.id)}
             />
           )
         })}
@@ -566,8 +429,9 @@ function EdgePath({
             : "stroke-border",
       )}
       strokeWidth={1.8}
+      strokeDasharray={edge.kind === "sequence" ? "5 4" : undefined}
       markerEnd={isActive ? "url(#arrow-active)" : "url(#arrow)"}
-    />
+    ><title>{edge.kind === "sequence" ? "执行顺序" : edge.kind === "summary" ? "汇总结果" : "结果引用"}</title></path>
   )
 }
 
@@ -586,6 +450,7 @@ function DagNodeBox({
   onClickCapture,
   onHeightChange,
   onInspect,
+  onInspectTask,
 }: {
   node: DagNode
   algoName: string
@@ -601,6 +466,7 @@ function DagNodeBox({
   onClickCapture: (e: React.MouseEvent<HTMLDivElement>) => void
   onHeightChange: (nodeId: string, height: number) => void
   onInspect: () => void
+  onInspectTask: () => void
 }) {
   const { t } = useI18n()
   const nodeRef = React.useRef<HTMLDivElement>(null)
@@ -631,13 +497,13 @@ function DagNodeBox({
       ? CheckCircle2
       : node.status === "running"
         ? Loader2
-        : Circle
+        : node.status === "error" ? XCircle : Circle
   const iconColor =
     node.status === "done"
       ? "text-accent"
       : node.status === "running"
         ? "text-primary"
-        : "text-muted-foreground"
+        : node.status === "error" ? "text-destructive" : "text-muted-foreground"
 
   return (
     <div
@@ -677,12 +543,12 @@ function DagNodeBox({
           {node.id}
         </span>
       </div>
-      <div className="mt-1 break-words text-sm font-semibold leading-snug text-foreground">
+      <div title={node.label} className="mt-1 line-clamp-3 break-words text-sm font-semibold leading-snug text-foreground">
         {node.label}
       </div>
       {noAlgorithm ? (
         <span className="mt-auto text-[11px] text-muted-foreground leading-tight">
-          {algoDisplayName || t("dag.noAlgoTask", "—")}
+          {node.toolName ? `${algoDisplayName} · ${node.toolName}` : algoDisplayName || t("dag.noAlgoTask", "—")}
         </span>
       ) : (
         <button
@@ -693,6 +559,9 @@ function DagNodeBox({
           <span className="text-muted-foreground break-words leading-tight">· {algoDisplayName}</span>
         </button>
       )}
+      {node.executionRecord && <button onClick={onInspectTask} className="mt-2 self-start text-xs text-primary underline-offset-2 hover:underline">
+        {t("react.taskDetails", "查看节点详情")}
+      </button>}
     </div>
   )
 }

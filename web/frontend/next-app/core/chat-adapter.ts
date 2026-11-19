@@ -11,6 +11,7 @@ import type {
   DagNode,
   SubProblem,
   WorkflowPlan,
+  ReactRun,
 } from "@/core/types"
 import type {
 
@@ -23,6 +24,7 @@ import type {
   OldSubquery,
 } from "@/core/api/chat"
 import { matchAlgorithm, parseAlgorithmName } from "@/core/api/chat"
+import { createReactRun, reduceReactEvent } from "./react-state"
 
 /**
  * 将后端 tasktype 转为人可读的中文标签。
@@ -31,6 +33,7 @@ export function taskTypeLabel(tasktype: string): string {
   if (!tasktype) return "Unknown Task / 未知任务"
   if (tasktype.includes("Numeric")) return "Numeric Analysis / 数值分析"
   if (tasktype.includes("Graph Query")) return "Graph Query / 图查询"
+  if (tasktype.includes("Analysis Report")) return "Analysis Report / 分析报告"
   if (tasktype.includes("Graph Algorithm") && tasktype.includes("("))
     return tasktype
   if (tasktype.includes("Graph Algorithm")) return "Graph Algorithm / 图算法"
@@ -54,6 +57,8 @@ export interface StepAlgorithm {
 }
 
 export interface AdapterState {
+  executionMode?: "react" | "dag"
+  react: ReactRun
   /** 累积的 thinking 文本 */
   thinkingText: string
   /** 当前 thinking 文本是否仅为占位提示（真实理解文本到达后将被替换） */
@@ -76,6 +81,7 @@ export interface AdapterState {
 
 export function createAdapterState(): AdapterState {
   return {
+    react: createReactRun(),
     thinkingText: "",
     thinkingIsPlaceholder: false,
     dag: null,
@@ -107,6 +113,13 @@ export function processChatEvent(
     return { kind: "stream_end" }
   }
 
+  if (event.contentType?.startsWith("react_") ||
+      (event.type === "thinking" && event.step !== undefined)) {
+    state.executionMode = "react"
+    state.react = reduceReactEvent(state.react, event)
+    return { kind: "react", react: state.react }
+  }
+
   if (event.type === "thinking" && event.contentType === "text") {
     const text = String(event.content ?? "")
     if (event.placeholder) {
@@ -126,6 +139,7 @@ export function processChatEvent(
   if (event.type === "result") {
     if (event.contentType === "dag") {
       state.dag = event.content as OldDag
+      if (state.dag.execution_driver === "react") state.executionMode = "react"
       return { kind: "dag", dag: state.dag }
     }
     if (event.contentType === "subproblems") {
@@ -169,6 +183,7 @@ export function processChatEvent(
 }
 
 export type AdapterEvent =
+  | { kind: "react"; react: ReactRun }
   | { kind: "thinking"; text: string }
   | { kind: "dag"; dag: OldDag }
   | { kind: "subproblems"; subqueries: OldSubquery[] }
@@ -208,6 +223,7 @@ export function convertOldDagToPlan(
 
   // 跳过可能是"用户问题描述"的首节点
   const skipFirst =
+    dag.execution_driver !== "react" &&
     dalgNodes.length > 1 &&
     (dalgNodes[0].label.includes("用户") ||
       dalgNodes[0].label.includes("问题") ||
@@ -226,7 +242,7 @@ export function convertOldDagToPlan(
 
     // 优先用 algorithm_selected 事件里的真实算法 id
     const selected = stepAlgorithms?.get(on.label)
-    const algoName = selected?.algorithm ?? parseAlgorithmName(on.tasktype)
+    const algoName = on.algorithm ?? selected?.algorithm ?? parseAlgorithmName(on.tasktype)
     const algo = algoName ? matchAlgorithm(algoName, algorithms) : undefined
     const taskLabel =
       selected?.taskType === "graph_query"
@@ -249,8 +265,13 @@ export function convertOldDagToPlan(
       label: on.label,
       algorithmId: algo?.id ?? "",
       subProblemId: sp.id,
-      status: "pending",
+      status: on.status === "success" ? "done" : on.status === "failed" ? "error"
+        : on.status === "running" ? "running" : "pending",
       taskType: algo ? undefined : taskLabel,
+      toolName: on.algorithm || undefined,
+      executionRecord: on.record,
+      result: on.summary ? { summary: on.summary } : undefined,
+      error: on.error || undefined,
     })
   })
 
@@ -260,14 +281,14 @@ export function convertOldDagToPlan(
     const targetId = idMap.get(e.to)
     // 只保留两端都存在的边（排除涉及根节点或缺失节点的边）
     if (sourceId && targetId) {
-      edges.push({ id: `e-${i}`, source: sourceId, target: targetId })
+      edges.push({ id: `e-${i}`, source: sourceId, target: targetId, kind: e.kind })
     } else if (!sourceId && targetId && e.from === rootId) {
       // 从根节点出发到子任务节点的边：忽略（根节点不展示）
     }
   })
 
   // 如果后端没给边，按节点顺序补一条链
-  if (edges.length === 0 && taskNodes.length > 1) {
+  if (dag.execution_driver !== "react" && edges.length === 0 && taskNodes.length > 1) {
     for (let i = 0; i < taskNodes.length - 1; i++) {
       edges.push({
         id: `e-chain-${i}`,

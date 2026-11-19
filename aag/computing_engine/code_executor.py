@@ -169,12 +169,11 @@ class DynamicCodeExecutor:
                 # 数值分析场景：data 是包含多个字段的字典，使用 **data 解包传递
                 if isinstance(data, dict):
                     sig = inspect.signature(process_func)
-                    param_names = list(sig.parameters.keys())
-                    # 检查所有参数名是否都在 data 的键中
-                    if all(name in data for name in param_names):
-                        result = process_func(**data)
-                    else:
-                        raise ValueError(f"函数参数 {param_names} 与 data 的键不匹配")
+                    try:
+                        sig.bind(**data)
+                    except TypeError as exc:
+                        raise ValueError(f"process input mismatch: signature={sig}, provided keys={list(data)}; {exc}") from exc
+                    result = process_func(**data)
                 else:
                     # data 不是字典，直接传递
                     result = process_func(data)

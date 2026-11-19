@@ -1,5 +1,6 @@
 import pandas as pd
 from neo4j import GraphDatabase
+from neo4j.exceptions import ClientError
 import logging
 import sys
 import time
@@ -120,37 +121,52 @@ class Neo4jGraphLoader:
             return False
         try:
             with self.driver.session() as session:
+                version = session.run(
+                    "CALL dbms.components() YIELD versions RETURN versions[0] AS version LIMIT 1"
+                ).single()["version"]
+                server_agent = f"Neo4j/{version}"
+                legacy_schema = version.startswith("3.")
                 for vertex_config in vertex_configs:
                     vertex_type = vertex_config.get('type', 'Node')
                     # 将type首字母大写作为标签
                     label = vertex_type.capitalize()
                     
-                    # 为node_key创建唯一性约束
-                    try:
-                        session.run(f"""
-                            CREATE CONSTRAINT {label.lower()}_key_unique IF NOT EXISTS 
-                            FOR (n:{label}) 
-                            REQUIRE n.node_key IS UNIQUE
-                        """)
-                        logger.info(f"成功创建{label}.node_key唯一性约束")
-                    except Exception as e:
-                        logger.warning(f"创建约束时出现问题（可能已存在）: {e}")
-                    
-                    # 创建node_key索引
-                    try:
-                        session.run(f"CREATE INDEX {label.lower()}_key_index IF NOT EXISTS FOR (n:{label}) ON (n.node_key)")
-                        logger.info(f"成功创建{label}.node_key索引")
-                    except Exception as e:
-                        logger.warning(f"创建索引时出现问题（可能已存在）: {e}")
-                    
-                    # 为id_field创建索引（如果存在）
+                    # Neo4j 3.5 has neither IF NOT EXISTS nor FOR ... REQUIRE.
+                    # A uniqueness constraint already creates the node_key
+                    # index, so creating another index on that field fails.
+                    quoted_label = "`" + label.replace("`", "``") + "`"
+                    if legacy_schema:
+                        statements = [
+                            f"CREATE CONSTRAINT ON (n:{quoted_label}) ASSERT n.node_key IS UNIQUE"
+                        ]
+                    else:
+                        statements = [
+                            f"CREATE CONSTRAINT {label.lower()}_key_unique IF NOT EXISTS "
+                            f"FOR (n:{quoted_label}) REQUIRE n.node_key IS UNIQUE"
+                        ]
+
                     id_field = vertex_config.get('id_field')
-                    if id_field:
+                    if id_field and id_field != "node_key":
+                        quoted_field = "`" + id_field.replace("`", "``") + "`"
+                        if legacy_schema:
+                            statements.append(f"CREATE INDEX ON :{quoted_label}({quoted_field})")
+                        else:
+                            statements.append(
+                                f"CREATE INDEX {label.lower()}_id_index IF NOT EXISTS "
+                                f"FOR (n:{quoted_label}) ON (n.{quoted_field})"
+                            )
+
+                    for statement in statements:
                         try:
-                            session.run(f"CREATE INDEX {label.lower()}_id_index IF NOT EXISTS FOR (n:{label}) ON (n.{id_field})")
-                            logger.info(f"成功创建{label}.{id_field}索引")
-                        except Exception as e:
-                            logger.warning(f"创建索引时出现问题（可能已存在）: {e}")
+                            session.run(statement).consume()
+                        except ClientError as exc:
+                            if exc.code not in {
+                                "Neo.ClientError.Schema.ConstraintAlreadyExists",
+                                "Neo.ClientError.Schema.IndexAlreadyExists",
+                                "Neo.ClientError.Schema.EquivalentSchemaRuleAlreadyExists",
+                            }:
+                                raise
+                    logger.info("%s 的约束和索引已就绪 (%s)", label, server_agent)
                 
                 return True
         except Exception as e:
@@ -229,7 +245,11 @@ class Neo4jGraphLoader:
                     # 动态构建SET子句
                     set_clauses = []
                     for field in fields_to_load:
-                        set_clauses.append(f"n.{field} = record.{field}")
+                        # pandas adds .1 to duplicate CSV headers in the
+                        # bundled processed graph. Quote properties so these
+                        # names (and spaces in uploaded CSVs) remain valid.
+                        quoted_field = "`" + field.replace("`", "``") + "`"
+                        set_clauses.append(f"n.{quoted_field} = record.{quoted_field}")
                     set_clause = ",\n                        ".join(set_clauses)
                     
                     # 构建Cypher查询
@@ -252,7 +272,7 @@ class Neo4jGraphLoader:
                         fail_count += len(records)
             
             logger.info(f"{vertex_type}数据加载完成，成功处理 {success_count} 条，失败 {fail_count} 条")
-            return True
+            return fail_count == 0
             
         except Exception as e:
             logger.error(f"加载{vertex_type}数据时发生错误: {e}")
@@ -364,7 +384,8 @@ class Neo4jGraphLoader:
                     if fields_to_load:
                         prop_clauses = []
                         for field in fields_to_load:
-                            prop_clauses.append(f"{field}: record.{field}")
+                            quoted_field = "`" + field.replace("`", "``") + "`"
+                            prop_clauses.append(f"{quoted_field}: record.{quoted_field}")
                         properties = "{" + ", ".join(prop_clauses) + "}"
                     else:
                         properties = ""
@@ -388,7 +409,7 @@ class Neo4jGraphLoader:
                         fail_count += len(records)
             
             logger.info(f"{edge_type}数据加载完成，成功插入 {success_count} 条关系，失败 {fail_count} 条")
-            return True
+            return fail_count == 0
             
         except Exception as e:
             logger.error(f"加载{edge_type}数据时发生错误: {e}")
@@ -481,7 +502,8 @@ class Neo4jGraphLoader:
             
             # 2. 创建约束和索引
             if not self.create_constraints_and_indexes(vertex_configs):
-                logger.warning("创建约束和索引失败，继续执行...")
+                logger.error("创建约束和索引失败，终止导入")
+                return False
             
             # 3. 加载所有顶点
             for vertex_config in vertex_configs:

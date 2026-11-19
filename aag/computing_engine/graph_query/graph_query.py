@@ -1120,7 +1120,10 @@ class Neo4jGraphClient:
             # 构建RETURN子句
             return_parts = []
             for field in return_fields:
-                if field.startswith("nbr."):
+                if field.startswith("start."):
+                    prop = self._sanitize_property_key(field[6:])
+                    return_parts.append(f"start.`{prop}` AS {field.replace('.', '_')}")
+                elif field.startswith("nbr."):
                     # 邻居节点属性
                     prop = self._sanitize_property_key(field[4:])
                     return_parts.append(f"nbr.`{prop}` AS {field.replace('.', '_')}")
@@ -1202,8 +1205,6 @@ class Neo4jGraphClient:
             cypher = f"""
             MATCH (start:`{label}` {{`{key}`: $value}})
             MATCH p = {pattern}
-            WITH nbr, min(length(p)) AS minHops, collect(p)[0] AS samplePath, relationships(collect(p)[0]) AS rels
-            WITH nbr, minHops, samplePath, rels[0] AS firstRel
             {where_clause}
             {return_clause}
             {order_clause}
@@ -2060,7 +2061,6 @@ class Neo4jGraphClient:
             cypher = f"""
             MATCH (n:`{label}`)
             {("WHERE " + where) if where else ""}
-            WITH {return_expr}
             RETURN {return_expr}
             ORDER BY cnt DESC
             {limit_clause}
@@ -2096,6 +2096,7 @@ class Neo4jGraphClient:
         max_hops: int = 5,
         where: Optional[str] = None,
         return_fields: Optional[List[str]] = None,
+        amount_field: Optional[str] = None,
         order_by: Optional[str] = None,
         order_direction: str = "ASC",
         limit: Optional[int] = None
@@ -2118,6 +2119,7 @@ class Neo4jGraphClient:
                 ("Account", "node_key", "B"),
                 rel_type="TRANSFER",
                 return_fields=["path", "hops", "maxAmount"],
+                amount_field="base_amt",
                 order_by="maxAmount",
                 order_direction="DESC"
             )
@@ -2136,6 +2138,7 @@ class Neo4jGraphClient:
                 ("Account", "node_key", "B"),
                 rel_type="TRANSFER",
                 return_fields=["path", "hops", "totalAmount"],
+                amount_field="base_amt",
                 order_by="totalAmount",
                 order_direction="DESC"
             )
@@ -2171,10 +2174,8 @@ class Neo4jGraphClient:
             return_fields: 要返回的字段列表（支持计算字段）
                           - 基础字段：path, hops, nodes, relationships
                           - 计算字段：
-                            * totalAmount: REDUCE(s = 0, r IN relationships(p) | s + r.base_amt)
-                            * maxAmount: REDUCE(m = 0, r IN relationships(p) | CASE WHEN r.base_amt > m THEN r.base_amt ELSE m END)
-                            * minAmount: REDUCE(m = 999999, r IN relationships(p) | CASE WHEN r.base_amt < m THEN r.base_amt ELSE m END)
-                            * avgAmount: REDUCE(s = 0, r IN relationships(p) | s + r.base_amt) / hops
+                            * totalAmount / maxAmount / minAmount / avgAmount: use amount_field
+            amount_field: Actual relationship value property, required for computed amount fields.
             order_by: 排序字段（如 "hops", "totalAmount", "maxAmount"）
             order_direction: 排序方向 ("ASC"=升序, "DESC"=降序)
             limit: 最大返回路径数（None=不限制）
@@ -2216,6 +2217,12 @@ class Neo4jGraphClient:
         
         if order_direction not in {"ASC", "DESC"}:
             raise ValueError("order_direction must be 'ASC' or 'DESC'")
+
+        computed = {str(field).lower() for field in return_fields or []} & {
+            "totalamount", "maxamount", "minamount", "avgamount"}
+        if computed and not amount_field:
+            raise ValueError("Computed path amounts require an explicit amount_field")
+        amount_property = f"r.`{self._sanitize_property_key(amount_field)}`" if amount_field else None
         
         # 构建关系模式
         rt = self._sanitize_rel_type(rel_type) if rel_type else ""
@@ -2247,23 +2254,23 @@ class Neo4jGraphClient:
                 elif field_lower == "nodes":
                     return_parts.append("pathNodes AS nodes")
                 elif field_lower == "relationships":
-                    return_parts.append("pathRels AS relationships")
+                    return_parts.append("[r IN pathRels | {id: id(r), source: coalesce(startNode(r).node_key, toString(id(startNode(r)))), target: coalesce(endNode(r).node_key, toString(id(endNode(r)))), properties: properties(r)}] AS relationships")
                 
                 # 计算字段：总金额
                 elif field_lower == "totalamount":
-                    return_parts.append("REDUCE(s = 0, r IN pathRels | s + r.base_amt) AS totalAmount")
+                    return_parts.append(f"REDUCE(s = 0.0, r IN pathRels | s + {amount_property}) AS totalAmount")
                 
                 # 计算字段：最大金额
                 elif field_lower == "maxamount":
-                    return_parts.append("REDUCE(m = 0, r IN pathRels | CASE WHEN r.base_amt > m THEN r.base_amt ELSE m END) AS maxAmount")
+                    return_parts.append(f"REDUCE(m = null, r IN pathRels | CASE WHEN m IS NULL OR {amount_property} > m THEN {amount_property} ELSE m END) AS maxAmount")
                 
                 # 计算字段：最小金额
                 elif field_lower == "minamount":
-                    return_parts.append("REDUCE(m = 999999, r IN pathRels | CASE WHEN r.base_amt < m THEN r.base_amt ELSE m END) AS minAmount")
+                    return_parts.append(f"REDUCE(m = null, r IN pathRels | CASE WHEN m IS NULL OR {amount_property} < m THEN {amount_property} ELSE m END) AS minAmount")
                 
                 # 计算字段：平均金额
                 elif field_lower == "avgamount":
-                    return_parts.append("REDUCE(s = 0, r IN pathRels | s + r.base_amt) / hops AS avgAmount")
+                    return_parts.append(f"CASE WHEN hops = 0 THEN null ELSE REDUCE(s = 0.0, r IN pathRels | s + {amount_property}) / hops END AS avgAmount")
                 
                 # 其他字段：直接使用
                 else:
@@ -2275,7 +2282,7 @@ class Neo4jGraphClient:
             return_clause = """RETURN p AS path,
                 hops,
                 pathNodes AS nodes,
-                pathRels AS relationships"""
+                [r IN pathRels | {id: id(r), source: coalesce(startNode(r).node_key, toString(id(startNode(r)))), target: coalesce(endNode(r).node_key, toString(id(endNode(r)))), properties: properties(r)}] AS relationships"""
         
         # 可选的 ORDER BY 子句（默认按 hops 升序）
         if order_by:

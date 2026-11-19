@@ -18,7 +18,8 @@ def _format_errors(error_history: List[Dict[str, Any]], keep_last_k: int = 2) ->
             "error_type": e.get("error_type"),
             "error": e.get("error"),
             "location": e.get("location"),
-            "hint": e.get("hint"),
+            "hint": e.get("hint") or e.get("repair_hint"),
+            "previous_code": (e.get("previous_code") or "")[:8000],
         })
     return json.dumps(simplified, ensure_ascii=False, indent=2)
 

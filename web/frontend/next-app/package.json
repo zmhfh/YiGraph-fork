@@ -6,6 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
+    "test": "node --test tests/react-state.test.cjs",
     "lint": "eslint .",
     "dev:all": "concurrently \"npm run dev\" \"python ../run.py\""
   },
