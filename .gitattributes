@@ -1,0 +1,7 @@
+
+# Binder source uses LF; reproducibility snapshots preserve original bytes.
+/aag/engine/runtime_binder*.py text eol=lf
+/tools/runtime_binder/*.py text eol=lf
+/docs/runtime-binder.md text eol=lf
+/models/runtime_binder/*.md text eol=lf
+/reproducibility/runtime_binder/** -text -whitespace
