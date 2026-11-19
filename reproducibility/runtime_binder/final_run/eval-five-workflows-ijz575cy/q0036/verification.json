@@ -1,0 +1,9 @@
+{
+  "question_id": "q0036",
+  "dag_type": "sequential",
+  "graph_sha256": "12ee71eefe71a9affe6d272b44965c107fea867d2d70d83fc536817ee113a768",
+  "matched_bindings": 2,
+  "total_bindings": 2,
+  "passed": true,
+  "first_difference": null
+}

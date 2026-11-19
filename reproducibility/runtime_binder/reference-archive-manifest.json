@@ -1,0 +1,6 @@
+{
+  "archive": "binder-reference-executions.tar.gz",
+  "bytes": 51705285,
+  "sha256": "373c5238a917741b18ebbe7a4deb89e83c52297b1fd63dfebc9936cadf6268b8",
+  "contains": "Reference programs, graph execution records and captured graph inputs used by the Binder data preparation"
+}

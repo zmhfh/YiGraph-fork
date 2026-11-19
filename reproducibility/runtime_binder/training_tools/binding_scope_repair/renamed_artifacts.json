@@ -1,0 +1,1014 @@
+{
+  "samples": [
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Rank the full network by degree_centrality, then retain its top 52 vertices and all of their mutual edges. Compute average_clustering on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality for each vertex in the full input graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Rank the full network by degree_centrality, then retain its top 52 vertices and all of their mutual edges. Compute average_clustering on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_clustering\",\"description\":\"Compute average_clustering on the induced subgraph of vertices selected using the v1 ranking.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_424\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_254\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_424\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Rank the full network by clustering, then retain its top 59 vertices and all of their mutual edges. Compute core_number on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"clustering\",\"description\":\"Compute clustering for each vertex in the full input graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Rank the full network by clustering, then retain its top 59 vertices and all of their mutual edges. Compute core_number on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"core_number\",\"description\":\"Compute core_number on the induced subgraph of vertices selected using the v1 ranking.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_360\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_508\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_360\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Rank the full network by average_neighbor_degree, then retain its top 66 vertices and all of their mutual edges. Compute pagerank on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree for each vertex in the full input graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Rank the full network by average_neighbor_degree, then retain its top 66 vertices and all of their mutual edges. Compute pagerank on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"pagerank\",\"description\":\"Compute pagerank on the induced subgraph of vertices selected using the v1 ranking.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_682\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_590\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_682\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Rank the full network by core_number, then retain its top 73 vertices and all of their mutual edges. Compute average_neighbor_degree on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"core_number\",\"description\":\"Compute core_number for each vertex in the full input graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Rank the full network by core_number, then retain its top 73 vertices and all of their mutual edges. Compute average_neighbor_degree on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the induced subgraph of vertices selected using the v1 ranking.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_628\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_246\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_628\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Rank the full network by pagerank, then retain its top 80 vertices and all of their mutual edges. Compute degree_centrality on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"pagerank\",\"description\":\"Compute pagerank for each vertex in the full input graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Rank the full network by pagerank, then retain its top 80 vertices and all of their mutual edges. Compute degree_centrality on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the induced subgraph of vertices selected using the v1 ranking.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_433\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_186\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_433\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Rank the full network by degree_centrality, then retain its top 87 vertices and all of their mutual edges. Compute average_clustering on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality for each vertex in the full input graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Rank the full network by degree_centrality, then retain its top 87 vertices and all of their mutual edges. Compute average_clustering on the resulting induced subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_clustering\",\"description\":\"Compute average_clustering on the induced subgraph of vertices selected using the v1 ranking.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_500\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_387\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_500\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Independently compute degree_centrality on the induced subgraph containing only vertices with IDs 0 through 51 and average_clustering on the full original graph. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the induced subgraph containing only vertices with IDs 0 through 51.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_446\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_446\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Independently compute degree_centrality on the induced subgraph containing only vertices with IDs 0 through 51 and average_clustering on the full original graph. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_clustering\",\"description\":\"Compute average_clustering on the full original graph. This is an independent analysis.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_446\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"artifact_446\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Independently compute clustering on the full original graph and core_number on the induced subgraph containing only vertices with IDs 0 through 58. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"clustering\",\"description\":\"Compute clustering on the full original graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_855\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Independently compute clustering on the full original graph and core_number on the induced subgraph containing only vertices with IDs 0 through 58. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"core_number\",\"description\":\"Compute core_number on the induced subgraph containing only vertices with IDs 0 through 58. This is an independent analysis.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_855\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_855\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Independently compute average_neighbor_degree on the induced subgraph containing only vertices with IDs 0 through 65 and pagerank on the full original graph. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the induced subgraph containing only vertices with IDs 0 through 65.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_350\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_350\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Independently compute average_neighbor_degree on the induced subgraph containing only vertices with IDs 0 through 65 and pagerank on the full original graph. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"pagerank\",\"description\":\"Compute pagerank on the full original graph. This is an independent analysis.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_350\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_350\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Independently compute core_number on the full original graph and average_neighbor_degree on the induced subgraph containing only vertices with IDs 0 through 72. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"core_number\",\"description\":\"Compute core_number on the full original graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_967\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Independently compute core_number on the full original graph and average_neighbor_degree on the induced subgraph containing only vertices with IDs 0 through 72. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the induced subgraph containing only vertices with IDs 0 through 72. This is an independent analysis.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_967\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_967\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Independently compute pagerank on the induced subgraph containing only vertices with IDs 0 through 79 and degree_centrality on the full original graph. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"pagerank\",\"description\":\"Compute pagerank on the induced subgraph containing only vertices with IDs 0 through 79.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_984\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_984\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Independently compute pagerank on the induced subgraph containing only vertices with IDs 0 through 79 and degree_centrality on the full original graph. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the full original graph. This is an independent analysis.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_984\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"artifact_984\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Independently compute degree_centrality on the full original graph and average_clustering on the induced subgraph containing only vertices with IDs 0 through 86. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the full original graph.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_280\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Independently compute degree_centrality on the full original graph and average_clustering on the induced subgraph containing only vertices with IDs 0 through 86. Report both measurements.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_clustering\",\"description\":\"Compute average_clustering on the induced subgraph containing only vertices with IDs 0 through 86. This is an independent analysis.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"artifact_280\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_280\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Make two full-graph rankings using degree_centrality and average_neighbor_degree. Take the union of their top 52 vertices and retain the original edges within it. Evaluate average_clustering on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the complete input graph for the first ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Make two full-graph rankings using degree_centrality and average_neighbor_degree. Take the union of their top 52 vertices and retain the original edges within it. Evaluate average_clustering on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the complete input graph for a separate ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_327\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Make two full-graph rankings using degree_centrality and average_neighbor_degree. Take the union of their top 52 vertices and retain the original edges within it. Evaluate average_clustering on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"average_clustering\",\"description\":\"Use the induced subgraph formed by combining both top-52 rankings from v1 and v2, then compute average_clustering.\"},\"required_steps\":[\"v1\",\"v2\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_327\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_908\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\",\"v2\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_908\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Make two full-graph rankings using clustering and average_neighbor_degree. Take the union of their top 59 vertices and retain the original edges within it. Evaluate core_number on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"clustering\",\"description\":\"Compute clustering on the complete input graph for the first ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Make two full-graph rankings using clustering and average_neighbor_degree. Take the union of their top 59 vertices and retain the original edges within it. Evaluate core_number on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the complete input graph for a separate ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_542\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Make two full-graph rankings using clustering and average_neighbor_degree. Take the union of their top 59 vertices and retain the original edges within it. Evaluate core_number on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"core_number\",\"description\":\"Use the induced subgraph formed by combining both top-59 rankings from v1 and v2, then compute core_number.\"},\"required_steps\":[\"v1\",\"v2\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_542\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_448\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\",\"v2\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_448\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Make two full-graph rankings using average_neighbor_degree and degree_centrality. Take the union of their top 66 vertices and retain the original edges within it. Evaluate pagerank on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the complete input graph for the first ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Make two full-graph rankings using average_neighbor_degree and degree_centrality. Take the union of their top 66 vertices and retain the original edges within it. Evaluate pagerank on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the complete input graph for a separate ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_900\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Make two full-graph rankings using average_neighbor_degree and degree_centrality. Take the union of their top 66 vertices and retain the original edges within it. Evaluate pagerank on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"pagerank\",\"description\":\"Use the induced subgraph formed by combining both top-66 rankings from v1 and v2, then compute pagerank.\"},\"required_steps\":[\"v1\",\"v2\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_900\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_691\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\",\"v2\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_691\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Make two full-graph rankings using core_number and average_neighbor_degree. Take the union of their top 73 vertices and retain the original edges within it. Evaluate average_neighbor_degree on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"core_number\",\"description\":\"Compute core_number on the complete input graph for the first ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Make two full-graph rankings using core_number and average_neighbor_degree. Take the union of their top 73 vertices and retain the original edges within it. Evaluate average_neighbor_degree on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the complete input graph for a separate ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_424\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Make two full-graph rankings using core_number and average_neighbor_degree. Take the union of their top 73 vertices and retain the original edges within it. Evaluate average_neighbor_degree on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Use the induced subgraph formed by combining both top-73 rankings from v1 and v2, then compute average_neighbor_degree.\"},\"required_steps\":[\"v1\",\"v2\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_424\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_729\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\",\"v2\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_729\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Make two full-graph rankings using pagerank and average_neighbor_degree. Take the union of their top 80 vertices and retain the original edges within it. Evaluate degree_centrality on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"pagerank\",\"description\":\"Compute pagerank on the complete input graph for the first ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Make two full-graph rankings using pagerank and average_neighbor_degree. Take the union of their top 80 vertices and retain the original edges within it. Evaluate degree_centrality on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the complete input graph for a separate ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_267\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Make two full-graph rankings using pagerank and average_neighbor_degree. Take the union of their top 80 vertices and retain the original edges within it. Evaluate degree_centrality on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"degree_centrality\",\"description\":\"Use the induced subgraph formed by combining both top-80 rankings from v1 and v2, then compute degree_centrality.\"},\"required_steps\":[\"v1\",\"v2\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_267\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_850\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\",\"v2\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_850\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Make two full-graph rankings using degree_centrality and average_neighbor_degree. Take the union of their top 87 vertices and retain the original edges within it. Evaluate average_clustering on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the complete input graph for the first ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Make two full-graph rankings using degree_centrality and average_neighbor_degree. Take the union of their top 87 vertices and retain the original edges within it. Evaluate average_clustering on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the complete input graph for a separate ranking.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_809\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Make two full-graph rankings using degree_centrality and average_neighbor_degree. Take the union of their top 87 vertices and retain the original edges within it. Evaluate average_clustering on this combined subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"average_clustering\",\"description\":\"Use the induced subgraph formed by combining both top-87 rankings from v1 and v2, then compute average_clustering.\"},\"required_steps\":[\"v1\",\"v2\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_809\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_111\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\",\"v2\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_111\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Use degree_centrality on the full graph to select 52 vertices. Keep all original edges within that selection and independently measure average_clustering and dijkstra_path_length on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Rank vertices of the full input graph by degree_centrality.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Use degree_centrality on the full graph to select 52 vertices. Keep all original edges within that selection and independently measure average_clustering and dijkstra_path_length on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_clustering\",\"description\":\"Run average_clustering on the induced subgraph derived from the v1 rankings.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_476\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_434\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_476\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Use degree_centrality on the full graph to select 52 vertices. Keep all original edges within that selection and independently measure average_clustering and dijkstra_path_length on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"dijkstra_path_length\",\"description\":\"Run dijkstra_path_length on the same induced subgraph from v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_476\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_434\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v2\",\"type\":\"float\",\"producer\":\"average_clustering\",\"derived_from\":[\"artifact_476\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_476\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Use clustering on the full graph to select 59 vertices. Keep all original edges within that selection and independently measure core_number and average_clustering on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"clustering\",\"description\":\"Rank vertices of the full input graph by clustering.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Use clustering on the full graph to select 59 vertices. Keep all original edges within that selection and independently measure core_number and average_clustering on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"core_number\",\"description\":\"Run core_number on the induced subgraph derived from the v1 rankings.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_472\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_296\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_472\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Use clustering on the full graph to select 59 vertices. Keep all original edges within that selection and independently measure core_number and average_clustering on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"average_clustering\",\"description\":\"Run average_clustering on the same induced subgraph from v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_472\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_296\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"artifact_472\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_472\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Use average_neighbor_degree on the full graph to select 66 vertices. Keep all original edges within that selection and independently measure pagerank and core_number on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Rank vertices of the full input graph by average_neighbor_degree.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Use average_neighbor_degree on the full graph to select 66 vertices. Keep all original edges within that selection and independently measure pagerank and core_number on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"pagerank\",\"description\":\"Run pagerank on the induced subgraph derived from the v1 rankings.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_448\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_912\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_448\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Use average_neighbor_degree on the full graph to select 66 vertices. Keep all original edges within that selection and independently measure pagerank and core_number on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"core_number\",\"description\":\"Run core_number on the same induced subgraph from v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_448\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_912\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"artifact_448\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_448\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Use core_number on the full graph to select 73 vertices. Keep all original edges within that selection and independently measure average_neighbor_degree and pagerank on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"core_number\",\"description\":\"Rank vertices of the full input graph by core_number.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Use core_number on the full graph to select 73 vertices. Keep all original edges within that selection and independently measure average_neighbor_degree and pagerank on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Run average_neighbor_degree on the induced subgraph derived from the v1 rankings.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_232\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_165\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_232\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Use core_number on the full graph to select 73 vertices. Keep all original edges within that selection and independently measure average_neighbor_degree and pagerank on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"pagerank\",\"description\":\"Run pagerank on the same induced subgraph from v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_232\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_165\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_232\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_232\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Use pagerank on the full graph to select 80 vertices. Keep all original edges within that selection and independently measure degree_centrality and average_neighbor_degree on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"pagerank\",\"description\":\"Rank vertices of the full input graph by pagerank.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Use pagerank on the full graph to select 80 vertices. Keep all original edges within that selection and independently measure degree_centrality and average_neighbor_degree on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"degree_centrality\",\"description\":\"Run degree_centrality on the induced subgraph derived from the v1 rankings.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_561\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_793\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_561\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Use pagerank on the full graph to select 80 vertices. Keep all original edges within that selection and independently measure degree_centrality and average_neighbor_degree on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Run average_neighbor_degree on the same induced subgraph from v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_561\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_793\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"artifact_561\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_561\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Use degree_centrality on the full graph to select 87 vertices. Keep all original edges within that selection and independently measure average_clustering and clustering on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Rank vertices of the full input graph by degree_centrality.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Use degree_centrality on the full graph to select 87 vertices. Keep all original edges within that selection and independently measure average_clustering and clustering on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_clustering\",\"description\":\"Run average_clustering on the induced subgraph derived from the v1 rankings.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_603\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_251\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_603\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Use degree_centrality on the full graph to select 87 vertices. Keep all original edges within that selection and independently measure average_clustering and clustering on the same selected subgraph.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"clustering\",\"description\":\"Run clustering on the same induced subgraph from v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_603\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"artifact_251\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\"]},{\"ref\":\"v2\",\"type\":\"float\",\"producer\":\"average_clustering\",\"derived_from\":[\"artifact_603\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_603\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Rank the full graph by degree_centrality, then preserve the induced subgraph of its top 52 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 26 vertices from each of those two rankings, retain their mutual edges, and compute average_clustering in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the whole original graph to determine the initial scope.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Rank the full graph by degree_centrality, then preserve the induced subgraph of its top 52 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 26 vertices from each of those two rankings, retain their mutual edges, and compute average_clustering in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average neighbor degree within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_244\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_244\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Rank the full graph by degree_centrality, then preserve the induced subgraph of its top 52 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 26 vertices from each of those two rankings, retain their mutual edges, and compute average_clustering in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"clustering\",\"description\":\"Compute local clustering within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_244\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_244\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_244\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A city transit planning team studies intersections and routes. Rank the full graph by degree_centrality, then preserve the induced subgraph of its top 52 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 26 vertices from each of those two rankings, retain their mutual edges, and compute average_clustering in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v4\",\"algorithm\":\"average_clustering\",\"description\":\"Compute average_clustering on the refined graph built by combining the rankings from v2 and v3.\"},\"required_steps\":[\"v2\",\"v3\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_244\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_244\"]},{\"ref\":\"v3\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"artifact_244\"]},{\"ref\":\"artifact_313\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"artifact_244\",\"v2\",\"v3\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_313\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Rank the full graph by clustering, then preserve the induced subgraph of its top 59 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 29 vertices from each of those two rankings, retain their mutual edges, and compute core_number in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"clustering\",\"description\":\"Compute clustering on the whole original graph to determine the initial scope.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Rank the full graph by clustering, then preserve the induced subgraph of its top 59 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 29 vertices from each of those two rankings, retain their mutual edges, and compute core_number in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average neighbor degree within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_701\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_701\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Rank the full graph by clustering, then preserve the induced subgraph of its top 59 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 29 vertices from each of those two rankings, retain their mutual edges, and compute core_number in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"clustering\",\"description\":\"Compute local clustering within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_701\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_701\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_701\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"An ecology team studies contacts between habitat patches. Rank the full graph by clustering, then preserve the induced subgraph of its top 59 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 29 vertices from each of those two rankings, retain their mutual edges, and compute core_number in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v4\",\"algorithm\":\"core_number\",\"description\":\"Compute core_number on the refined graph built by combining the rankings from v2 and v3.\"},\"required_steps\":[\"v2\",\"v3\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_701\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_701\"]},{\"ref\":\"v3\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"artifact_701\"]},{\"ref\":\"artifact_194\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"artifact_701\",\"v2\",\"v3\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_194\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Rank the full graph by average_neighbor_degree, then preserve the induced subgraph of its top 66 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 33 vertices from each of those two rankings, retain their mutual edges, and compute pagerank in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the whole original graph to determine the initial scope.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Rank the full graph by average_neighbor_degree, then preserve the induced subgraph of its top 66 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 33 vertices from each of those two rankings, retain their mutual edges, and compute pagerank in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average neighbor degree within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_858\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_858\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Rank the full graph by average_neighbor_degree, then preserve the induced subgraph of its top 66 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 33 vertices from each of those two rankings, retain their mutual edges, and compute pagerank in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"clustering\",\"description\":\"Compute local clustering within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_858\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_858\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_858\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A library team indexes collaboration across branches. Rank the full graph by average_neighbor_degree, then preserve the induced subgraph of its top 66 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 33 vertices from each of those two rankings, retain their mutual edges, and compute pagerank in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v4\",\"algorithm\":\"pagerank\",\"description\":\"Compute pagerank on the refined graph built by combining the rankings from v2 and v3.\"},\"required_steps\":[\"v2\",\"v3\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_858\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_858\"]},{\"ref\":\"v3\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"artifact_858\"]},{\"ref\":\"artifact_568\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"artifact_858\",\"v2\",\"v3\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_568\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Rank the full graph by core_number, then preserve the induced subgraph of its top 73 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 36 vertices from each of those two rankings, retain their mutual edges, and compute average_neighbor_degree in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"core_number\",\"description\":\"Compute core_number on the whole original graph to determine the initial scope.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Rank the full graph by core_number, then preserve the induced subgraph of its top 73 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 36 vertices from each of those two rankings, retain their mutual edges, and compute average_neighbor_degree in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average neighbor degree within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_638\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_638\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Rank the full graph by core_number, then preserve the induced subgraph of its top 73 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 36 vertices from each of those two rankings, retain their mutual edges, and compute average_neighbor_degree in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"clustering\",\"description\":\"Compute local clustering within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_638\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_638\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_638\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A logistics group tracks connections among delivery depots. Rank the full graph by core_number, then preserve the induced subgraph of its top 73 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 36 vertices from each of those two rankings, retain their mutual edges, and compute average_neighbor_degree in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v4\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average_neighbor_degree on the refined graph built by combining the rankings from v2 and v3.\"},\"required_steps\":[\"v2\",\"v3\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"core_number\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_638\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_638\"]},{\"ref\":\"v3\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"artifact_638\"]},{\"ref\":\"artifact_962\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"artifact_638\",\"v2\",\"v3\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_962\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Rank the full graph by pagerank, then preserve the induced subgraph of its top 80 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 40 vertices from each of those two rankings, retain their mutual edges, and compute degree_centrality in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"pagerank\",\"description\":\"Compute pagerank on the whole original graph to determine the initial scope.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Rank the full graph by pagerank, then preserve the induced subgraph of its top 80 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 40 vertices from each of those two rankings, retain their mutual edges, and compute degree_centrality in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average neighbor degree within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_415\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_415\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Rank the full graph by pagerank, then preserve the induced subgraph of its top 80 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 40 vertices from each of those two rankings, retain their mutual edges, and compute degree_centrality in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"clustering\",\"description\":\"Compute local clustering within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_415\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_415\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_415\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A research group studies coauthorship links among researchers. Rank the full graph by pagerank, then preserve the induced subgraph of its top 80 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 40 vertices from each of those two rankings, retain their mutual edges, and compute degree_centrality in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v4\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the refined graph built by combining the rankings from v2 and v3.\"},\"required_steps\":[\"v2\",\"v3\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"pagerank\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_415\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_415\"]},{\"ref\":\"v3\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"artifact_415\"]},{\"ref\":\"artifact_969\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"artifact_415\",\"v2\",\"v3\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_969\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Rank the full graph by degree_centrality, then preserve the induced subgraph of its top 87 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 43 vertices from each of those two rankings, retain their mutual edges, and compute average_clustering in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v1\",\"algorithm\":\"degree_centrality\",\"description\":\"Compute degree_centrality on the whole original graph to determine the initial scope.\"},\"required_steps\":[],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"}]}",
+      "output": "{\"input_refs\":[\"G0\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Rank the full graph by degree_centrality, then preserve the induced subgraph of its top 87 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 43 vertices from each of those two rankings, retain their mutual edges, and compute average_clustering in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v2\",\"algorithm\":\"average_neighbor_degree\",\"description\":\"Compute average neighbor degree within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_791\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_791\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Rank the full graph by degree_centrality, then preserve the induced subgraph of its top 87 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 43 vertices from each of those two rankings, retain their mutual edges, and compute average_clustering in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v3\",\"algorithm\":\"clustering\",\"description\":\"Compute local clustering within the initial scope built using v1.\"},\"required_steps\":[\"v1\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_791\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_791\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_791\"]}"
+    },
+    {
+      "system": "你负责为已经选好的图算法绑定输入。只能引用 available_inputs 中已经存在的 ref。结合当前步骤描述和依赖，选择当前这次算法调用需要读取的输入，按调用顺序列出。只返回含 input_refs 字段的 JSON 对象。",
+      "instruction": "为当前算法调用绑定输入引用。",
+      "input": "{\"question\":\"A campus team models movement between buildings. Rank the full graph by degree_centrality, then preserve the induced subgraph of its top 87 vertices. On this initial scope rank by average neighbor degree and local clustering independently. Combine the top 43 vertices from each of those two rankings, retain their mutual edges, and compute average_clustering in this refined scope.\",\"actual_graph_attributes\":{\"num_nodes\":1001,\"num_edges\":3000,\"directed\":false,\"weighted\":false,\"multigraph\":false,\"heterogeneous\":false},\"step\":{\"id\":\"v4\",\"algorithm\":\"average_clustering\",\"description\":\"Compute average_clustering on the refined graph built by combining the rankings from v2 and v3.\"},\"required_steps\":[\"v2\",\"v3\"],\"available_inputs\":[{\"ref\":\"G0\",\"type\":\"Graph\",\"description\":\"当前输入的原始图\"},{\"ref\":\"v1\",\"type\":\"mapping_preview\",\"producer\":\"degree_centrality\",\"derived_from\":[\"G0\"]},{\"ref\":\"artifact_791\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"G0\",\"v1\"]},{\"ref\":\"v2\",\"type\":\"mapping_preview\",\"producer\":\"average_neighbor_degree\",\"derived_from\":[\"artifact_791\"]},{\"ref\":\"v3\",\"type\":\"mapping_preview\",\"producer\":\"clustering\",\"derived_from\":[\"artifact_791\"]},{\"ref\":\"artifact_784\",\"type\":\"Graph\",\"producer\":\"transform\",\"derived_from\":[\"artifact_791\",\"v2\",\"v3\"]}]}",
+      "output": "{\"input_refs\":[\"artifact_784\"]}"
+    }
+  ],
+  "metadata": [
+    {
+      "question_id": "bg0001",
+      "dag_type": "sequential",
+      "step_id": "v1",
+      "graph_sha256": "8c50644c92860acdc469224f1667311dd5434c3f70bff60669cf755298840789"
+    },
+    {
+      "question_id": "bg0001",
+      "dag_type": "sequential",
+      "step_id": "v2",
+      "graph_sha256": "8c50644c92860acdc469224f1667311dd5434c3f70bff60669cf755298840789"
+    },
+    {
+      "question_id": "bg0002",
+      "dag_type": "sequential",
+      "step_id": "v1",
+      "graph_sha256": "8da5ea45cac43993d86ae86dacd915a81c1d39c6ec77183b379b46b57c4d8c01"
+    },
+    {
+      "question_id": "bg0002",
+      "dag_type": "sequential",
+      "step_id": "v2",
+      "graph_sha256": "8da5ea45cac43993d86ae86dacd915a81c1d39c6ec77183b379b46b57c4d8c01"
+    },
+    {
+      "question_id": "bg0003",
+      "dag_type": "sequential",
+      "step_id": "v1",
+      "graph_sha256": "b2cdc2546ae9d1a42ab05657edcd835d02929e3c7c630a276c358318ce5c1f49"
+    },
+    {
+      "question_id": "bg0003",
+      "dag_type": "sequential",
+      "step_id": "v2",
+      "graph_sha256": "b2cdc2546ae9d1a42ab05657edcd835d02929e3c7c630a276c358318ce5c1f49"
+    },
+    {
+      "question_id": "bg0004",
+      "dag_type": "sequential",
+      "step_id": "v1",
+      "graph_sha256": "5200dbc1e6c81caf08102e7092c09187893266db173632e3504df9fa44b0f7d2"
+    },
+    {
+      "question_id": "bg0004",
+      "dag_type": "sequential",
+      "step_id": "v2",
+      "graph_sha256": "5200dbc1e6c81caf08102e7092c09187893266db173632e3504df9fa44b0f7d2"
+    },
+    {
+      "question_id": "bg0005",
+      "dag_type": "sequential",
+      "step_id": "v1",
+      "graph_sha256": "91a3b0ab394187d1e97ba139971b61642791a4eb936f27930432932e3e9f036e"
+    },
+    {
+      "question_id": "bg0005",
+      "dag_type": "sequential",
+      "step_id": "v2",
+      "graph_sha256": "91a3b0ab394187d1e97ba139971b61642791a4eb936f27930432932e3e9f036e"
+    },
+    {
+      "question_id": "bg0006",
+      "dag_type": "sequential",
+      "step_id": "v1",
+      "graph_sha256": "69d139dd389c819efdac0f4984a53208461f998ce38e81e39b167c4d6a6a1706"
+    },
+    {
+      "question_id": "bg0006",
+      "dag_type": "sequential",
+      "step_id": "v2",
+      "graph_sha256": "69d139dd389c819efdac0f4984a53208461f998ce38e81e39b167c4d6a6a1706"
+    },
+    {
+      "question_id": "bg0007",
+      "dag_type": "parallel",
+      "step_id": "v1",
+      "graph_sha256": "e26ae0bed09be51f5f14d0949657f9887db8c8a39dc8877158f11cbec7537476"
+    },
+    {
+      "question_id": "bg0007",
+      "dag_type": "parallel",
+      "step_id": "v2",
+      "graph_sha256": "e26ae0bed09be51f5f14d0949657f9887db8c8a39dc8877158f11cbec7537476"
+    },
+    {
+      "question_id": "bg0008",
+      "dag_type": "parallel",
+      "step_id": "v1",
+      "graph_sha256": "103040665afb9caf0a29154bbaaa28e8f1cf9c8bdfc5f1204c82a171ba49db2e"
+    },
+    {
+      "question_id": "bg0008",
+      "dag_type": "parallel",
+      "step_id": "v2",
+      "graph_sha256": "103040665afb9caf0a29154bbaaa28e8f1cf9c8bdfc5f1204c82a171ba49db2e"
+    },
+    {
+      "question_id": "bg0009",
+      "dag_type": "parallel",
+      "step_id": "v1",
+      "graph_sha256": "3549a94db533965693ca0777c443c7f721894f15a5caa7a616ebef41460a1ee9"
+    },
+    {
+      "question_id": "bg0009",
+      "dag_type": "parallel",
+      "step_id": "v2",
+      "graph_sha256": "3549a94db533965693ca0777c443c7f721894f15a5caa7a616ebef41460a1ee9"
+    },
+    {
+      "question_id": "bg0010",
+      "dag_type": "parallel",
+      "step_id": "v1",
+      "graph_sha256": "a621ac213a76ea7ce5bf19a76339e82b704b5c52ca9011c7d224cb575c7f5b14"
+    },
+    {
+      "question_id": "bg0010",
+      "dag_type": "parallel",
+      "step_id": "v2",
+      "graph_sha256": "a621ac213a76ea7ce5bf19a76339e82b704b5c52ca9011c7d224cb575c7f5b14"
+    },
+    {
+      "question_id": "bg0011",
+      "dag_type": "parallel",
+      "step_id": "v1",
+      "graph_sha256": "f502b3a289d35ed8e560bfa934676321936a29c933580d4f24d3335f1fc9a831"
+    },
+    {
+      "question_id": "bg0011",
+      "dag_type": "parallel",
+      "step_id": "v2",
+      "graph_sha256": "f502b3a289d35ed8e560bfa934676321936a29c933580d4f24d3335f1fc9a831"
+    },
+    {
+      "question_id": "bg0012",
+      "dag_type": "parallel",
+      "step_id": "v1",
+      "graph_sha256": "521e16bf5688caa4b73293a4747a836ea69df8389011333995abdf65c908ed3b"
+    },
+    {
+      "question_id": "bg0012",
+      "dag_type": "parallel",
+      "step_id": "v2",
+      "graph_sha256": "521e16bf5688caa4b73293a4747a836ea69df8389011333995abdf65c908ed3b"
+    },
+    {
+      "question_id": "bg0013",
+      "dag_type": "convergence",
+      "step_id": "v1",
+      "graph_sha256": "ac6769e2384a95572ae7069eabc89fde5a02ba6b642ac263d6053e9896618008"
+    },
+    {
+      "question_id": "bg0013",
+      "dag_type": "convergence",
+      "step_id": "v2",
+      "graph_sha256": "ac6769e2384a95572ae7069eabc89fde5a02ba6b642ac263d6053e9896618008"
+    },
+    {
+      "question_id": "bg0013",
+      "dag_type": "convergence",
+      "step_id": "v3",
+      "graph_sha256": "ac6769e2384a95572ae7069eabc89fde5a02ba6b642ac263d6053e9896618008"
+    },
+    {
+      "question_id": "bg0014",
+      "dag_type": "convergence",
+      "step_id": "v1",
+      "graph_sha256": "6537fde842db9481d630fa798589f6c66939d4169efe71c3a8990ce79590277d"
+    },
+    {
+      "question_id": "bg0014",
+      "dag_type": "convergence",
+      "step_id": "v2",
+      "graph_sha256": "6537fde842db9481d630fa798589f6c66939d4169efe71c3a8990ce79590277d"
+    },
+    {
+      "question_id": "bg0014",
+      "dag_type": "convergence",
+      "step_id": "v3",
+      "graph_sha256": "6537fde842db9481d630fa798589f6c66939d4169efe71c3a8990ce79590277d"
+    },
+    {
+      "question_id": "bg0015",
+      "dag_type": "convergence",
+      "step_id": "v1",
+      "graph_sha256": "ad39779aa6e488a42e3187494121048e8e19390843aa4ea7245041e7314d1c54"
+    },
+    {
+      "question_id": "bg0015",
+      "dag_type": "convergence",
+      "step_id": "v2",
+      "graph_sha256": "ad39779aa6e488a42e3187494121048e8e19390843aa4ea7245041e7314d1c54"
+    },
+    {
+      "question_id": "bg0015",
+      "dag_type": "convergence",
+      "step_id": "v3",
+      "graph_sha256": "ad39779aa6e488a42e3187494121048e8e19390843aa4ea7245041e7314d1c54"
+    },
+    {
+      "question_id": "bg0016",
+      "dag_type": "convergence",
+      "step_id": "v1",
+      "graph_sha256": "c95462b8678c7c7607161c50bce182a3086b1254be11e834139abe42bd1c9f27"
+    },
+    {
+      "question_id": "bg0016",
+      "dag_type": "convergence",
+      "step_id": "v2",
+      "graph_sha256": "c95462b8678c7c7607161c50bce182a3086b1254be11e834139abe42bd1c9f27"
+    },
+    {
+      "question_id": "bg0016",
+      "dag_type": "convergence",
+      "step_id": "v3",
+      "graph_sha256": "c95462b8678c7c7607161c50bce182a3086b1254be11e834139abe42bd1c9f27"
+    },
+    {
+      "question_id": "bg0017",
+      "dag_type": "convergence",
+      "step_id": "v1",
+      "graph_sha256": "0b14a7bcc37dcdf56a9b36650696b0d34b9c851b9e88457850cd51905bcaf653"
+    },
+    {
+      "question_id": "bg0017",
+      "dag_type": "convergence",
+      "step_id": "v2",
+      "graph_sha256": "0b14a7bcc37dcdf56a9b36650696b0d34b9c851b9e88457850cd51905bcaf653"
+    },
+    {
+      "question_id": "bg0017",
+      "dag_type": "convergence",
+      "step_id": "v3",
+      "graph_sha256": "0b14a7bcc37dcdf56a9b36650696b0d34b9c851b9e88457850cd51905bcaf653"
+    },
+    {
+      "question_id": "bg0018",
+      "dag_type": "convergence",
+      "step_id": "v1",
+      "graph_sha256": "bd7444c3672dcc1532568f97594fe84d275b15fb875de2b25155af9ced52ad07"
+    },
+    {
+      "question_id": "bg0018",
+      "dag_type": "convergence",
+      "step_id": "v2",
+      "graph_sha256": "bd7444c3672dcc1532568f97594fe84d275b15fb875de2b25155af9ced52ad07"
+    },
+    {
+      "question_id": "bg0018",
+      "dag_type": "convergence",
+      "step_id": "v3",
+      "graph_sha256": "bd7444c3672dcc1532568f97594fe84d275b15fb875de2b25155af9ced52ad07"
+    },
+    {
+      "question_id": "bg0019",
+      "dag_type": "divergence",
+      "step_id": "v1",
+      "graph_sha256": "bc06c0093ddfd40e4d1bc862fe2b0ce5652a5914ba3084c32faebd69181763a5"
+    },
+    {
+      "question_id": "bg0019",
+      "dag_type": "divergence",
+      "step_id": "v2",
+      "graph_sha256": "bc06c0093ddfd40e4d1bc862fe2b0ce5652a5914ba3084c32faebd69181763a5"
+    },
+    {
+      "question_id": "bg0019",
+      "dag_type": "divergence",
+      "step_id": "v3",
+      "graph_sha256": "bc06c0093ddfd40e4d1bc862fe2b0ce5652a5914ba3084c32faebd69181763a5"
+    },
+    {
+      "question_id": "bg0020",
+      "dag_type": "divergence",
+      "step_id": "v1",
+      "graph_sha256": "a5271f797afe99735042ff1042548eb2cde54d3fba649180a50ecc598508b1f7"
+    },
+    {
+      "question_id": "bg0020",
+      "dag_type": "divergence",
+      "step_id": "v2",
+      "graph_sha256": "a5271f797afe99735042ff1042548eb2cde54d3fba649180a50ecc598508b1f7"
+    },
+    {
+      "question_id": "bg0020",
+      "dag_type": "divergence",
+      "step_id": "v3",
+      "graph_sha256": "a5271f797afe99735042ff1042548eb2cde54d3fba649180a50ecc598508b1f7"
+    },
+    {
+      "question_id": "bg0021",
+      "dag_type": "divergence",
+      "step_id": "v1",
+      "graph_sha256": "5bd469a2baac72e8571e39f7f419be1c0735bdd975c11afd787cdaa429aada86"
+    },
+    {
+      "question_id": "bg0021",
+      "dag_type": "divergence",
+      "step_id": "v2",
+      "graph_sha256": "5bd469a2baac72e8571e39f7f419be1c0735bdd975c11afd787cdaa429aada86"
+    },
+    {
+      "question_id": "bg0021",
+      "dag_type": "divergence",
+      "step_id": "v3",
+      "graph_sha256": "5bd469a2baac72e8571e39f7f419be1c0735bdd975c11afd787cdaa429aada86"
+    },
+    {
+      "question_id": "bg0022",
+      "dag_type": "divergence",
+      "step_id": "v1",
+      "graph_sha256": "3bcbfdf77c98aa2d7e4b3353012936bb7d47b5d6dbc1a2f6b996aa4a1414eab2"
+    },
+    {
+      "question_id": "bg0022",
+      "dag_type": "divergence",
+      "step_id": "v2",
+      "graph_sha256": "3bcbfdf77c98aa2d7e4b3353012936bb7d47b5d6dbc1a2f6b996aa4a1414eab2"
+    },
+    {
+      "question_id": "bg0022",
+      "dag_type": "divergence",
+      "step_id": "v3",
+      "graph_sha256": "3bcbfdf77c98aa2d7e4b3353012936bb7d47b5d6dbc1a2f6b996aa4a1414eab2"
+    },
+    {
+      "question_id": "bg0023",
+      "dag_type": "divergence",
+      "step_id": "v1",
+      "graph_sha256": "2b94dda84cfc084a07d11680f71ff12fb9114c00dedd0a9d331c92b091779744"
+    },
+    {
+      "question_id": "bg0023",
+      "dag_type": "divergence",
+      "step_id": "v2",
+      "graph_sha256": "2b94dda84cfc084a07d11680f71ff12fb9114c00dedd0a9d331c92b091779744"
+    },
+    {
+      "question_id": "bg0023",
+      "dag_type": "divergence",
+      "step_id": "v3",
+      "graph_sha256": "2b94dda84cfc084a07d11680f71ff12fb9114c00dedd0a9d331c92b091779744"
+    },
+    {
+      "question_id": "bg0024",
+      "dag_type": "divergence",
+      "step_id": "v1",
+      "graph_sha256": "2fa613c2a004e1a6c34a81b64bd4cfa91ceac4f82c8ab4b013adbb5c35838f70"
+    },
+    {
+      "question_id": "bg0024",
+      "dag_type": "divergence",
+      "step_id": "v2",
+      "graph_sha256": "2fa613c2a004e1a6c34a81b64bd4cfa91ceac4f82c8ab4b013adbb5c35838f70"
+    },
+    {
+      "question_id": "bg0024",
+      "dag_type": "divergence",
+      "step_id": "v3",
+      "graph_sha256": "2fa613c2a004e1a6c34a81b64bd4cfa91ceac4f82c8ab4b013adbb5c35838f70"
+    },
+    {
+      "question_id": "bg0025",
+      "dag_type": "diamond",
+      "step_id": "v1",
+      "graph_sha256": "557f352a78d931404554aa81e9193e27ea0c12be641e43605e377b83efe9d741"
+    },
+    {
+      "question_id": "bg0025",
+      "dag_type": "diamond",
+      "step_id": "v2",
+      "graph_sha256": "557f352a78d931404554aa81e9193e27ea0c12be641e43605e377b83efe9d741"
+    },
+    {
+      "question_id": "bg0025",
+      "dag_type": "diamond",
+      "step_id": "v3",
+      "graph_sha256": "557f352a78d931404554aa81e9193e27ea0c12be641e43605e377b83efe9d741"
+    },
+    {
+      "question_id": "bg0025",
+      "dag_type": "diamond",
+      "step_id": "v4",
+      "graph_sha256": "557f352a78d931404554aa81e9193e27ea0c12be641e43605e377b83efe9d741"
+    },
+    {
+      "question_id": "bg0026",
+      "dag_type": "diamond",
+      "step_id": "v1",
+      "graph_sha256": "d78dccd254800ad84ef4850980f5620aea60d9ebcef47679000dfbb9ad9de682"
+    },
+    {
+      "question_id": "bg0026",
+      "dag_type": "diamond",
+      "step_id": "v2",
+      "graph_sha256": "d78dccd254800ad84ef4850980f5620aea60d9ebcef47679000dfbb9ad9de682"
+    },
+    {
+      "question_id": "bg0026",
+      "dag_type": "diamond",
+      "step_id": "v3",
+      "graph_sha256": "d78dccd254800ad84ef4850980f5620aea60d9ebcef47679000dfbb9ad9de682"
+    },
+    {
+      "question_id": "bg0026",
+      "dag_type": "diamond",
+      "step_id": "v4",
+      "graph_sha256": "d78dccd254800ad84ef4850980f5620aea60d9ebcef47679000dfbb9ad9de682"
+    },
+    {
+      "question_id": "bg0027",
+      "dag_type": "diamond",
+      "step_id": "v1",
+      "graph_sha256": "2d5e254bf1e23367a602b85ab042883175513fdde6f4021fa8ea8ce6087892d4"
+    },
+    {
+      "question_id": "bg0027",
+      "dag_type": "diamond",
+      "step_id": "v2",
+      "graph_sha256": "2d5e254bf1e23367a602b85ab042883175513fdde6f4021fa8ea8ce6087892d4"
+    },
+    {
+      "question_id": "bg0027",
+      "dag_type": "diamond",
+      "step_id": "v3",
+      "graph_sha256": "2d5e254bf1e23367a602b85ab042883175513fdde6f4021fa8ea8ce6087892d4"
+    },
+    {
+      "question_id": "bg0027",
+      "dag_type": "diamond",
+      "step_id": "v4",
+      "graph_sha256": "2d5e254bf1e23367a602b85ab042883175513fdde6f4021fa8ea8ce6087892d4"
+    },
+    {
+      "question_id": "bg0028",
+      "dag_type": "diamond",
+      "step_id": "v1",
+      "graph_sha256": "62e60ca50bb764a6a37003015694f0e395ebc441d3170638dbf277f4123029fc"
+    },
+    {
+      "question_id": "bg0028",
+      "dag_type": "diamond",
+      "step_id": "v2",
+      "graph_sha256": "62e60ca50bb764a6a37003015694f0e395ebc441d3170638dbf277f4123029fc"
+    },
+    {
+      "question_id": "bg0028",
+      "dag_type": "diamond",
+      "step_id": "v3",
+      "graph_sha256": "62e60ca50bb764a6a37003015694f0e395ebc441d3170638dbf277f4123029fc"
+    },
+    {
+      "question_id": "bg0028",
+      "dag_type": "diamond",
+      "step_id": "v4",
+      "graph_sha256": "62e60ca50bb764a6a37003015694f0e395ebc441d3170638dbf277f4123029fc"
+    },
+    {
+      "question_id": "bg0029",
+      "dag_type": "diamond",
+      "step_id": "v1",
+      "graph_sha256": "277a35bc13f54927dea2616439b0e0a07570605720670596b9d8b0b61c0af036"
+    },
+    {
+      "question_id": "bg0029",
+      "dag_type": "diamond",
+      "step_id": "v2",
+      "graph_sha256": "277a35bc13f54927dea2616439b0e0a07570605720670596b9d8b0b61c0af036"
+    },
+    {
+      "question_id": "bg0029",
+      "dag_type": "diamond",
+      "step_id": "v3",
+      "graph_sha256": "277a35bc13f54927dea2616439b0e0a07570605720670596b9d8b0b61c0af036"
+    },
+    {
+      "question_id": "bg0029",
+      "dag_type": "diamond",
+      "step_id": "v4",
+      "graph_sha256": "277a35bc13f54927dea2616439b0e0a07570605720670596b9d8b0b61c0af036"
+    },
+    {
+      "question_id": "bg0030",
+      "dag_type": "diamond",
+      "step_id": "v1",
+      "graph_sha256": "a64f82206fca094fd3d7978399cd1c4f4efa6dd4218e0310f1765ba12a184ae7"
+    },
+    {
+      "question_id": "bg0030",
+      "dag_type": "diamond",
+      "step_id": "v2",
+      "graph_sha256": "a64f82206fca094fd3d7978399cd1c4f4efa6dd4218e0310f1765ba12a184ae7"
+    },
+    {
+      "question_id": "bg0030",
+      "dag_type": "diamond",
+      "step_id": "v3",
+      "graph_sha256": "a64f82206fca094fd3d7978399cd1c4f4efa6dd4218e0310f1765ba12a184ae7"
+    },
+    {
+      "question_id": "bg0030",
+      "dag_type": "diamond",
+      "step_id": "v4",
+      "graph_sha256": "a64f82206fca094fd3d7978399cd1c4f4efa6dd4218e0310f1765ba12a184ae7"
+    }
+  ]
+}

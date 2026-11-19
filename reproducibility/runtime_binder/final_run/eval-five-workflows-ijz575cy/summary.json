@@ -1,0 +1,52 @@
+{
+  "adapter": "/home/hdd3/fuzq/node1-copy-20261114/hdd2/qwen35-dag.h5GkGf/runtime-binding.eLxc9y/scope-gpu3-20261119-193920-6cd432/binding_lora",
+  "total": 5,
+  "passed": 5,
+  "questions": [
+    {
+      "question_id": "q0493",
+      "dag_type": "convergence",
+      "graph_sha256": "a1fc0d664aa814e8afbed11330bdfeca88494740d9a5f3ce9d5853658e17da87",
+      "matched_bindings": 3,
+      "total_bindings": 3,
+      "passed": true,
+      "first_difference": null
+    },
+    {
+      "question_id": "q0916",
+      "dag_type": "diamond",
+      "graph_sha256": "113976382a13c3ad275c4d89ae243133465f604960b618c691e7a63c7d38c657",
+      "matched_bindings": 4,
+      "total_bindings": 4,
+      "passed": true,
+      "first_difference": null
+    },
+    {
+      "question_id": "q0750",
+      "dag_type": "divergence",
+      "graph_sha256": "691b74a24db72df84dca6267178188400f681c1c2a74366149bc00ceaab75414",
+      "matched_bindings": 3,
+      "total_bindings": 3,
+      "passed": true,
+      "first_difference": null
+    },
+    {
+      "question_id": "q0242",
+      "dag_type": "parallel",
+      "graph_sha256": "96ee59761cf3a1d2da0964c961678bdbdf1b7d60b28c462fe18b9033f0d9e895",
+      "matched_bindings": 2,
+      "total_bindings": 2,
+      "passed": true,
+      "first_difference": null
+    },
+    {
+      "question_id": "q0036",
+      "dag_type": "sequential",
+      "graph_sha256": "12ee71eefe71a9affe6d272b44965c107fea867d2d70d83fc536817ee113a768",
+      "matched_bindings": 2,
+      "total_bindings": 2,
+      "passed": true,
+      "first_difference": null
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "expected": {
+      "input_refs": [
+        "G0"
+      ]
+    },
+    "prediction": {
+      "input_refs": [
+        "G0"
+      ]
+    },
+    "strict": true,
+    "raw_response": "{\"input_refs\":[\"G0\"]}",
+    "issue": null,
+    "step_id": "v1",
+    "algorithm": "square_clustering"
+  },
+  {
+    "expected": {
+      "input_refs": [
+        "G0"
+      ]
+    },
+    "prediction": {
+      "input_refs": [
+        "G0"
+      ]
+    },
+    "strict": true,
+    "raw_response": "{\"input_refs\":[\"G0\"]}",
+    "issue": null,
+    "step_id": "v2",
+    "algorithm": "center"
+  }
+]

@@ -1,0 +1,113 @@
+{
+  "original_names": {
+    "steps": {
+      "passed": 84,
+      "total": 84
+    },
+    "whole_questions": {
+      "passed": 30,
+      "total": 30
+    },
+    "multi_candidate_G0": {
+      "passed": 12,
+      "total": 12
+    },
+    "non_G0": {
+      "passed": 48,
+      "total": 48
+    },
+    "scope_pairs_both_correct": {
+      "passed": 0,
+      "total": 0
+    },
+    "by_dag_type": {
+      "sequential": {
+        "passed": 12,
+        "total": 12
+      },
+      "parallel": {
+        "passed": 12,
+        "total": 12
+      },
+      "convergence": {
+        "passed": 18,
+        "total": 18
+      },
+      "divergence": {
+        "passed": 18,
+        "total": 18
+      },
+      "diamond": {
+        "passed": 24,
+        "total": 24
+      }
+    },
+    "failure_issues": {}
+  },
+  "renamed_artifacts": {
+    "steps": {
+      "passed": 84,
+      "total": 84
+    },
+    "whole_questions": {
+      "passed": 30,
+      "total": 30
+    },
+    "multi_candidate_G0": {
+      "passed": 12,
+      "total": 12
+    },
+    "non_G0": {
+      "passed": 48,
+      "total": 48
+    },
+    "scope_pairs_both_correct": {
+      "passed": 0,
+      "total": 0
+    },
+    "by_dag_type": {
+      "sequential": {
+        "passed": 12,
+        "total": 12
+      },
+      "parallel": {
+        "passed": 12,
+        "total": 12
+      },
+      "convergence": {
+        "passed": 18,
+        "total": 18
+      },
+      "divergence": {
+        "passed": 18,
+        "total": 18
+      },
+      "diamond": {
+        "passed": 24,
+        "total": 24
+      }
+    },
+    "failure_issues": {}
+  },
+  "paired_target_renamed": {
+    "original_names": {
+      "passed": 48,
+      "total": 48
+    },
+    "renamed_artifacts": {
+      "passed": 48,
+      "total": 48
+    }
+  },
+  "inference_config": {
+    "model_name_or_path": "/home/hdd3/fuzq/node1-copy-20261114/home/LLaMA-Factory/models/Qwen3.5-2B",
+    "template": "qwen3_5",
+    "enable_thinking": false,
+    "trust_remote_code": true,
+    "infer_backend": "huggingface",
+    "finetuning_type": "lora",
+    "adapter_name_or_path": "/home/hdd3/fuzq/node1-copy-20261114/hdd2/qwen35-dag.h5GkGf/runtime-binding.eLxc9y/scope-gpu3-20261119-193920-6cd432/binding_lora"
+  },
+  "scope_hint": "\n先根据当前 step.description 确定算法的作用范围。要求使用原始图、完整输入图或全图时，选择 G0，即使已有子图。在汇聚或并行任务中，每个步骤按自己的描述选择输入。要求使用筛选或合并后的子图时，依据 derived_from 核对产物来源。",
+  "scope": "Input binding from provided status snapshots. No model-generated transformations, parameters, or final report."
+}

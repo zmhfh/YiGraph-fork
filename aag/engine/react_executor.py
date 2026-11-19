@@ -475,6 +475,9 @@ class ReActExecutor:
             )
         if bound.get("errors"):
             raise ValueError("Input binding failed; correct consumed references: " + "; ".join(bound["errors"]))
+        # Trained input_refs Binder: runs on completed graph objects.
+        from aag.engine.runtime_binder import bind_prepared_inputs
+        bound = await bind_prepared_inputs(self, action, state, bound)
         await self._initialize_working_graph(bound.get("graph_adapter_result"), algorithm)
         self._emit_status("executing", state.step)
         self._record("tool_call", {"step": state.step, "action": action, "parameters": bound.get("parameters"),
@@ -621,7 +624,7 @@ class ReActExecutor:
                     if pair not in seen:
                         seen.add(pair)
                         pairs.append(pair)
-            if nodes or pairs:
+            if nodes or pairs or adapter_result.get("_runtime_binder_bound"):
                 vertices, edges = reconstruct_graph(nodes, pairs, vertices, edges)
         runner = getattr(self.computing_engine, "run_algorithm", None)
         if not callable(runner):
@@ -772,6 +775,7 @@ class ReActExecutor:
             "fields": fields,
             "summary": str(preview(raw_result))[: self.observation_chars],
             "evidence_scope": evidence_scope,
+            "binding_input_refs": action.get("_runtime_binder_input_refs"),
         }
         return artifact_id
 

@@ -1,0 +1,9 @@
+{
+  "question_id": "q0750",
+  "dag_type": "divergence",
+  "graph_sha256": "691b74a24db72df84dca6267178188400f681c1c2a74366149bc00ceaab75414",
+  "matched_bindings": 3,
+  "total_bindings": 3,
+  "passed": true,
+  "first_difference": null
+}
