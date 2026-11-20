@@ -12,6 +12,7 @@ from aag.models.graph_workflow_dag import WorkflowStep, StepOutputItem
 from aag.reasoner.model_deployment import Reasoner
 from aag.models.task_types import GraphAnalysisType
 from aag.utils.data_utils import take_sample
+from aag.engine.react_trace import preview, collection_metadata
 from aag.error_recovery.error_manager import ErrorRecovery
 
 logger = logging.getLogger(__name__)
@@ -511,12 +512,13 @@ class DataDependencyResolver:
         for item in graph_items:
             parent_step = parent_steps[item.parent_step_id]
             raw_data = item.value
-            sample_value = take_sample(raw_data)
+            sample_value = preview(raw_data)
             dependency_list.append({
                 "field_key": item.field_key,
                 "field_type": item.field_type,
                 "field_desc": item.field_desc,
                 "sample_value": sample_value,
+                **collection_metadata(raw_data),
                 "parent_step_id": item.parent_step_id,
                 "parent_step_question": parent_step.question,
                 "reason": item.reason
@@ -647,12 +649,13 @@ class DataDependencyResolver:
         for item in param_items:
             parent_step = parent_steps[item.parent_step_id]
             raw_data = item.value
-            sample_value = take_sample(raw_data)
+            sample_value = preview(raw_data)
             dependency_list.append({
                 "field_key": item.field_key,
                 "field_type": item.field_type,
                 "field_desc": item.field_desc,
                 "sample_value": sample_value,
+                **collection_metadata(raw_data),
                 "parent_step_id": item.parent_step_id,
                 "parent_step_question": parent_step.question,
                 "reason": item.reason

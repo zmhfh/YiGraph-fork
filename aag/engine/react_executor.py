@@ -15,6 +15,7 @@ import logging
 import time
 import uuid
 import copy
+import re
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 
@@ -22,7 +23,7 @@ from aag.expert_search_engine.database.datatype import GraphData
 from aag.models.graph_workflow_dag import GraphWorkflowDAG
 from aag.utils.data_utils import take_sample
 from aag.utils.graph_conversion import reconstruct_graph
-from aag.engine.react_trace import ReactTraceStore, preview, is_sampled
+from aag.engine.react_trace import ReactTraceStore, preview, is_sampled, collection_metadata
 from aag.computing_engine.schema_roles import temporal_path_schema, bind_temporal_path_parameters
 
 logger = logging.getLogger(__name__)
@@ -64,6 +65,7 @@ class RunState:
                 "summary": str(artifact.get("summary", ""))[:observation_chars],
                 "evidence_scope": artifact.get("evidence_scope", {}),
                 "sample": preview(artifact.get("value")),
+                **collection_metadata(artifact.get("value")),
                 "collection_sizes": {key: len(value) for key, value in artifact.get("value", {}).items()
                                      if isinstance(value, (dict, list))} if isinstance(artifact.get("value"), dict) else {},
             }
@@ -224,7 +226,8 @@ class ReActExecutor:
                     observation["repair_hint"] = "Repair the arguments using the actual database schema; do not treat missing/null fields as evidence that no transactions exist."
                 if isinstance(metadata, dict):
                     observation["tool"] = metadata.get("name") or metadata.get("algorithm")
-                if actual_error is None and self._has_result(tool_result):
+                retained_raw = isinstance(tool_result, dict) and tool_result.get("algorithm_success") is True
+                if (actual_error is None and self._has_result(tool_result)) or retained_raw:
                     observation["artifact_id"] = self._add_artifact(state, action, tool_result, metadata, step)
             except Exception as exc:
                 observation = {"summary": f"工具执行失败，需修正后继续：{exc}", "success": False,
@@ -242,7 +245,7 @@ class ReActExecutor:
         if state.status != "completed":
             successes = [event for event in self.events if event["kind"] == "observation"
                          and event["data"].get("success") is True]
-            state.status = "incomplete" if successes else "failed"
+            state.status = "incomplete" if successes or state.artifacts else "failed"
             if not state.missing_goals:
                 state.missing_goals = list(state.checklist) or [goal]
         state.termination_reason = stop_reason
@@ -410,9 +413,16 @@ class ReActExecutor:
         if action_type == "algorithm" and action.get("name") == "temporal_paths":
             return await self._execute_temporal_paths(action, state)
         if action_type == "graph_query":
-            self._emit_status("executing", state.step)
             parameters = dict(action["parameters"])
             query_type = parameters.pop("query_type", None) or action.get("name")
+            if query_type == "subgraph_by_nodes" and state.artifacts and not action.get("consumed"):
+                literal_values = parameters.get("values") or []
+                if not literal_values or not all(re.search(r"(?<![A-Za-z0-9_])" + re.escape(str(value)) + r"(?![A-Za-z0-9_])", state.goal)
+                                                 for value in literal_values):
+                    raise ValueError("Bind the complete upstream node selection using consumed with alias=values and use_as=parameter. Do not copy preview IDs into a new group. Explicit IDs supplied in the user goal may be passed directly.")
+            if action.get("consumed"):
+                parameters = await self._bind_query_inputs(action, state, query_type, parameters)
+            self._emit_status("executing", state.step)
             if query_type and query_type != "graph_query":
                 result = self.computing_engine.execute_graph_query(query_type=query_type, parameters=parameters)
             else:
@@ -425,6 +435,8 @@ class ReActExecutor:
                                       "normalized_parameters": result.get("params", parameters)})
             if isinstance(result, dict) and "results" in result and "result" not in result:
                 result = {**result, "result": {"results": result["results"], "count": result.get("count", len(result["results"]))}}
+            if isinstance(result, dict):
+                result["query_scope"] = {"query_type": query_type, "parameters": result.get("params", parameters)}
             return result, {"name": query_type or "graph_query", "description": "graph query"}
         if action_type == "numeric_analysis":
             return await self._execute_numeric_action(action, state)
@@ -442,8 +454,9 @@ class ReActExecutor:
 
         base_parameters = dict(action.get("parameters") or {})
         post_code = action.get("post_processing_code")
-        # M2 normally emits parameters itself.  If it leaves them empty, use
-        # the binder adapter as the optional second model to fill the tool
+        post_schema = {}
+        # The decision normally supplies parameters. If it leaves them empty,
+        # the binder adapter fills the tool
         # schema; this still happens inside the ReAct action boundary.
         if not base_parameters and not action.get("consumed"):
             extractor = getattr(self.reasoner, "extract_parameters_with_postprocess_new", None)
@@ -461,7 +474,10 @@ class ReActExecutor:
                     base_parameters = dict(extracted.get("parameters") or {})
                     generated_post = extracted.get("post_processing_code")
                     if isinstance(generated_post, dict):
+                        post_schema = generated_post.get("output_schema") or {}
                         generated_post = generated_post.get("code")
+                    # Reuse a task extractor already produced with the parameters.
+                    # Calls with prepared parameters generate one after execution.
                     post_code = post_code or generated_post
 
         bound = {"parameters": base_parameters, "graph_adapter_result": None, "errors": []}
@@ -482,14 +498,134 @@ class ReActExecutor:
         run_call = self.computing_engine.run_algorithm(
             algorithm,
             bound.get("parameters") or {},
-            post_code,
+            None,
             global_graph=self.global_graph,
         )
         result = await run_call if inspect.isawaitable(run_call) else run_call
+        if self._execution_error(result) is None and isinstance(result, dict) and "result" in result:
+            result, metadata = await self._postprocess_algorithm_result(
+                action, state, result, metadata, tool_description, bound,
+                post_code=post_code, post_schema=post_schema,
+            )
         if bound.get("errors"):
             result = dict(result or {})
             result.setdefault("react_binding_warnings", bound["errors"])
         return result, metadata or {"name": algorithm, "description": tool_description}
+
+    async def _bind_query_inputs(self, action, state, query_type, parameters):
+        """Bind query arguments to complete artifacts through the shared binder."""
+        if not self.dependency_resolver:
+            raise ValueError("Graph-query artifact binding requires DependencyResolver")
+        aliases = []
+        for reference in action["consumed"]:
+            if not isinstance(reference, dict) or reference.get("use_as", "parameter") != "parameter":
+                raise ValueError("Graph-query consumed inputs use use_as=parameter and alias=<query parameter>")
+            alias = reference.get("alias")
+            if alias not in parameters:
+                raise ValueError("Declare the target query parameter in parameters and use its name as the consumed alias")
+            if alias in aliases:
+                raise ValueError(f"Duplicate query input alias '{alias}'")
+            aliases.append(alias)
+        fixed = {key: value for key, value in parameters.items() if key not in aliases}
+        input_schema = {"parameters": {key: {
+            "type": type(parameters[key]).__name__ if parameters[key] is not None else "any",
+            "description": f"Actual {query_type} argument {key}; adapt the complete source. Fixed query arguments: {json.dumps(fixed, ensure_ascii=False)}",
+        } for key in aliases}}
+        bound = await self.dependency_resolver.prepare_react_inputs(
+            current_question=action.get("objective") or state.goal,
+            alg_des_info={"name": query_type, "engine": "neo4j", "input_params": input_schema},
+            consumed=action["consumed"], artifacts=state.artifacts, base_parameters=parameters,
+        )
+        if bound.get("errors"):
+            raise ValueError("Query input binding failed: " + "; ".join(bound["errors"]))
+        return {**parameters, **{key: bound["parameters"][key] for key in aliases}}
+
+    async def _postprocess_algorithm_result(
+        self, action: Dict[str, Any], state: RunState, result: Dict[str, Any], metadata: Dict[str, Any],
+        tool_description: str, bound: Dict[str, Any], *, post_code: Any = None, post_schema: Any = None,
+    ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+        """Extract task fields from the complete result while retaining raw evidence."""
+        generator = getattr(self.reasoner, "generate_algorithm_postprocessing", None)
+        raw = result["result"]
+        if isinstance(post_code, dict):
+            post_schema = post_code.get("output_schema") or post_schema
+            post_code = post_code.get("code")
+        if not post_code and (not callable(generator) or isinstance(raw, (bool, int, float)) or raw is None):
+            return result, metadata
+        errors = []
+        scope = self._derived_evidence_scope(action, state)
+        if isinstance(raw, dict) and raw.get("truncated") is True:
+            scope = {**scope, "source_truncated": True,
+                     "restriction": "The original algorithm enumeration is truncated. Derived fields cover only retained items unless separately supported by exact source statistics."}
+        vertex_schema, edge_schema = self._graph_schemas()
+        attempts = self.max_retries_per_action + 1 if callable(generator) else 1
+        for attempt in range(attempts):
+            code = post_code if attempt == 0 else None
+            schema = post_schema or {}
+            try:
+                if not code:
+                    self._emit_status("binding", state.step)
+                    request = generator(
+                        goal=state.goal, objective=action.get("objective") or state.goal,
+                        tool_description=tool_description, parameters=bound.get("parameters") or {},
+                        result_view=self._bounded_result(result), vertex_schema=vertex_schema, edge_schema=edge_schema,
+                        execution_scope={"uses_consumed_graph": bool(bound.get("graph_adapter_result")),
+                                         "consumed": action.get("consumed") or [], "evidence_scope": scope},
+                        error_history=errors,
+                    )
+                    spec = await request if inspect.isawaitable(request) else request
+                    if not isinstance(spec, dict):
+                        raise ValueError("Post-processing specification must be an object")
+                    code = spec.get("code")
+                    schema = spec.get("output_schema") or {}
+                    if spec.get("required") is False and not code:
+                        self._record("post_processing", {"step": state.step, "status": "not_required",
+                                                          "description": spec.get("description", "")})
+                        return result, metadata
+                if not isinstance(code, str) or not code.strip():
+                    raise ValueError("Post-processing requires executable process(data) code")
+                if not isinstance(schema, dict) or not isinstance(schema.get("fields", {}), dict):
+                    raise ValueError("Post-processing output_schema.fields must be an object")
+                self._emit_status("executing", state.step)
+                computed = self.computing_engine.execute_code(
+                    code=code, data=copy.deepcopy(raw), global_graph=self.global_graph,
+                    is_numeric_analysis=False, fallback_to_direct_exec=False,
+                )
+                computed = await computed if inspect.isawaitable(computed) else computed
+                error = self._execution_error(computed)
+                if error:
+                    raise ValueError(error)
+                value = computed.get("result") if isinstance(computed, dict) else None
+                if not isinstance(value, dict):
+                    raise ValueError("process(data) must return a dictionary of extracted fields")
+                derived = {key: item for key, item in value.items() if key != "original_result"}
+                json.dumps(derived, allow_nan=False)
+                missing = set(schema.get("fields", {})) - {"original_result", *derived}
+                if missing:
+                    raise ValueError(f"Post-processing did not return declared fields: {sorted(missing)}")
+                fields = dict(schema.get("fields", {}))
+                fields["original_result"] = {"type": type(raw).__name__,
+                                              "field_description": "Unmodified full algorithm output; preserve its original execution scope and any truncation flags."}
+                for key, item in derived.items():
+                    fields.setdefault(key, {"type": type(item).__name__, "field_description": "Field derived from the actual algorithm output."})
+                output_schema = {**schema, "type": "dict", "fields": fields}
+                self._record("post_processing", {"step": state.step, "status": "success", "attempt": attempt + 1,
+                                                  "code": code, "output_schema": output_schema,
+                                                  "derived_fields": list(derived)})
+                return ({**result, "result": {"original_result": raw, **derived}, "evidence_scope": scope,
+                         "output_schema": output_schema,
+                         "postprocessing": {"status": "success", "derived_fields": list(derived)}},
+                        {**metadata, "output_params": output_schema})
+            except Exception as exc:
+                detail = {"error": str(exc), "previous_code": code, "attempt": attempt + 1}
+                errors.append(detail)
+                self._record("post_processing", {"step": state.step, "status": "failed", **detail})
+        error = "Algorithm succeeded but result extraction failed: " + errors[-1]["error"]
+        return ({**result, "success": False, "algorithm_success": True, "error": error,
+                 "result": {"original_result": raw}, "evidence_scope": scope,
+                 "postprocessing": {"status": "failed", "error": error, "raw_result_retained": True}},
+                {**metadata, "output_params": {"type": "dict", "fields": {
+                    "original_result": {"type": type(raw).__name__, "field_description": "Retained algorithm output; requested derived fields were not computed."}}}})
 
     async def _execute_numeric_action(self, action: Dict[str, Any], state: RunState) -> Tuple[Any, Dict[str, Any]]:
         if action.get("name") == "temporal_paths":
@@ -558,6 +694,8 @@ class ReActExecutor:
             result = dict(result or {})
             result["output_schema"] = output_schema
         evidence_scope = self._derived_evidence_scope(action, state)
+        if isinstance(result, dict) and isinstance(result.get("evidence_scope"), dict):
+            evidence_scope.update(result["evidence_scope"])
         if isinstance(result, dict) and evidence_scope:
             result = {**result, "evidence_scope": evidence_scope}
         return result, {"name": "numeric_analysis", "description": "numeric analysis"}
@@ -585,17 +723,24 @@ class ReActExecutor:
 
     def _derived_evidence_scope(self, action: Dict[str, Any], state: RunState) -> Dict[str, Any]:
         sources = {}
+        query_inputs = {}
         for reference in action.get("consumed") or []:
             reference = {"artifact_id": reference} if isinstance(reference, str) else reference
             if not isinstance(reference, dict):
                 continue
             artifact = state.artifacts.get(str(reference.get("artifact_id")), {})
             scope = self._input_evidence_scope(artifact, reference.get("field"))
+            query_inputs.update(scope.get("query_inputs", {}))
+            if scope.get("query_scope"):
+                query_inputs[str(reference.get("artifact_id"))] = {
+                    "scope": scope["query_scope"], "stored_collections": scope.get("stored_collections", {}),
+                    "source_truncated": scope.get("source_truncated", False),
+                }
             for source in scope.get("example_sources", []):
                 sources[(source["artifact_id"], source["field"])] = source
         if not sources:
-            return {}
-        return {"example_sources": list(sources.values()),
+            return {"query_inputs": query_inputs} if query_inputs else {}
+        return {**({"query_inputs": query_inputs} if query_inputs else {}), "example_sources": list(sources.values()),
                 "restriction": "These inputs contain example collections. Formatting, grouping, deduplicating or renaming examples does not establish population counts, complete path-pattern counts or whole-population value ranges. Use the original source artifact for full-scope statistics. Derived exact statistics copied from that source retain its original scope."}
 
     def _numeric_error_history(self, state: RunState) -> List[Dict[str, Any]]:
@@ -695,9 +840,11 @@ class ReActExecutor:
                     artifacts={
                         key: {
                             "source": value.get("source"),
+                            "fields": value.get("fields", {}),
                             "sample": preview(value.get("value")),
                             "evidence_scope": value.get("evidence_scope", {}),
                             "preview_is_truncated": is_sampled(value.get("value")),
+                            **collection_metadata(value.get("value")),
                             "collection_sizes": {name: len(items) for name, items in value.get("value", {}).items()
                                                  if isinstance(items, (list, dict))} if isinstance(value.get("value"), dict) else {},
                         }
@@ -752,9 +899,20 @@ class ReActExecutor:
         if isinstance(metadata, dict):
             output_schema = metadata.get("output_params") or metadata.get("output_schema") or {}
             fields = output_schema.get("fields", {}) if isinstance(output_schema, dict) else {}
+        if not fields and isinstance(result, dict) and isinstance(result.get("output_schema"), dict):
+            fields = result["output_schema"].get("fields", {})
         if not fields and isinstance(raw_result, dict):
             fields = {key: {"type": type(value).__name__} for key, value in raw_result.items()}
         evidence_scope = self._derived_evidence_scope(action, state)
+        if isinstance(result, dict) and isinstance(result.get("evidence_scope"), dict):
+            evidence_scope.update(result["evidence_scope"])
+        if isinstance(result, dict) and result.get("query_scope"):
+            evidence_scope.update({"query_scope": result["query_scope"],
+                                   "stored_collections": collection_metadata(raw_result)["nested_collection_sizes"],
+                                   "membership_rule": "Use complete stored collections for membership. Preview IDs alone do not establish an exhaustive node set or community."})
+            rows = raw_result.get("results", []) if isinstance(raw_result, dict) else []
+            if any(isinstance(row, dict) and (row.get("scope_is_complete") is False or row.get("path_limit_reached")) for row in rows):
+                evidence_scope["source_truncated"] = True
         if isinstance(raw_result, dict) and raw_result.get("sample_paths_are_examples_only") is True:
             evidence_scope = {
                 "example_sources": [{"artifact_id": artifact_id, "field": "sample_paths",
@@ -863,10 +1021,10 @@ class ReActExecutor:
         if not isinstance(result, dict):
             return take_sample(result)
         output: Dict[str, Any] = {}
-        for key in ("success", "result", "results", "error", "summary", "algorithm", "query_type", "count", "params", "evidence_scope"):
+        for key in ("success", "result", "results", "error", "summary", "algorithm", "query_type", "count", "params", "evidence_scope", "postprocessing", "algorithm_success", "output_schema", "query_scope"):
             if key in result:
                 value = result[key]
-                output[key] = preview(value) if key in {"result", "results", "params"} else value
+                output[key] = preview(value) if key in {"result", "results", "params", "output_schema"} else value
                 if key == "result" and isinstance(value, (dict, list, tuple)):
                     output["result_is_sample"] = is_sampled(value)
                     if isinstance(value, (list, tuple)):
@@ -879,6 +1037,7 @@ class ReActExecutor:
                         output["result_field_count"] = len(value)
                         output["collection_sizes"] = {name: len(items) for name, items in value.items()
                                                       if isinstance(items, (list, dict))}
+                    output.update(collection_metadata(value))
         if not output:
             return take_sample(result)
         return output

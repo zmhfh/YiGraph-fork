@@ -53,6 +53,42 @@ def is_sampled(value: Any, items: int = 8, depth: int = 5) -> bool:
     return isinstance(value, str) and len(value) > 6000
 
 
+def collection_metadata(value: Any, *, max_depth: int = 3, max_rows: int = 2) -> dict:
+    """Describe full nested collections separately from their displayed previews.
+
+    Traverse only representative rows to bound metadata size. Each reported
+    count is exact for that stored collection; it does not claim a capped tool
+    result contains the complete database scope.
+    """
+    shown = preview(value)
+    full_sizes, shown_sizes = {}, {}
+
+    def visit(actual, sample, path, depth):
+        if isinstance(actual, Mapping):
+            if path:
+                full_sizes[path] = len(actual)
+                shown_sizes[path] = len(sample) if isinstance(sample, Mapping) else None
+            if depth >= max_depth:
+                return
+            for key, child in actual.items():
+                if isinstance(child, (Mapping, list, tuple, set)):
+                    visit(child, sample.get(str(key)) if isinstance(sample, Mapping) else None,
+                          f"{path}.{key}" if path else str(key), depth + 1)
+        elif isinstance(actual, (list, tuple, set)):
+            full_sizes[path or "$"] = len(actual)
+            shown_sizes[path or "$"] = len(sample) if isinstance(sample, (list, tuple)) else None
+            if depth >= max_depth:
+                return
+            for index, child in enumerate(list(actual)[:max_rows]):
+                if isinstance(child, (Mapping, list, tuple, set)):
+                    visit(child, sample[index] if isinstance(sample, (list, tuple)) and index < len(sample) else None,
+                          f"{path}[{index}]", depth + 1)
+
+    visit(value, shown, "", 0)
+    return {"nested_collection_sizes": full_sizes, "preview_collection_sizes": shown_sizes,
+            "preview_is_truncated": is_sampled(value)}
+
+
 class ReactTraceStore:
     def __init__(self, directory: Optional[Path] = None):
         self.directory = Path(directory) if directory else RUNTIME_ROOT / "output" / "react-runs"

@@ -49,9 +49,13 @@ def normalize_query_parameters(query_type: str, params: Dict[str, Any], schema: 
         "node_lookup": {"label", "key", "value", "conditions", "return_fields", "order_by", "order_direction", "limit", "aggregate", "aggregate_field"},
         "neighbor_query": {"label", "key", "value", "hops", "rel_type", "direction", "return_fields", "order_by", "order_direction", "limit", "where", "return_distinct", "exclude_start", "return_path_length", "aggregate", "aggregate_field"},
         "relationship_filter": {"rel_type", "start_label", "end_label", "rel_conditions", "return_fields", "aggregate", "aggregate_field", "order_by", "order_direction", "limit"},
+        "subgraph": {"label", "key", "value", "hops", "rel_type", "direction", "where", "limit_paths", "rel_conditions", "start_label", "end_label", "limit", "aggregate", "aggregate_field", "return_fields"},
+        "subgraph_by_nodes": {"label", "key", "values", "include_internal", "rel_type", "direction", "where", "aggregate", "aggregate_field", "return_fields"},
     }.get(query_type)
     if allowed and set(result) - allowed:
         raise ValueError(f"Unsupported {query_type} parameters: {sorted(set(result) - allowed)}; allowed={sorted(allowed)}. Use neighbor_query with label/key/value to filter transactions around a named entity.")
+    if query_type == "subgraph" and "limit" in result and not result.get("rel_conditions"):
+        raise ValueError("Center-based subgraph uses limit_paths, not limit; returned path-limit metadata describes whether the candidate scope is complete")
     if query_type == "path_query":
         result.setdefault("max_hops", 4)
         result.setdefault("limit", 50)

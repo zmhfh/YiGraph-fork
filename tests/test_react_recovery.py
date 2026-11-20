@@ -12,6 +12,7 @@ from aag.engine.react_trace import ReactTraceStore, preview
 from aag.reasoner.prompt_template.react_prompts import (
     DECISION_INSTRUCTIONS, OBSERVER_INSTRUCTIONS, COMPLETION_INSTRUCTIONS, REPORT_INSTRUCTIONS,
     REPORT_REVIEW_INSTRUCTIONS,
+    ALGORITHM_POSTPROCESSING_INSTRUCTIONS,
 )
 
 SCHEMA = {
@@ -108,7 +109,8 @@ def test_path_amount_projection_uses_the_bound_property_and_rejects_missing_mapp
 
 def test_fixed_react_instructions_are_english():
     assert all(text.isascii() for text in [DECISION_INSTRUCTIONS, OBSERVER_INSTRUCTIONS,
-                                           COMPLETION_INSTRUCTIONS, REPORT_INSTRUCTIONS, REPORT_REVIEW_INSTRUCTIONS])
+                                           COMPLETION_INSTRUCTIONS, REPORT_INSTRUCTIONS, REPORT_REVIEW_INSTRUCTIONS,
+                                           ALGORITHM_POSTPROCESSING_INSTRUCTIONS])
 
 
 def test_preview_preserves_entity_identity_even_after_many_other_fields():

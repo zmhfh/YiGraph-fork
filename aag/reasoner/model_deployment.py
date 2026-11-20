@@ -24,6 +24,7 @@ from aag.error_recovery.enhancer import enhance_prompt
 from aag.reasoner.prompt_template.react_prompts import (
     DECISION_INSTRUCTIONS, OBSERVER_INSTRUCTIONS, COMPLETION_INSTRUCTIONS, REPORT_INSTRUCTIONS,
     REPORT_REVIEW_INSTRUCTIONS,
+    ALGORITHM_POSTPROCESSING_INSTRUCTIONS,
 )
 
 logger = logging.getLogger(__name__)
@@ -1274,6 +1275,36 @@ Existing artifact IDs:
             "empty": not bool(tool_result),
         }
 
+    def generate_algorithm_postprocessing(
+        self, *, goal: str, objective: str, tool_description: str,
+        parameters: Dict[str, Any], result_view: Dict[str, Any],
+        vertex_schema: Dict[str, Any], edge_schema: Dict[str, Any],
+        execution_scope: Dict[str, Any], error_history: Optional[List[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        """Derive task fields after execution, including when parameters were supplied."""
+        prompt = ALGORITHM_POSTPROCESSING_INSTRUCTIONS + f"""
+User goal:
+{goal}
+Current algorithm objective:
+{objective}
+Actual tool description and result contract:
+{tool_description}
+Executed parameters:
+{json.dumps(parameters, ensure_ascii=False, default=str)}
+Actual result preview and full collection sizes:
+{json.dumps(result_view, ensure_ascii=False, default=str)}
+Actual vertex and edge property schemas:
+{json.dumps({"vertices": vertex_schema, "edges": edge_schema}, ensure_ascii=False, default=str)}
+Working graph scope and input references:
+{json.dumps(execution_scope, ensure_ascii=False, default=str)}
+Previous extraction errors:
+{json.dumps(error_history or [], ensure_ascii=False, default=str)}
+"""
+        result = self._execute_prompt(prompt, parse_json=True, adapter=self.adapter_for("binder"))
+        if not isinstance(result, dict):
+            raise ValueError("Algorithm post-processing must return a JSON object")
+        return result
+
     def react_review_completion(self, goal: str, observations: List[Dict[str, Any]],
                                 artifacts: Dict[str, Any], graph_schema: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Check requested deliverables against computed evidence, not the DAG."""
@@ -1479,6 +1510,10 @@ Controller outcome:
         )
         full_prompt += (
             "\nUse the complete input values at execution time, not the displayed previews. "
+            "When an input defines group membership, extract every member from the full input; do not hardcode the visible sample IDs. "
+            "Use canonical vertex IDs for graph endpoints or map through an actual declared node property; do not confuse source identifiers with vertex IDs. "
+            "State the activity metric and whether transactions are group-internal or all-network. "
+            "Sort the final ranking by the requested computed metric; if a requested field is missing, raise an explicit error rather than silently sorting by another metric. "
             "Keep parallel transactions distinct. When combining multiple paths, deduplicate by relationship ID "
             "or original edge index before summing the same transaction. State the amount basis explicitly. "
             "An origin-specific outflow estimate counts qualifying transfers leaving that origin once; "

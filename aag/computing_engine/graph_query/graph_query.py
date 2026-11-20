@@ -1605,6 +1605,13 @@ class Neo4jGraphClient:
     # =========================================================
     # 5. 子图抽取
     # =========================================================
+    @staticmethod
+    def _relationship_projection(collection: str) -> str:
+        return (f"[rel IN {collection} | {{id: id(rel), "
+                "source: coalesce(startNode(rel).node_key, toString(id(startNode(rel)))), "
+                "target: coalesce(endNode(rel).node_key, toString(id(endNode(rel)))), "
+                "properties: properties(rel)}]")
+
     def subgraph_extract(
         self,
         center: Tuple[str, str, Any],
@@ -1635,6 +1642,10 @@ class Neo4jGraphClient:
         
         if not (1 <= hops <= 5):
             raise ValueError("hops must be between 1 and 5")
+        if direction not in {"out", "in", "both"}:
+            raise ValueError("direction must be out, in or both")
+        if not isinstance(limit_paths, int) or not 1 <= limit_paths <= 100000:
+            raise ValueError("limit_paths must be an integer between 1 and 100000")
         
         rt = self._sanitize_rel_type(rel_type) if rel_type else ""
         rel = f":`{rt}`" if rt else ""
@@ -1652,25 +1663,36 @@ class Neo4jGraphClient:
         
         cypher = f"""
         MATCH (c:`{cl}` {{`{ck}`: $cv}})
-        MATCH p = {pat}
+        OPTIONAL MATCH p = {pat}
         {where_clause}
-        WITH collect(p)[0..$limit_paths] AS ps
-        UNWIND ps AS p
-        UNWIND nodes(p) AS nn
-        UNWIND relationships(p) AS rr
-        WITH collect(DISTINCT nn) AS nodes, collect(DISTINCT rr) AS relationships
-        RETURN nodes, relationships
+        WITH c, p LIMIT $probe_limit
+        WITH c, collect(p) AS observed
+        WITH c, observed[0..$limit_paths] AS ps, size(observed) > $limit_paths AS path_limit_reached
+        UNWIND CASE WHEN size(ps) = 0 THEN [null] ELSE ps END AS p
+        UNWIND CASE WHEN p IS NULL THEN [c] ELSE nodes(p) END AS nn
+        UNWIND CASE WHEN p IS NULL THEN [null] ELSE relationships(p) END AS rr
+        WITH collect(DISTINCT nn) AS nodes, collect(DISTINCT rr) AS rels,
+             path_limit_reached, size(ps) AS returned_path_count
+        RETURN nodes, {self._relationship_projection('rels')} AS relationships,
+               size(nodes) AS node_count, size(rels) AS relationship_count,
+               returned_path_count, path_limit_reached, NOT path_limit_reached AS scope_is_complete
         """
         
-        res = self.run(cypher, {"cv": cv, "limit_paths": limit_paths})
+        res = self.run(cypher, {"cv": cv, "limit_paths": limit_paths, "probe_limit": limit_paths + 1})
         
         if res and res[0]:
             return {
                 "nodes": res[0].get("nodes", []),
-                "relationships": res[0].get("relationships", [])
+                "relationships": res[0].get("relationships", []),
+                "node_count": res[0].get("node_count", len(res[0].get("nodes", []))),
+                "relationship_count": res[0].get("relationship_count", len(res[0].get("relationships", []))),
+                "returned_path_count": res[0].get("returned_path_count", 0),
+                "path_limit_reached": res[0].get("path_limit_reached", False),
+                "scope_is_complete": res[0].get("scope_is_complete", True),
             }
         
-        return {"nodes": [], "relationships": []}
+        return {"nodes": [], "relationships": [], "node_count": 0, "relationship_count": 0,
+                "returned_path_count": 0, "path_limit_reached": False, "scope_is_complete": True}
 
     def subgraph_extract_by_nodes(
         self,
@@ -1786,7 +1808,7 @@ class Neo4jGraphClient:
         WITH allNodes, collect(DISTINCT r) AS allRels
         
         RETURN allNodes AS nodes,
-               allRels AS relationships,
+               {self._relationship_projection('allRels')} AS relationships,
                size(allNodes) AS node_count,
                size(allRels) AS relationship_count
         """
@@ -1938,7 +1960,7 @@ class Neo4jGraphClient:
              collect(DISTINCT r) AS allRels
         {limit_clause}
         RETURN allNodes AS nodes,
-               allRels AS relationships,
+               {self._relationship_projection('allRels')} AS relationships,
                size(allNodes) AS node_count,
                size(allRels) AS relationship_count
         """

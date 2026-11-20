@@ -380,8 +380,13 @@ class ComputingEngine:
             "neighbor_query": "Use label/key/value to anchor the requested entity. One-hop property projections use start.node_property, nbr.node_property, rel.relationship_property. Money and timestamps belong to rel when the schema says so.",
             "relationship_filter": "Filters relationship properties only. rel_conditions is an object property->value or property->[operator,value], not a list. Endpoint projections use from.node_property/to.node_property; relationship projections use rel.property. To filter by a named endpoint use neighbor_query instead, not unsupported start_conditions/end_conditions.",
             "path_query": "Use label/key/v1/v2; equal endpoints find closed paths. Return fields may be nodes, relationships, hops, totalAmount, maxAmount, minAmount, avgAmount. Computed amount projections require amount_field set to an actual relationship property. Each relationship preserves id/source/target/properties. Bound max_hops and limit; chronological constraints may be given in where.",
+            "subgraph": "Returns one graph wrapper with complete stored node/relationship counts and path-limit metadata. A hop neighborhood is candidate scope, not community detection. Use limit_paths for a center-based query; limit is only for relationship-filter mode.",
+            "subgraph_by_nodes": "Returns the induced graph on the supplied node values. Bind values from the full upstream artifact using consumed with alias=values and use_as=parameter; declare values:[] as the target slot. Do not manually copy preview IDs. This tool has no limit/order parameters.",
         }
         for tool in tools:
+            if tool["id"] in {"subgraph", "subgraph_by_nodes"}:
+                tool["optional_parameters"] = [name for name in tool["optional_parameters"]
+                                               if name not in {"order_by", "order_direction"} and (name != "limit" or tool["id"] == "subgraph")]
             tool["note"] += " " + notes.get(tool["id"], "")
             tool["parameter_enums"] = {"order_direction": ["ASC", "DESC"]}
             if "direction" in tool["optional_parameters"]:

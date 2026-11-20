@@ -42,6 +42,23 @@ Rules:
    return_fields contains property references, not AS aliases or aggregate expressions.
 4. Use numeric_analysis for calculations on COMPLETE artifacts. Previews are not complete inputs.
    A consumed reference without field selects the complete artifact. Give colliding inputs unique aliases.
+   Registered algorithm results may contain original_result plus task-specific extracted fields.
+   Prefer those exact fields when they already answer the objective. Refer to field=original_result
+   when another computation needs the full raw algorithm result; do not rank wrapper field names.
+   If extraction failed but original_result was retained, repair the extraction from that artifact
+   instead of repeating a successful graph algorithm just to fix processing code.
+   nested_collection_sizes records exact stored sizes at paths such as results[0].nodes;
+   preview_collection_sizes records only the visible part. A result_total_items of one may be a
+   wrapper containing many nodes or edges. Never copy preview IDs as an exhaustive group. Consume
+   the complete upstream artifact and extract membership in code, or bind the whole source to a
+   graph-query parameter using consumed with alias equal to that parameter name.
+   A hop neighborhood is a candidate scope. For tightly connected groups or communities, run an
+   implemented community/clustering algorithm and select the group containing the requested entity.
+   Define the graph scope, direction and weight assumptions. A neighborhood alone does not establish
+   community cohesion. State explicitly if only a proximity-based proxy can be computed.
+   Define activity by the requested metric and scope (for example group-internal incident transaction
+   count). Compute all group members, preserve parallel original transactions, and actually sort by
+   the declared metric. Do not silently switch from group-internal counts to all-network counts.
 5. numeric_analysis also has global_graph: vertices have vid/properties and edges have src/dst/rank/properties.
    It is GraphData, not a NetworkX graph. Construct a directed graph if needed; preserve parallel transactions.
    Scalar calculation arguments may be supplied in parameters. Use objective for the exact computation.
@@ -89,6 +106,12 @@ for collection size. Complete data remains available in the artifact. Do not inf
 from a preview's length. result_field_count counts dictionary fields, NOT records. collection_sizes
 describes specific collections. A preview shorter than count is expected, not inconsistent data.
 Use the user's language for the summary and evidence.
+Read nested_collection_sizes and preview_collection_sizes. A single result object can contain many
+nodes while only a few are visible. Report the full stored count, never the preview length as
+group size. A neighborhood is candidate data until group selection criteria are computed.
+Task-specific fields are computed by post-processing the full algorithm result. Use these for extrema,
+rankings and aggregates; their presence is independent of a truncated preview of original_result.
+If postprocessing reports failure, retain that error even when the underlying algorithm succeeded.
 An empty explicit flagged-node list does not contradict has_node_flag=true when node_flag_field
 is configured: property-based flags and explicitly designated IDs are independent criteria.
 Respect evidence_scope inherited from inputs. Example-derived groups and ranges are still sample-only,
@@ -105,6 +128,11 @@ An explicitly requested implemented algorithm, community partition, centrality m
 result needs matching execution evidence. Attribute totals or a temporal-flow ranking cannot substitute
 for a different graph metric. Do not require extra algorithms when the requested outputs already exist.
 List missing outputs so the controller can continue repairing the run.
+Check membership lineage: a group copied from visible IDs does not cover a larger upstream node
+collection. Require a complete-data extraction or an explicitly justified selection rule. For a
+tightly connected group request, check actual community/cohesion evidence, not just a hop radius.
+Activity rankings must cover the computed group, retain the declared counting scope and be ordered
+by the requested metric. Correcting report wording cannot repair a wrong computed ranking.
 Check scope and accounting: origin outflow is not the sum of every leg of every overlapping path.
 Property-based screening flags do not require a nonempty explicit flagged-node list.
 Every result must concern the entity requested by the user. Results for a different entity that
@@ -140,6 +168,9 @@ Identify representative paths explicitly as examples and use original tool scope
 for population conclusions. Do not copy unsupported structural labels or whole-population value ranges
 from observations. If report_correction is supplied, fix every identified issue before returning the report.
 collection_sizes gives full artifact collection lengths; preview_is_truncated describes display only.
+nested_collection_sizes includes collections inside wrappers; preview_collection_sizes describes
+their visible subset. Use these counts when checking membership and scope. Copying visible node IDs
+does not establish the complete membership of a larger stored collection.
 Answer the requested outputs with a few representative examples when sufficient. Avoid reproducing
 intermediate tables or lookup history; an exhaustive list is needed only when the user asks for one.
 If the controller outcome is incomplete or failed, begin by stating that the analysis is incomplete.
@@ -157,5 +188,48 @@ the population. Check structural labels against the actual node sequence, especi
 the center. Do not require listing every path if full-scope statistics and representative examples suffice.
 Do not flag display truncation as missing computation. List only concrete errors supported by artifacts;
 collection_sizes describes full collection lengths even when sample previews are shorter.
+Check nested_collection_sizes as well as root sizes. Reject reports whose complete-group claim comes
+from preview IDs without an executed selection rule. A hop-neighborhood query alone is not community
+discovery. Group membership and activity scope must remain consistent through downstream filtering.
 do not invent additional business requirements. valid=true requires no unresolved factual/scope errors.
+"""
+
+ALGORITHM_POSTPROCESSING_INSTRUCTIONS = """You are YiGraph's binder for algorithm result extraction.
+Generate only the processing needed to turn the actual algorithm output into fields useful for the
+current objective and the user's goal. Return only a JSON object:
+{
+  "required": true,
+  "description": "What is derived and from which scope",
+  "code": "def process(data):\\n    ...",
+  "output_schema": {
+    "type": "dict",
+    "fields": {"derived_field": {"type": "dict", "field_description": "Meaning and scope"}}
+  }
+}
+Rules:
+- The tool already ran. Keep its selected algorithm and parameters unchanged.
+- The displayed result is a structure preview, not the full input. At execution, process(data) receives
+  the complete actual algorithm result. Never hardcode IDs, scores or values from the preview.
+- Derive only facts supported by this algorithm's result. For a node-score mapping and a requested
+  highest/lowest node, compute the extremum over all entries and return a small explicit node/score
+  record. For requested rankings, counts, statistics or a community containing a supplied node, compute
+  the corresponding fields from the full input. Name and describe each derived field explicitly.
+- Do not call another graph algorithm, query a database, remove graph nodes or reconstruct temporal
+  paths here. Those are separate ReAct actions. Do not invent uncomputed downstream results.
+- The function must be process(data), return a JSON-compatible dictionary and declare its derived
+  fields in output_schema.fields. The framework retains unmodified raw output as original_result;
+  you may omit original_result in your return value. Do not replace the original data with a sample.
+- NetworkX sets and tuples arrive as lists. An iterator limit can produce an items/truncated/
+  count_is_exact wrapper. Results derived from partial inputs remain partial; never label them exact
+  population counts or global extrema. Preserve relevant scope and truncation flags.
+- A serialized graph with type=graph is restored to a NetworkX graph by the code executor before
+  process(data). global_graph is also available for property lookup using the supplied actual schema.
+  Use it only for property enrichment requested by this objective, not for another graph computation.
+- Scope follows the working graph and algorithm parameters; a consumed subgraph is not the full
+  dataset. An influence score, transaction amount and risk label are distinct concepts.
+- An empty input must produce an explicit empty/no-match result, not a fabricated node or score.
+- If the result already directly answers the objective and no extraction is useful, return
+  {"required": false, "description": "Why raw output suffices", "code": null, "output_schema": {}}.
+- If an earlier extraction failed, use the actual error to fix the code. Do not claim success without
+  executable processing. Return code and schema, never calculated answers guessed from the preview.
 """
