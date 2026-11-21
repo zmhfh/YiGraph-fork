@@ -406,7 +406,6 @@ Clustering & Community 算子集覆盖两大类能力：
 | 社区发现-异步标签传播 | `asyn_lpa_communities` | 异步更新标签传播（可控权重与随机种子） |
 | 社区发现-k clique | `k_clique_communities` | 基于 k 团渗透的可重叠社区发现 |
 | 社区发现-Louvain | `louvain_communities` | 多层模块度优化，适合大图快速社区划分 |
-| 社区发现-Leiden | `leiden_communities` | Louvain 改进版，更稳定且保证社区内部连通性 |
 | 环结构-简单环枚举 | `simple_cycles` | 列举图中的所有简单环（可设置长度上限） |
 | 环结构-环基 | `cycle_basis` | 无向图的基础环集合（cycle space basis） |
 | 方案质量-模块度 | `modularity` | 对给定划分计算 modularity(Q) |
@@ -602,20 +601,6 @@ Clustering & Community 算子集覆盖两大类能力：
 
 ---
 
-### 12) leiden_communities —— Leiden 社区
-
-**功能说明**  
-Louvain 的改进版本，通常更稳定，且强调社区内部连通性（避免“看起来一组但内部断裂”的坏社区）。
-
-**关键参数**
-- `weight` / `resolution`
-- `max_level` / `seed`
-
-**特点**
-- 质量更稳，适合对社区结构有严谨性要求的场景
-
----
-
 ## 4.3 环结构与循环检测
 
 ### 13) simple_cycles —— 简单环枚举
@@ -687,7 +672,7 @@ Louvain 的改进版本，通常更稳定，且强调社区内部连通性（避
 
 - **想先衡量网络是否“抱团”**：`average_clustering` + `transitivity`
 - **想找局部紧密核心点/团伙特征**：`clustering` + `triangles`（必要时 `square_clustering`）
-- **想快速得到社区（大图优先）**：`louvain_communities` 或 `leiden_communities`
+- **想快速得到社区（大图优先）**：`louvain_communities`
 - **想要更解释性的分层拆分（小图）**：`girvan_newman`
 - **想极快粗分群（超大图）**：`label_propagation_communities` / `asyn_lpa_communities`
 - **想找可重叠、极紧密的小圈子**：`k_clique_communities`

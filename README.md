@@ -86,7 +86,7 @@ YiGraph will not indiscriminately build all raw data into one large graph. It wi
 
 ### 4. Rich Graph Algorithm Library
 
-Built-in **200+ graph algorithms** covering 21 major categories, providing professional algorithm support for various graph analysis scenarios. The table below lists only a subset of representative categories; see the online documentation for the complete list.
+The current executable catalog contains **226 graph algorithms and analysis tasks** across 22 categories, providing professional algorithm support for various graph analysis scenarios. The table below lists only a subset of representative categories; see the online documentation for the complete list.
 
 | Algorithm Category | Number of Algorithms | Typical Algorithms | Application Scenarios |
 |---------|---------|---------|---------|

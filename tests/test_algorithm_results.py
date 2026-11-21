@@ -39,3 +39,12 @@ def test_actual_pagerank_weight_contract_preserves_the_requested_edge_attribute(
     graph = nx.DiGraph()
     graph.add_weighted_edges_from([("a", "b", 1), ("b", "a", 10), ("b", "c", 1)], weight="strength")
     assert nx.pagerank(graph, **arguments) != nx.pagerank(graph, weight=None)
+
+
+def test_real_label_propagation_values_view_preserves_the_complete_partition():
+    graph = nx.karate_club_graph()
+    partition = nx.community.label_propagation_communities(graph)
+    result = json.loads(json.dumps(registry._serialize_result(partition)))
+    assert isinstance(result, list)
+    assert nx.community.is_partition(graph, result)
+    assert {frozenset(group) for group in result} == {frozenset(group) for group in partition}

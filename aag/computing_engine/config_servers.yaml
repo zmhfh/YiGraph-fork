@@ -3,6 +3,246 @@ servers:
     command: "python"
     args: ["-m", "aag.computing_engine.networkx_server.mcp_server"]
 
+    # Restored from the original knowledge catalog; each entry has a real local implementation.
+    get_node_attributes:
+      - tool: get_node_attributes
+    k_hop_neighbors:
+      - tool: k_hop_neighbors
+    common_neighbors:
+      - tool: common_neighbors
+    extract_subgraph:
+      - tool: extract_subgraph
+    get_paths_between_two_nodes:
+      - tool: get_paths_between_two_nodes
+    common_neighbor_centrality:
+      - tool: common_neighbor_centrality
+    communicability:
+      - tool: communicability
+    k_truss:
+      - tool: k_truss
+    immediate_dominators:
+      - tool: immediate_dominators
+    quotient_graph:
+      - tool: quotient_graph
+    second_order_centrality:
+      - tool: second_order_centrality
+    is_isomorphic:
+      - tool: is_isomorphic
+    laplacian_centrality:
+      - tool: laplacian_centrality
+    astar_path:
+      - tool: astar_path
+    maximal_independent_set:
+      - tool: maximal_independent_set
+    lowest_common_ancestor:
+      - tool: lowest_common_ancestor
+    percolation_centrality:
+      - tool: percolation_centrality
+    all_simple_paths:
+      - tool: all_simple_paths
+    shortest_simple_paths:
+      - tool: shortest_simple_paths
+    simrank_similarity:
+      - tool: simrank_similarity
+    graph_edit_distance:
+      - tool: graph_edit_distance
+    node_boundary:
+      - tool: node_boundary
+    edge_expansion:
+      - tool: edge_expansion
+    minimum_cycle_basis:
+      - tool: minimum_cycle_basis
+    hamiltonian_path:
+      - tool: hamiltonian_path
+    current_flow_betweenness_centrality:
+      - tool: current_flow_betweenness_centrality
+    is_d_separator:
+      - tool: is_d_separator
+    check_planarity:
+      - tool: check_planarity
+    average_neighbor_degree:
+      - tool: average_neighbor_degree
+    average_degree_connectivity:
+      - tool: average_degree_connectivity
+    naive_greedy_modularity_communities:
+      - tool: naive_greedy_modularity_communities
+    biconnected_component_edges:
+      - tool: biconnected_component_edges
+    condensation:
+      - tool: condensation
+    efficiency:
+      - tool: efficiency
+    full_join:
+      - tool: full_join
+    is_tournament:
+      - tool: is_tournament
+    score_sequence:
+      - tool: score_sequence
+    node_redundancy:
+      - tool: node_redundancy
+    closeness_vitality:
+      - tool: closeness_vitality
+    bridges:
+      - tool: bridges
+    maximum_flow:
+      - tool: maximum_flow
+    local_bridges:
+      - tool: local_bridges
+    trophic_levels:
+      - tool: trophic_levels
+    non_randomness:
+      - tool: non_randomness
+    goldberg_radzik:
+      - tool: goldberg_radzik
+    panther_similarity:
+      - tool: panther_similarity
+    random_reference:
+      - tool: random_reference
+    spanner:
+      - tool: spanner
+    triadic_census:
+      - tool: triadic_census
+    rich_club_coefficient:
+      - tool: rich_club_coefficient
+    dispersion:
+      - tool: dispersion
+    reciprocity:
+      - tool: reciprocity
+    resistance_distance:
+      - tool: resistance_distance
+    weisfeiler_lehman_graph_hash:
+      - tool: weisfeiler_lehman_graph_hash
+    antichains:
+      - tool: antichains
+    asyn_fluidc:
+      - tool: asyn_fluidc
+    barycenter:
+      - tool: barycenter
+    birank:
+      - tool: birank
+    colliders:
+      - tool: colliders
+    dominating_set:
+      - tool: dominating_set
+    estrada_index:
+      - tool: estrada_index
+    girth:
+      - tool: girth
+    harmonic_diameter:
+      - tool: harmonic_diameter
+    is_aperiodic:
+      - tool: is_aperiodic
+    is_bipartite:
+      - tool: is_bipartite
+    kemeny_constant:
+      - tool: kemeny_constant
+    kernighan_lin_bisection:
+      - tool: kernighan_lin_bisection
+    onion_layers:
+      - tool: onion_layers
+    v_structures:
+      - tool: v_structures
+    subgraph_is_monomorphic:
+      - tool: subgraph_is_monomorphic
+    dominance_frontiers:
+      - tool: dominance_frontiers
+    flow_hierarchy:
+      - tool: flow_hierarchy
+    voronoi_cells:
+      - tool: voronoi_cells
+    minimum_weight_full_matching:
+      - tool: minimum_weight_full_matching
+    tutte_polynomial:
+      - tool: tutte_polynomial
+    chromatic_polynomial:
+      - tool: chromatic_polynomial
+    treewidth_min_fill_in:
+      - tool: treewidth_min_fill_in
+    treewidth_min_degree:
+      - tool: treewidth_min_degree
+    equitable_color:
+      - tool: equitable_color
+    eppstein_matching:
+      - tool: eppstein_matching
+    is_at_free:
+      - tool: is_at_free
+    complete_to_chordal_graph:
+      - tool: complete_to_chordal_graph
+    chordal_graph_treewidth:
+      - tool: chordal_graph_treewidth
+    tree_isomorphism:
+      - tool: tree_isomorphism
+    tree_broadcast_center:
+      - tool: tree_broadcast_center
+    all_pairs_shortest_path:
+      - tool: all_pairs_shortest_path
+    all_pairs_shortest_path_length:
+      - tool: all_pairs_shortest_path_length
+    all_pairs_dijkstra_path:
+      - tool: all_pairs_dijkstra_path
+    all_pairs_dijkstra_path_length:
+      - tool: all_pairs_dijkstra_path_length
+    all_pairs_bellman_ford_path:
+      - tool: all_pairs_bellman_ford_path
+    all_pairs_bellman_ford_path_length:
+      - tool: all_pairs_bellman_ford_path_length
+    single_source_shortest_path:
+      - tool: single_source_shortest_path
+    single_source_shortest_path_length:
+      - tool: single_source_shortest_path_length
+    single_source_dijkstra_path:
+      - tool: single_source_dijkstra_path
+    single_source_dijkstra_path_length:
+      - tool: single_source_dijkstra_path_length
+    bellman_ford_path_length:
+      - tool: bellman_ford_path_length
+    bidirectional_shortest_path:
+      - tool: bidirectional_shortest_path
+    bidirectional_dijkstra:
+      - tool: bidirectional_dijkstra
+    number_strongly_connected_components:
+      - tool: number_strongly_connected_components
+    number_weakly_connected_components:
+      - tool: number_weakly_connected_components
+    biconnected_components:
+      - tool: biconnected_components
+    is_biconnected:
+      - tool: is_biconnected
+    node_connected_component:
+      - tool: node_connected_component
+    has_eulerian_path:
+      - tool: has_eulerian_path
+    is_semiconnected:
+      - tool: is_semiconnected
+    is_arborescence:
+      - tool: is_arborescence
+    is_branching:
+      - tool: is_branching
+    k_shell:
+      - tool: k_shell
+    k_crust:
+      - tool: k_crust
+    fast_label_propagation_communities:
+      - tool: fast_label_propagation_communities
+    global_efficiency:
+      - tool: global_efficiency
+    local_efficiency:
+      - tool: local_efficiency
+    topological_generations:
+      - tool: topological_generations
+    transitive_closure_dag:
+      - tool: transitive_closure_dag
+    transitive_reduction:
+      - tool: transitive_reduction
+    louvain_partitions:
+      - tool: louvain_partitions
+    enumerate_all_cliques:
+      - tool: enumerate_all_cliques
+    is_maximal_matching:
+      - tool: is_maximal_matching
+    is_perfect_matching:
+      - tool: is_perfect_matching
+
   pyg:
       command: "python"
       args: ["-m", "aag.computing_engine.pyg.mcp_server"]
@@ -199,9 +439,6 @@ engine_supported_algorithms:
     louvain_communities:
       - tool: louvain_communities
 
-    leiden_communities:
-      - tool: leiden_communities
-
     simple_cycles:
       - tool: simple_cycles
 
@@ -318,6 +555,246 @@ engine_supported_algorithms:
     
     find_cycle:
       - tool: find_cycle
+
+    # Restored from the original knowledge catalog; each entry has a real local implementation.
+    get_node_attributes:
+      - tool: get_node_attributes
+    k_hop_neighbors:
+      - tool: k_hop_neighbors
+    common_neighbors:
+      - tool: common_neighbors
+    extract_subgraph:
+      - tool: extract_subgraph
+    get_paths_between_two_nodes:
+      - tool: get_paths_between_two_nodes
+    common_neighbor_centrality:
+      - tool: common_neighbor_centrality
+    communicability:
+      - tool: communicability
+    k_truss:
+      - tool: k_truss
+    immediate_dominators:
+      - tool: immediate_dominators
+    quotient_graph:
+      - tool: quotient_graph
+    second_order_centrality:
+      - tool: second_order_centrality
+    is_isomorphic:
+      - tool: is_isomorphic
+    laplacian_centrality:
+      - tool: laplacian_centrality
+    astar_path:
+      - tool: astar_path
+    maximal_independent_set:
+      - tool: maximal_independent_set
+    lowest_common_ancestor:
+      - tool: lowest_common_ancestor
+    percolation_centrality:
+      - tool: percolation_centrality
+    all_simple_paths:
+      - tool: all_simple_paths
+    shortest_simple_paths:
+      - tool: shortest_simple_paths
+    simrank_similarity:
+      - tool: simrank_similarity
+    graph_edit_distance:
+      - tool: graph_edit_distance
+    node_boundary:
+      - tool: node_boundary
+    edge_expansion:
+      - tool: edge_expansion
+    minimum_cycle_basis:
+      - tool: minimum_cycle_basis
+    hamiltonian_path:
+      - tool: hamiltonian_path
+    current_flow_betweenness_centrality:
+      - tool: current_flow_betweenness_centrality
+    is_d_separator:
+      - tool: is_d_separator
+    check_planarity:
+      - tool: check_planarity
+    average_neighbor_degree:
+      - tool: average_neighbor_degree
+    average_degree_connectivity:
+      - tool: average_degree_connectivity
+    naive_greedy_modularity_communities:
+      - tool: naive_greedy_modularity_communities
+    biconnected_component_edges:
+      - tool: biconnected_component_edges
+    condensation:
+      - tool: condensation
+    efficiency:
+      - tool: efficiency
+    full_join:
+      - tool: full_join
+    is_tournament:
+      - tool: is_tournament
+    score_sequence:
+      - tool: score_sequence
+    node_redundancy:
+      - tool: node_redundancy
+    closeness_vitality:
+      - tool: closeness_vitality
+    bridges:
+      - tool: bridges
+    maximum_flow:
+      - tool: maximum_flow
+    local_bridges:
+      - tool: local_bridges
+    trophic_levels:
+      - tool: trophic_levels
+    non_randomness:
+      - tool: non_randomness
+    goldberg_radzik:
+      - tool: goldberg_radzik
+    panther_similarity:
+      - tool: panther_similarity
+    random_reference:
+      - tool: random_reference
+    spanner:
+      - tool: spanner
+    triadic_census:
+      - tool: triadic_census
+    rich_club_coefficient:
+      - tool: rich_club_coefficient
+    dispersion:
+      - tool: dispersion
+    reciprocity:
+      - tool: reciprocity
+    resistance_distance:
+      - tool: resistance_distance
+    weisfeiler_lehman_graph_hash:
+      - tool: weisfeiler_lehman_graph_hash
+    antichains:
+      - tool: antichains
+    asyn_fluidc:
+      - tool: asyn_fluidc
+    barycenter:
+      - tool: barycenter
+    birank:
+      - tool: birank
+    colliders:
+      - tool: colliders
+    dominating_set:
+      - tool: dominating_set
+    estrada_index:
+      - tool: estrada_index
+    girth:
+      - tool: girth
+    harmonic_diameter:
+      - tool: harmonic_diameter
+    is_aperiodic:
+      - tool: is_aperiodic
+    is_bipartite:
+      - tool: is_bipartite
+    kemeny_constant:
+      - tool: kemeny_constant
+    kernighan_lin_bisection:
+      - tool: kernighan_lin_bisection
+    onion_layers:
+      - tool: onion_layers
+    v_structures:
+      - tool: v_structures
+    subgraph_is_monomorphic:
+      - tool: subgraph_is_monomorphic
+    dominance_frontiers:
+      - tool: dominance_frontiers
+    flow_hierarchy:
+      - tool: flow_hierarchy
+    voronoi_cells:
+      - tool: voronoi_cells
+    minimum_weight_full_matching:
+      - tool: minimum_weight_full_matching
+    tutte_polynomial:
+      - tool: tutte_polynomial
+    chromatic_polynomial:
+      - tool: chromatic_polynomial
+    treewidth_min_fill_in:
+      - tool: treewidth_min_fill_in
+    treewidth_min_degree:
+      - tool: treewidth_min_degree
+    equitable_color:
+      - tool: equitable_color
+    eppstein_matching:
+      - tool: eppstein_matching
+    is_at_free:
+      - tool: is_at_free
+    complete_to_chordal_graph:
+      - tool: complete_to_chordal_graph
+    chordal_graph_treewidth:
+      - tool: chordal_graph_treewidth
+    tree_isomorphism:
+      - tool: tree_isomorphism
+    tree_broadcast_center:
+      - tool: tree_broadcast_center
+    all_pairs_shortest_path:
+      - tool: all_pairs_shortest_path
+    all_pairs_shortest_path_length:
+      - tool: all_pairs_shortest_path_length
+    all_pairs_dijkstra_path:
+      - tool: all_pairs_dijkstra_path
+    all_pairs_dijkstra_path_length:
+      - tool: all_pairs_dijkstra_path_length
+    all_pairs_bellman_ford_path:
+      - tool: all_pairs_bellman_ford_path
+    all_pairs_bellman_ford_path_length:
+      - tool: all_pairs_bellman_ford_path_length
+    single_source_shortest_path:
+      - tool: single_source_shortest_path
+    single_source_shortest_path_length:
+      - tool: single_source_shortest_path_length
+    single_source_dijkstra_path:
+      - tool: single_source_dijkstra_path
+    single_source_dijkstra_path_length:
+      - tool: single_source_dijkstra_path_length
+    bellman_ford_path_length:
+      - tool: bellman_ford_path_length
+    bidirectional_shortest_path:
+      - tool: bidirectional_shortest_path
+    bidirectional_dijkstra:
+      - tool: bidirectional_dijkstra
+    number_strongly_connected_components:
+      - tool: number_strongly_connected_components
+    number_weakly_connected_components:
+      - tool: number_weakly_connected_components
+    biconnected_components:
+      - tool: biconnected_components
+    is_biconnected:
+      - tool: is_biconnected
+    node_connected_component:
+      - tool: node_connected_component
+    has_eulerian_path:
+      - tool: has_eulerian_path
+    is_semiconnected:
+      - tool: is_semiconnected
+    is_arborescence:
+      - tool: is_arborescence
+    is_branching:
+      - tool: is_branching
+    k_shell:
+      - tool: k_shell
+    k_crust:
+      - tool: k_crust
+    fast_label_propagation_communities:
+      - tool: fast_label_propagation_communities
+    global_efficiency:
+      - tool: global_efficiency
+    local_efficiency:
+      - tool: local_efficiency
+    topological_generations:
+      - tool: topological_generations
+    transitive_closure_dag:
+      - tool: transitive_closure_dag
+    transitive_reduction:
+      - tool: transitive_reduction
+    louvain_partitions:
+      - tool: louvain_partitions
+    enumerate_all_cliques:
+      - tool: enumerate_all_cliques
+    is_maximal_matching:
+      - tool: is_maximal_matching
+    is_perfect_matching:
+      - tool: is_perfect_matching
 
   pyg:
     initialize_graph_pyg:

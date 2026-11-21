@@ -1239,72 +1239,6 @@
     eventually form.
   - Without complex optimization objectives, partition the network into different groups based solely on the voting results
     of local neighbors.
-- id: leiden_communities
-  task_type_id: Clustering & Community
-  Deployment_method:
-    support_engine: networkx
-    input_schema:
-      parameters:
-        G:
-          type: NetworkX graph
-          description: Parameter 'G' for leiden_communities
-          required: true
-        weight:
-          type: string or None, optional (default="weight")
-          description: The name of an edge attribute that holds the numerical value used as a weight. If None then each edge
-            has weight 1.
-          default: weight
-        resolution:
-          type: float, optional (default=1)
-          description: If resolution is less than 1, the algorithm favors larger communities. Greater than 1 favors smaller
-            communities.
-          default: 1
-        max_level:
-          type: int or None, optional (default=None)
-          description: The maximum number of levels (steps of the algorithm) to compute. Must be a positive integer or None.
-            If None, then there is no max level and the algorithm will run until converged.
-          default: null
-        seed:
-          type: integer, random_state, or None (default)
-          description: Indicator of random number generation state. See :ref:`Randomness<randomness>`.
-          default: null
-    output_schema:
-      type: any
-      description: list A list of disjoint sets (partition of `G`). Each set represents one community. All communities together
-        contain all the nodes in `G`.
-    graph_type:
-      directed: false
-      multigraph: false
-      weighted: true
-      heterogeneous: false
-  Application_scenario: The leiden_communities algorithm is commonly applied in social networks, biological networks, and
-    information networks to uncover community structures. It is particularly useful for detecting clusters of closely connected
-    nodes, such as user groups in social media or functional modules in biological networks. For example, in a social network,
-    this algorithm can help to identify communities of users who interact frequently with one another.
-  Tuning_Mechanisms:
-    weight: Adjusting the weight parameter allows users to specify a particular edge attribute for edge weights. By doing
-      so, communities may reflect more meaningful relationships depending on the weights assigned, thus affecting the resulting
-      community structure.
-    resolution: Changing the resolution parameter alters the size of the communities detected. A resolution less than 1 tends
-      to produce larger communities, while a resolution greater than 1 results in smaller, more granular communities, allowing
-      for tailored detection of community structures based on specific needs.
-  Principles:
-    description: The leiden_communities algorithm operates on both directed and undirected graphs, using a multi-level optimization
-      approach to partition the graph into communities based on edge weights. It maximizes modularity, promoting the formation
-      of dense connections within communities while minimizing connections between them. The algorithm requires a graph as
-      input and can run until convergence or a specified maximum number of levels is reached, with complexity influenced by
-      the resolution parameter.
-    time_complexity: O(V log V) (Empirical)
-  solvable_questions:
-  - Use the Leiden algorithm to detect communities and output the partition results.
-  - Run the Leiden algorithm to guarantee community connectivity and return the community list.
-  - Partition communities more finely than Louvain and provide results using the Leiden method.
-  - Please find a set of higher-quality community structures that guarantee each group is internally connected.
-  - In biological network analysis, identify functional modules that are structurally tight and have no internal breaks.
-  - Use a method faster and more stable than Louvain to partition the network into high-quality clusters.
-  - Avoid creating "bad communities" that are grouped together but actually disconnected; please find structurally rigorous
-    subgroups.
-  - Perform refined slicing on this large-scale network to ensure that every partitioned community is topologically reasonable.
 - id: louvain_communities
   task_type_id: Clustering & Community
   Deployment_method:
@@ -5553,6 +5487,27 @@
   - In the supply chain association and traceability graph, from a full-chain perspective, what is the overall reachability
     distance level between nodes?
 - id: get_node_attributes
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for get_node_attributes
+          type: NetworkX Graph
+        name:
+          description: Attribute name
+          type: string
+        default:
+          description: Default value of the node attribute if there is no value set for that node in graph. If `None`
+            then nodes without this attribute are not included in the returned dict.
+          type: object (default=None)
+          default: null
+      required:
+      - name
+    output_schema:
+      type: any
+      description: Dictionary of attributes keyed by node.
   task_type_id: Graph Query
   Application_scenario: This algorithm is fundamental for retrieving detailed profile information in knowledge graphs, social
     networks, or product catalogs. For example, in a Customer 360 view, it is used to fetch specific user details (age, location,
@@ -5572,6 +5527,26 @@
   - (Transaction Transfer) Retrieve the detailed amount and timestamp of the transaction with serial number "TX_20240101".
   - (Web Links) What is the page information corresponding to this webpage URL in the system?
 - id: k_hop_neighbors
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for k_hop_neighbors
+          type: graph
+        source:
+          description: Canonical starting node ID. Directed graphs follow outgoing edges.
+          type: node
+        k:
+          description: Nonnegative maximum hop count, default 2.
+          type: int
+          default: 2
+      required:
+      - source
+    output_schema:
+      type: any
+      description: list All reachable node IDs within the declared hop bound, excluding source.
   task_type_id: Graph Query
   Application_scenario: K-hop neighbor queries are widely used in recommendation systems, risk analysis, and impact assessment.
     For instance, in social networks, querying 2-hop neighbors helps suggest "Friends of Friends"; in supply chain management,
@@ -5593,6 +5568,24 @@
   - (Transaction Transfer) Which accounts have transferred money to account "Brewer Debra"? List the 3 most recent payers.
   - (Paper Network) Which papers cite "Attention is All You Need"? Please provide a list of the citing papers.
 - id: common_neighbors
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: 'A NetworkX undirected graph. u, v : nodes Nodes in the graph.'
+          type: graph
+        u:
+          description: Parameter 'u' for common_neighbors
+        v:
+          description: Parameter 'v' for common_neighbors
+      required:
+      - u
+      - v
+    output_schema:
+      type: set
+      description: Set of common neighbors of u and v in the graph.
   task_type_id: Graph Query
   Application_scenario: Finding common neighbors is a key heuristic for Link Prediction and similarity analysis. In social
     media, if two users share many mutual friends, the system recommends they connect; in fraud detection, identifying that
@@ -5615,6 +5608,22 @@
   - (Transaction Transfer) From which sources did both suspicious account X and suspicious account Y receive funds? Identify
     their common remittance sources.
 - id: extract_subgraph
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for extract_subgraph
+          type: graph
+        nodes:
+          description: Complete node selection; unknown IDs are rejected.
+          type: list
+      required:
+      - nodes
+    output_schema:
+      type: any
+      description: graph Induced subgraph retaining direction, attributes and parallel edges.
   task_type_id: Graph Query
   Application_scenario: Subgraph extraction is essential for focused analysis, visualization, and machine learning training
     (GNNs). Scenarios include extracting a specific community for visual inspection, isolating a transaction ring suspected
@@ -5639,6 +5648,30 @@
   - (Social Network) Export the local network topology centered around a "certain influential user," including their followers
     and the relationships among these followers.
 - id: get_paths_between_two_nodes
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for get_paths_between_two_nodes
+          type: graph
+        source:
+          description: Canonical starting node ID.
+          type: node
+        target:
+          description: Canonical ending node ID.
+          type: node
+        cutoff:
+          description: Maximum hops, default 4; must be between 1 and 16.
+          type: int
+          default: 4
+      required:
+      - source
+      - target
+    output_schema:
+      type: any
+      description: iterator Bounded simple node paths. Serialization marks incomplete enumeration.
   task_type_id: Graph Query
   Application_scenario: Path queries are critical for tracing relationships, logistics, and root cause analysis. In a knowledge
     graph, it answers "How is Person A related to Company B?"; in navigation apps, it finds routes between locations; in network
@@ -6782,41 +6815,6 @@
     - In the infrastructure graph, which nodes are the most critical bridges under resistance-weighted flow?
     - Compare shortest-path betweenness centrality and current-flow betweenness centrality for the same graph.
   url: https://doi.org/10.1007/978-3-540-31856-9_44
-
-- id: spectral_modularity_bipartition
-  task_type_id: Clustering & Community
-  Deployment_method:
-    support_engine: networkx
-    input_schema:
-      parameters:
-        G:
-          type: graph
-          description: A NetworkX graph.
-          required: true
-    output_schema:
-      type: tuple of sets
-      description: A pair of sets of nodes representing a bipartition of the graph.
-    graph_type:
-      directed: false
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: The spectral_modularity_bipartition algorithm is used to split a graph into two communities based on the spectrum of the modularity matrix of the graph. It is suitable for graph bipartition tasks where one wants a spectral method for community separation rather than heuristic modularity optimization or label propagation.
-  Tuning_Mechanisms:
-    graph_structure: This function has no explicit tunable parameters in the documented interface. The resulting bipartition is determined by the structure of the input graph.
-  Principles:
-    description: The spectral_modularity_bipartition algorithm returns a bipartition of the nodes based on the spectrum of the modularity matrix of the graph.
-    time_complexity: The NetworkX reference page does not explicitly state the time complexity.
-  solvable_questions:
-    - Compute a spectral modularity bipartition for the current graph.
-    - Split the nodes of the graph into two communities using a spectral method.
-    - Return a bipartition of the graph based on the spectrum of the modularity matrix.
-    - In the current network, how can the nodes be divided into two communities by spectral modularity analysis?
-    - In the social graph, which two groups are identified by a spectral bipartition method?
-    - In the collaboration graph, compute a two-way community split using the modularity spectrum.
-    - In the interaction network, find a bipartition that reflects spectral community structure.
-    - Compare a spectral bipartition with modularity-based or label-propagation-based communities.
-  url: https://doi.org/10.1073/pnas.0601602103
 
 - id: is_d_separator
   task_type_id: Graph Query
@@ -9545,1358 +9543,6 @@
     - Analyze how tree topology affects fastest possible broadcast.
   url: https://networkx.org/documentation/stable/reference/algorithms/generated/networkx.algorithms.broadcasting.tree_broadcast_center.html
 
-- id: gcnconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: GCNConv is used for semi-supervised graph representation learning, node classification, and embedding generation on citation, social, transaction, and knowledge graphs where neighborhood smoothing is useful.
-  Tuning_Mechanisms:
-    out_channels: Controls the embedding capacity; larger values can capture richer structure but increase memory and overfitting risk.
-    epochs: More epochs can improve fitting quality but increase runtime.
-    lr: Higher learning rates train faster but may destabilize optimization.
-  Principles:
-    description: GCNConv applies graph convolution by aggregating normalized neighbor information and transforming node features into learned embeddings.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate node embeddings from the current graph using a GNN convolution layer.
-    - Run graph representation learning with optional node features.
-    - Compare embedding dimensions by changing out_channels.
-    - Train a message-passing layer and inspect final training loss.
-    - Produce node representations for downstream classification or clustering.
-    - Infer node embeddings without training when model parameters are initialized.
-
-- id: sageconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: SAGEConv is used for inductive graph representation learning when embeddings should generalize to unseen nodes or sampled neighborhoods.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding size and model capacity.
-    epochs: Controls how long the layer is optimized in train mode.
-    lr: Controls optimization step size.
-  Principles:
-    description: SAGEConv learns node embeddings by aggregating neighbor features and combining them with each node's own representation.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate inductive node embeddings for the current graph.
-    - Learn representations from local neighborhood features.
-    - Compare embeddings under different output dimensions.
-    - Train a GraphSAGE-style convolution and inspect loss.
-    - Prepare node vectors for downstream machine learning.
-    - Run inference with supplied node features.
-
-- id: gatconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: GATConv is used when neighbor importance should be learned through attention, such as social influence, citation relevance, or interaction strength modeling.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding size per attention configuration.
-    epochs: Controls training duration.
-    lr: Controls optimization step size.
-  Principles:
-    description: GATConv computes attention weights over neighboring nodes and aggregates features according to learned neighbor relevance.
-    time_complexity: O(E * F_out) per attention head, plus feature transformation cost
-  solvable_questions:
-    - Learn attention-based node embeddings for the current graph.
-    - Model which neighbors contribute most to node representations.
-    - Generate node features for downstream prediction tasks.
-    - Compare GAT embeddings with non-attention convolution results.
-    - Train a graph attention layer and inspect convergence.
-    - Run inference using existing node features.
-
-- id: gatv2conv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: GATv2Conv is used for attention-based representation learning when more expressive dynamic attention over graph neighborhoods is needed.
-  Tuning_Mechanisms:
-    out_channels: Controls learned embedding dimensionality.
-    epochs: Controls optimization length.
-    lr: Controls training stability and speed.
-  Principles:
-    description: GATv2Conv extends graph attention with a more expressive attention mechanism whose ranking can depend dynamically on source and target features.
-    time_complexity: O(E * F_out) per attention head, plus feature transformation cost
-  solvable_questions:
-    - Generate dynamic attention-based node embeddings.
-    - Compare GATv2 embeddings with standard GAT embeddings.
-    - Learn representations where neighbor relevance changes by target node.
-    - Train an expressive attention layer on the current graph.
-    - Use node features to infer graph-aware embeddings.
-    - Inspect training loss for attention-based graph learning.
-
-- id: transformerconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: TransformerConv is used for graph learning tasks that benefit from transformer-style attention over graph neighborhoods.
-  Tuning_Mechanisms:
-    out_channels: Controls the output representation width.
-    epochs: Controls training effort in train mode.
-    lr: Controls the optimizer step size.
-  Principles:
-    description: TransformerConv applies attention-based message passing inspired by transformer architectures while respecting graph connectivity.
-    time_complexity: O(E * F_out) per attention head, plus feature transformation cost
-  solvable_questions:
-    - Generate transformer-style node embeddings.
-    - Apply attention-based message passing to the current graph.
-    - Compare transformer graph embeddings with GCN-style embeddings.
-    - Train graph representations from optional node features.
-    - Produce node vectors for downstream prediction.
-    - Inspect training loss for graph transformer convolution.
-
-- id: resgatedgraphconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: ResGatedGraphConv is used for graph representation learning where gated residual message passing can stabilize or enrich neighborhood aggregation.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding capacity.
-    epochs: Controls optimization length.
-    lr: Controls training speed and stability.
-  Principles:
-    description: ResGatedGraphConv combines residual connections with gated message passing to regulate information flow from neighboring nodes.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Learn gated residual node embeddings.
-    - Generate graph-aware vectors for downstream tasks.
-    - Compare gated convolution against standard convolution.
-    - Train representations on sparse or noisy graph neighborhoods.
-    - Inspect training behavior through loss history.
-    - Run embedding inference with supplied node features.
-
-- id: gravnetconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: GravNetConv is used for graph learning with learned geometric neighborhoods, especially when latent spatial relationships are important.
-  Tuning_Mechanisms:
-    out_channels: Controls output embedding size.
-    epochs: Controls train-mode optimization effort.
-    lr: Controls optimization step size.
-  Principles:
-    description: GravNetConv projects nodes into a learned space and performs neighborhood aggregation based on learned geometric relationships.
-    time_complexity: Depends on neighbor search and message passing; commonly O(E * F_out) after neighborhood construction
-  solvable_questions:
-    - Learn embeddings from latent geometric graph structure.
-    - Generate node vectors using learned spatial neighborhoods.
-    - Compare geometric graph embeddings with topology-only embeddings.
-    - Train graph representations from optional node features.
-    - Inspect final loss after self-supervised training.
-    - Run inference to produce node embeddings.
-
-- id: supergatconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: SuperGATConv is used for attention-based graph learning with self-supervised attention signals, often to improve robustness of attention weights.
-  Tuning_Mechanisms:
-    out_channels: Controls learned embedding width.
-    epochs: Controls training duration.
-    lr: Controls optimizer step size.
-  Principles:
-    description: SuperGATConv augments graph attention with self-supervised attention learning to improve how neighbors are weighted.
-    time_complexity: O(E * F_out) per attention head, plus auxiliary attention computation
-  solvable_questions:
-    - Generate self-supervised attention-based embeddings.
-    - Improve neighbor weighting for graph representation learning.
-    - Compare SuperGAT embeddings with standard GAT embeddings.
-    - Train attention representations and inspect loss.
-    - Produce node vectors for classification or clustering.
-    - Run inference with optional node features.
-
-- id: egconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: EGConv is used for efficient graph convolution on larger graphs where expressive aggregation is needed with practical runtime.
-  Tuning_Mechanisms:
-    out_channels: Controls output representation size.
-    epochs: Controls training effort.
-    lr: Controls optimization behavior.
-  Principles:
-    description: EGConv applies efficient graph convolution with configurable aggregation behavior to transform node features through neighborhood messages.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate efficient graph convolution embeddings.
-    - Learn node representations on larger graph datasets.
-    - Compare efficient convolution with standard GCN outputs.
-    - Train embeddings from graph topology and node features.
-    - Inspect final loss after training.
-    - Run inference to obtain node vectors.
-
-- id: pdnconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: true
-      heterogeneous: false
-  Application_scenario: PDNConv is used for graph learning when edge-conditioned propagation or path-dependent neighborhood information is relevant.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding width.
-    epochs: Controls training duration.
-    lr: Controls optimizer step size.
-  Principles:
-    description: PDNConv performs message passing that can incorporate richer edge or path-dependent information when provided by the PyG layer configuration.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate embeddings with edge-aware graph convolution.
-    - Learn node representations where edge context matters.
-    - Compare edge-aware and topology-only embeddings.
-    - Train graph representations and inspect loss.
-    - Produce node vectors for downstream tasks.
-    - Run inference with optional node features.
-
-- id: generalconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: GeneralConv is used as a configurable message-passing layer for experimenting with graph neural network design choices.
-  Tuning_Mechanisms:
-    out_channels: Controls representation size.
-    epochs: Controls optimization length.
-    lr: Controls training speed and stability.
-  Principles:
-    description: GeneralConv provides a flexible graph convolution interface that can combine common message-passing design components.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate embeddings with a configurable graph convolution.
-    - Prototype graph representation learning settings.
-    - Compare general message passing with specialized layers.
-    - Train node representations and inspect loss.
-    - Produce node vectors for downstream modeling.
-    - Run inference on the initialized graph.
-
-- id: hypergraphconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: true
-      heterogeneous: false
-      other: Intended for hypergraph-style incidence relationships when represented in the expected PyG format.
-  Application_scenario: HypergraphConv is used for representation learning where relationships may connect more than two nodes, such as group membership, co-authorship teams, or transaction baskets.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding capacity.
-    epochs: Controls optimization effort.
-    lr: Controls optimizer step size.
-  Principles:
-    description: HypergraphConv propagates information through hyperedge incidence structure rather than only pairwise graph edges.
-    time_complexity: O(I * F_out + V * F_in * F_out), where I is the number of incidence links
-  solvable_questions:
-    - Learn embeddings over hypergraph-style relationships.
-    - Represent nodes connected through group-level interactions.
-    - Compare hypergraph convolution with pairwise graph convolution.
-    - Train hypergraph-aware node representations.
-    - Produce node vectors for downstream analysis.
-    - Inspect final loss after training.
-
-- id: leconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: LEConv is used for local extremum-aware graph representation learning, often in architectures that emphasize local structural differences.
-  Tuning_Mechanisms:
-    out_channels: Controls output embedding size.
-    epochs: Controls training length.
-    lr: Controls optimization step size.
-  Principles:
-    description: LEConv performs neighborhood aggregation designed to capture local extremal or contrastive signals in node neighborhoods.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate locally sensitive node embeddings.
-    - Learn representations that emphasize neighborhood differences.
-    - Compare LEConv embeddings with standard convolution embeddings.
-    - Train graph representations and inspect convergence.
-    - Produce node vectors for downstream tasks.
-    - Run inference with optional node features.
-
-- id: clustergcnconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: ClusterGCNConv is used for scalable graph representation learning, especially when graphs can be processed through clustered neighborhoods.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding dimensionality.
-    epochs: Controls training effort.
-    lr: Controls optimization behavior.
-  Principles:
-    description: ClusterGCNConv follows the Cluster-GCN style of message passing, supporting efficient learning over graph partitions or clustered graph structure.
-    time_complexity: O(E_c * F_out + V_c * F_in * F_out) per processed cluster or graph batch
-  solvable_questions:
-    - Generate scalable graph convolution embeddings.
-    - Learn representations suitable for large graph workflows.
-    - Compare ClusterGCN-style embeddings with standard GCN embeddings.
-    - Train node vectors and inspect loss history.
-    - Produce embeddings for downstream prediction.
-    - Run inference over the current initialized graph.
-
-- id: genconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: GENConv is used in deep graph neural networks that need expressive and stable message aggregation.
-  Tuning_Mechanisms:
-    out_channels: Controls representation capacity.
-    epochs: Controls training duration.
-    lr: Controls optimizer step size.
-  Principles:
-    description: GENConv implements generalized aggregation and message normalization ideas for expressive graph representation learning.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate embeddings with generalized graph convolution.
-    - Train expressive node representations on the current graph.
-    - Compare GENConv against simpler aggregation operators.
-    - Produce node vectors for downstream graph learning.
-    - Inspect loss history from train mode.
-    - Run inference using optional node features.
-
-- id: filmconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: FiLMConv is used when node representations should be modulated by learned feature-wise transformations during message passing.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding width.
-    epochs: Controls optimization length.
-    lr: Controls training stability and speed.
-  Principles:
-    description: FiLMConv applies feature-wise linear modulation to graph messages, allowing conditional scaling and shifting of node representations.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate FiLM-modulated node embeddings.
-    - Learn node representations with feature-wise modulation.
-    - Compare modulated graph convolution with standard convolution.
-    - Train graph embeddings and inspect final loss.
-    - Produce node vectors for downstream tasks.
-    - Run inference on current graph features.
-
-- id: mfconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: MFConv is used for graph representation learning where molecular-fingerprint-style neighborhood aggregation is useful.
-  Tuning_Mechanisms:
-    out_channels: Controls learned representation size.
-    epochs: Controls training duration.
-    lr: Controls optimizer step size.
-  Principles:
-    description: MFConv applies a graph convolution inspired by molecular fingerprints to aggregate neighborhood features into node embeddings.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate molecular-fingerprint-style node embeddings.
-    - Learn local structural representations from graph neighborhoods.
-    - Compare MFConv outputs with other PyG convolution layers.
-    - Train embeddings and inspect loss history.
-    - Produce node vectors for downstream analysis.
-    - Run inference with optional node features.
-
-- id: feastconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: FeaStConv is used for feature-steered graph convolution where node features guide how neighbors contribute to representations.
-  Tuning_Mechanisms:
-    out_channels: Controls output embedding dimensionality.
-    epochs: Controls training effort.
-    lr: Controls optimization behavior.
-  Principles:
-    description: FeaStConv steers message aggregation based on learned feature-dependent assignments of neighbors.
-    time_complexity: O(E * F_out + V * F_in * F_out) per layer
-  solvable_questions:
-    - Generate feature-steered graph embeddings.
-    - Learn representations where features guide neighbor aggregation.
-    - Compare FeaStConv with attention-based graph layers.
-    - Train node embeddings and inspect final loss.
-    - Produce node vectors for downstream prediction.
-    - Run inference with supplied node features.
-
-- id: pointtransformerconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: true
-      heterogeneous: false
-  Application_scenario: PointTransformerConv is used for graph learning over point-cloud or geometric graph data where positional relationships influence message passing.
-  Tuning_Mechanisms:
-    out_channels: Controls output embedding size.
-    epochs: Controls optimization length.
-    lr: Controls training stability and speed.
-  Principles:
-    description: PointTransformerConv applies transformer-style local attention designed for point or geometric neighborhoods.
-    time_complexity: O(E * F_out) per attention computation, plus feature transformation cost
-  solvable_questions:
-    - Generate embeddings for geometric or point-neighborhood graphs.
-    - Learn node vectors using local transformer-style attention.
-    - Compare point transformer embeddings with standard graph embeddings.
-    - Train graph representations and inspect loss.
-    - Produce node vectors for downstream geometric analysis.
-    - Run inference with optional node features.
-
-- id: heteroconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: true
-      heterogeneous: true
-      other: Intended for heterogeneous graph schemas when relation-specific PyG modules are configured.
-  Application_scenario: HeteroConv is used for heterogeneous graph representation learning with different node or edge types, such as user-item, author-paper, and knowledge graph data.
-  Tuning_Mechanisms:
-    out_channels: Controls relation-aware embedding size.
-    epochs: Controls train-mode optimization effort.
-    lr: Controls optimizer step size.
-  Principles:
-    description: HeteroConv combines relation-specific convolution modules and aggregates their outputs for heterogeneous graph message passing.
-    time_complexity: Sum of the time complexity of the relation-specific convolution modules
-  solvable_questions:
-    - Generate embeddings for heterogeneous graph data.
-    - Learn node representations across multiple relation types.
-    - Compare heterogeneous message passing with homogeneous convolution.
-    - Train relation-aware graph embeddings.
-    - Produce node vectors for downstream prediction.
-    - Inspect final loss after training.
-
-- id: mixhopconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: MixHopConv is used when node representations should combine information from multiple graph-hop distances.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding capacity across mixed hops.
-    epochs: Controls training duration.
-    lr: Controls optimization step size.
-  Principles:
-    description: MixHopConv mixes feature propagation from multiple powers of the adjacency structure to capture different neighborhood ranges.
-    time_complexity: O(K * E * F_out + V * F_in * F_out), where K is the number of propagated hop powers
-  solvable_questions:
-    - Generate multi-hop node embeddings.
-    - Learn representations combining near and farther neighborhoods.
-    - Compare mixed-hop embeddings with one-hop convolution.
-    - Train graph embeddings and inspect loss history.
-    - Produce node vectors for downstream modeling.
-    - Run inference with optional node features.
-
-- id: ssgconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: SSGConv is used for simple spectral graph representation learning with smoothed multi-step propagation.
-  Tuning_Mechanisms:
-    out_channels: Controls output embedding size.
-    epochs: Controls optimization effort.
-    lr: Controls training stability and speed.
-  Principles:
-    description: SSGConv performs simple spectral graph convolution by propagating features across graph neighborhoods and combining smoothed signals.
-    time_complexity: O(K * E * F_out + V * F_in * F_out), where K is the number of propagation steps
-  solvable_questions:
-    - Generate smoothed spectral graph embeddings.
-    - Learn representations from multi-step feature propagation.
-    - Compare SSGConv with GCN-style convolution.
-    - Train node vectors and inspect final loss.
-    - Produce embeddings for downstream graph tasks.
-    - Run inference on the initialized graph.
-
-- id: armaconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: ARMAConv is used for spectral graph representation learning with auto-regressive moving-average style graph filters.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding dimensionality.
-    epochs: Controls training duration.
-    lr: Controls optimization step size.
-  Principles:
-    description: ARMAConv approximates graph spectral filters through stacked or recurrent ARMA-style propagation steps.
-    time_complexity: O(S * T * E * F_out + V * F_in * F_out), where S and T depend on stacks and iterations
-  solvable_questions:
-    - Generate ARMA-filtered graph embeddings.
-    - Learn spectral-style node representations.
-    - Compare ARMAConv with spatial message-passing layers.
-    - Train embeddings and inspect loss history.
-    - Produce node vectors for downstream prediction.
-    - Run inference with optional node features.
-
-- id: sgconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: SGConv is used for simplified graph convolution when efficient propagation and linear transformation are sufficient.
-  Tuning_Mechanisms:
-    out_channels: Controls final embedding width.
-    epochs: Controls train-mode optimization effort.
-    lr: Controls optimizer step size.
-  Principles:
-    description: SGConv simplifies GCN-style learning by separating repeated feature propagation from the learnable linear transformation.
-    time_complexity: O(K * E * F_in + V * F_in * F_out), where K is the number of propagation steps
-  solvable_questions:
-    - Generate efficient simplified graph convolution embeddings.
-    - Learn node vectors with lightweight propagation.
-    - Compare SGConv with full GCN convolution.
-    - Train graph embeddings and inspect final loss.
-    - Produce features for downstream classification or clustering.
-    - Run inference on the current graph.
-
-- id: tagconv
-  task_type_id: Graph Learning
-  Deployment_method:
-    support_engine: pyg
-    input_schema:
-      parameters:
-        in_channels:
-          type: int, optional (default=-1)
-          description: Input node feature dimension; -1 infers the dimension from provided or generated node features.
-          default: -1
-        out_channels:
-          type: int, optional (default=16)
-          description: Output embedding dimension produced by the PyG convolution layer.
-          default: 16
-        mode:
-          type: string, optional (default=train)
-          description: Execution mode, either train for self-supervised embedding fitting or infer for a forward pass.
-          default: train
-        node_features:
-          type: list, optional
-          description: Optional node feature matrix. If omitted, graph-derived degree features are used.
-          default: null
-        epochs:
-          type: int, optional (default=100)
-          description: Number of optimization epochs used when mode is train.
-          default: 100
-        lr:
-          type: float, optional (default=0.01)
-          description: Learning rate used when mode is train.
-          default: 0.01
-    output_schema:
-      type: dictionary
-      description: Node embeddings and, in train mode, loss history and final loss.
-    graph_type:
-      directed: both
-      multigraph: false
-      weighted: false
-      heterogeneous: false
-  Application_scenario: TAGConv is used for topology adaptive graph convolution where multiple adjacency powers are combined to capture different neighborhood ranges.
-  Tuning_Mechanisms:
-    out_channels: Controls embedding capacity.
-    epochs: Controls optimization length.
-    lr: Controls training stability and speed.
-  Principles:
-    description: TAGConv applies topology adaptive graph filtering by aggregating features across multiple hop distances.
-    time_complexity: O(K * E * F_out + V * F_in * F_out), where K is the number of topology-adaptive hops
-  solvable_questions:
-    - Generate topology-adaptive node embeddings.
-    - Learn representations from several graph-hop neighborhoods.
-    - Compare TAGConv with single-hop graph convolution.
-    - Train embeddings and inspect loss history.
-    - Produce node vectors for downstream graph learning.
-    - Run inference with optional node features.
-
 - id: gcn_node_classification
   task_type_id: NodeClassification
   Deployment_method:
@@ -11142,3 +9788,812 @@
     num_layers: 2-3 layers; GraphSAGE maintains discriminative embeddings better than GCN at greater depths.
     epochs: 50-100 epochs typically sufficient.
     lr: 0.01 works well across most graph types.
+
+- id: all_pairs_shortest_path
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for all_pairs_shortest_path
+          type: NetworkX graph
+        cutoff:
+          description: Depth at which to stop the search. Only paths of length at most `cutoff` are returned.
+          type: integer, optional
+          default: null
+    output_schema:
+      type: iterator
+      description: Dictionary, keyed by source and target, of shortest paths.
+  Application_scenario: Compute shortest paths between all nodes.
+  Principles:
+    description: Compute shortest paths between all nodes.
+- id: all_pairs_shortest_path_length
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for all_pairs_shortest_path_length
+          type: NetworkX graph
+        cutoff:
+          description: Depth at which to stop the search. Only paths of length at most `cutoff` are returned.
+          type: integer, optional
+          default: null
+    output_schema:
+      type: iterator
+      description: (source, dictionary) iterator with dictionary keyed by target and shortest path length as the
+        key value.
+  Application_scenario: Computes the shortest path lengths between all nodes in `G`.
+  Principles:
+    description: Computes the shortest path lengths between all nodes in `G`.
+- id: all_pairs_dijkstra_path
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for all_pairs_dijkstra_path
+          type: NetworkX graph
+        cutoff:
+          description: Length (sum of edge weights) at which the search is stopped. If cutoff is provided, only
+            return paths with summed weight <= cutoff.
+          type: integer or float, optional
+          default: null
+        weight:
+          description: 'If this is a string, then edge weights will be accessed via the edge attribute with this
+            key (that is, the weight of the edge joining `u` to `v` will be ``G.edges[u, v][weight]``). If no such
+            edge attribute exists, the weight of the edge is assumed to be one. If this is a function, the weight
+            of an edge is the value returned by the function. The function must accept exactly three positional
+            arguments: the two endpoints of an edge and the dictionary of edge attributes for that edge. The function
+            must return a number or None to indicate a hidden edge.'
+          type: string or function
+          default: weight
+    output_schema:
+      type: iterator
+      description: (source, dictionary) iterator with dictionary keyed by target and shortest path as the key value.
+  Application_scenario: Compute shortest paths between all nodes in a weighted graph.
+  Principles:
+    description: Compute shortest paths between all nodes in a weighted graph.
+- id: all_pairs_dijkstra_path_length
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for all_pairs_dijkstra_path_length
+          type: NetworkX graph
+        cutoff:
+          description: Length (sum of edge weights) at which the search is stopped. If cutoff is provided, only
+            return paths with summed weight <= cutoff.
+          type: integer or float, optional
+          default: null
+        weight:
+          description: 'If this is a string, then edge weights will be accessed via the edge attribute with this
+            key (that is, the weight of the edge joining `u` to `v` will be ``G.edges[u, v][weight]``). If no such
+            edge attribute exists, the weight of the edge is assumed to be one. If this is a function, the weight
+            of an edge is the value returned by the function. The function must accept exactly three positional
+            arguments: the two endpoints of an edge and the dictionary of edge attributes for that edge. The function
+            must return a number or None to indicate a hidden edge.'
+          type: string or function
+          default: weight
+    output_schema:
+      type: iterator
+      description: (source, dictionary) iterator with dictionary keyed by target and shortest path length as the
+        key value.
+  Application_scenario: Compute shortest path lengths between all nodes in a weighted graph.
+  Principles:
+    description: Compute shortest path lengths between all nodes in a weighted graph.
+- id: all_pairs_bellman_ford_path
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for all_pairs_bellman_ford_path
+          type: NetworkX graph
+        weight:
+          description: 'If this is a string, then edge weights will be accessed via the edge attribute with this
+            key (that is, the weight of the edge joining `u` to `v` will be ``G.edges[u, v][weight]``). If no such
+            edge attribute exists, the weight of the edge is assumed to be one. If this is a function, the weight
+            of an edge is the value returned by the function. The function must accept exactly three positional
+            arguments: the two endpoints of an edge and the dictionary of edge attributes for that edge. The function
+            must return a number.'
+          type: string or function (default="weight")
+          default: weight
+    output_schema:
+      type: iterator
+      description: (source, dictionary) iterator with dictionary keyed by target and shortest path as the key value.
+  Application_scenario: Compute shortest paths between all nodes in a weighted graph.
+  Principles:
+    description: Compute shortest paths between all nodes in a weighted graph.
+- id: all_pairs_bellman_ford_path_length
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for all_pairs_bellman_ford_path_length
+          type: NetworkX graph
+        weight:
+          description: 'If this is a string, then edge weights will be accessed via the edge attribute with this
+            key (that is, the weight of the edge joining `u` to `v` will be ``G.edges[u, v][weight]``). If no such
+            edge attribute exists, the weight of the edge is assumed to be one. If this is a function, the weight
+            of an edge is the value returned by the function. The function must accept exactly three positional
+            arguments: the two endpoints of an edge and the dictionary of edge attributes for that edge. The function
+            must return a number.'
+          type: string or function (default="weight")
+          default: weight
+    output_schema:
+      type: iterator
+      description: (source, dictionary) iterator with dictionary keyed by target and shortest path length as the
+        key value.
+  Application_scenario: Compute shortest path lengths between all nodes in a weighted graph.
+  Principles:
+    description: Compute shortest path lengths between all nodes in a weighted graph.
+- id: single_source_shortest_path
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for single_source_shortest_path
+          type: NetworkX graph
+        source:
+          description: Starting node for path
+          type: node label
+        cutoff:
+          description: Depth to stop the search. Only paths of length <= cutoff are returned.
+          type: integer, optional
+          default: null
+      required:
+      - source
+    output_schema:
+      type: dictionary
+      description: Dictionary, keyed by target, of shortest paths.
+  Application_scenario: 'Compute shortest path between source
+
+    and all other nodes reachable from source.'
+  Principles:
+    description: 'Compute shortest path between source
+
+      and all other nodes reachable from source.'
+- id: single_source_shortest_path_length
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for single_source_shortest_path_length
+          type: NetworkX graph
+        source:
+          description: Starting node for path
+          type: node
+        cutoff:
+          description: Depth to stop the search. Only paths of length <= `cutoff` are returned.
+          type: integer, optional
+          default: null
+      required:
+      - source
+    output_schema:
+      type: dict
+      description: Dict keyed by node to shortest path length to `source`.
+  Application_scenario: Compute the shortest path lengths from `source` to all reachable nodes in `G`.
+  Principles:
+    description: Compute the shortest path lengths from `source` to all reachable nodes in `G`.
+- id: single_source_dijkstra_path
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for single_source_dijkstra_path
+          type: NetworkX graph
+        source:
+          description: Starting node for path.
+          type: node
+        cutoff:
+          description: Length (sum of edge weights) at which the search is stopped. If cutoff is provided, only
+            return paths with summed weight <= cutoff.
+          type: integer or float, optional
+          default: null
+        weight:
+          description: 'If this is a string, then edge weights will be accessed via the edge attribute with this
+            key (that is, the weight of the edge joining `u` to `v` will be ``G.edges[u, v][weight]``). If no such
+            edge attribute exists, the weight of the edge is assumed to be one. If this is a function, the weight
+            of an edge is the value returned by the function. The function must accept exactly three positional
+            arguments: the two endpoints of an edge and the dictionary of edge attributes for that edge. The function
+            must return a number or None to indicate a hidden edge.'
+          type: string or function
+          default: weight
+      required:
+      - source
+    output_schema:
+      type: dictionary
+      description: Dictionary of shortest path lengths keyed by target.
+  Application_scenario: Find shortest weighted paths in G from a source node.
+  Principles:
+    description: Find shortest weighted paths in G from a source node.
+- id: single_source_dijkstra_path_length
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for single_source_dijkstra_path_length
+          type: NetworkX graph
+        source:
+          description: Starting node for path
+          type: node label
+        cutoff:
+          description: Length (sum of edge weights) at which the search is stopped. If cutoff is provided, only
+            return paths with summed weight <= cutoff.
+          type: integer or float, optional
+          default: null
+        weight:
+          description: 'If this is a string, then edge weights will be accessed via the edge attribute with this
+            key (that is, the weight of the edge joining `u` to `v` will be ``G.edges[u, v][weight]``). If no such
+            edge attribute exists, the weight of the edge is assumed to be one. If this is a function, the weight
+            of an edge is the value returned by the function. The function must accept exactly three positional
+            arguments: the two endpoints of an edge and the dictionary of edge attributes for that edge. The function
+            must return a number or None to indicate a hidden edge.'
+          type: string or function
+          default: weight
+      required:
+      - source
+    output_schema:
+      type: dict
+      description: Dict keyed by node to shortest path length from source.
+  Application_scenario: Find shortest weighted path lengths in G from a source node.
+  Principles:
+    description: Find shortest weighted path lengths in G from a source node.
+- id: bellman_ford_path_length
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for bellman_ford_path_length
+          type: NetworkX graph
+        source:
+          description: starting node for path
+          type: node label
+        target:
+          description: ending node for path
+          type: node label
+        weight:
+          description: 'If this is a string, then edge weights will be accessed via the edge attribute with this
+            key (that is, the weight of the edge joining `u` to `v` will be ``G.edges[u, v][weight]``). If no such
+            edge attribute exists, the weight of the edge is assumed to be one. If this is a function, the weight
+            of an edge is the value returned by the function. The function must accept exactly three positional
+            arguments: the two endpoints of an edge and the dictionary of edge attributes for that edge. The function
+            must return a number.'
+          type: string or function (default="weight")
+          default: weight
+      required:
+      - source
+      - target
+    output_schema:
+      type: number
+      description: Shortest path length.
+  Application_scenario: 'Returns the shortest path length from source to target
+
+    in a weighted graph.'
+  Principles:
+    description: 'Returns the shortest path length from source to target
+
+      in a weighted graph.'
+- id: bidirectional_shortest_path
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for bidirectional_shortest_path
+          type: NetworkX graph
+        source:
+          description: starting node for path
+          type: node label
+        target:
+          description: ending node for path
+          type: node label
+      required:
+      - source
+      - target
+    output_schema:
+      type: any
+      description: 'path: list List of nodes in a path from source to target.'
+  Application_scenario: Returns a list of nodes in a shortest path between source and target.
+  Principles:
+    description: Returns a list of nodes in a shortest path between source and target.
+- id: bidirectional_dijkstra
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for bidirectional_dijkstra
+          type: NetworkX graph
+        source:
+          description: Starting node.
+          type: node
+        target:
+          description: Ending node.
+          type: node
+        weight:
+          description: 'If this is a string, then edge weights will be accessed via the edge attribute with this
+            key (that is, the weight of the edge joining `u` to `v` will be ``G.edges[u, v][weight]``). If no such
+            edge attribute exists, the weight of the edge is assumed to be one. If this is a function, the weight
+            of an edge is the value returned by the function. The function must accept exactly three positional
+            arguments: the two endpoints of an edge and the dictionary of edge attributes for that edge. The function
+            must return a number or None to indicate a hidden edge.'
+          type: string or function
+          default: weight
+      required:
+      - source
+      - target
+    output_schema:
+      type: number and list
+      description: length is the distance from source to target. path is a list of nodes on a path from source to
+        target.
+  Application_scenario: Dijkstra's algorithm for shortest paths using bidirectional search.
+  Principles:
+    description: Dijkstra's algorithm for shortest paths using bidirectional search.
+- id: number_strongly_connected_components
+  task_type_id: Connectivity & Components
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A directed graph.
+          type: NetworkX graph
+    output_schema:
+      type: integer
+      description: Number of strongly connected components
+  Application_scenario: Returns number of strongly connected components in graph.
+  Principles:
+    description: Returns number of strongly connected components in graph.
+- id: number_weakly_connected_components
+  task_type_id: Connectivity & Components
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A directed graph.
+          type: NetworkX graph
+    output_schema:
+      type: integer
+      description: Number of weakly connected components
+  Application_scenario: Returns the number of weakly connected components in G.
+  Principles:
+    description: Returns the number of weakly connected components in G.
+- id: biconnected_components
+  task_type_id: Connectivity & Components
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: An undirected graph.
+          type: NetworkX Graph
+    output_schema:
+      type: generator
+      description: Generator of sets of nodes, one set for each biconnected component.
+  Application_scenario: 'Returns a generator of sets of nodes, one set for each biconnected
+
+    component of the graph'
+  Principles:
+    description: 'Returns a generator of sets of nodes, one set for each biconnected
+
+      component of the graph'
+- id: is_biconnected
+  task_type_id: Connectivity & Components
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: An undirected graph.
+          type: NetworkX Graph
+    output_schema:
+      type: bool
+      description: True if the graph is biconnected, False otherwise.
+  Application_scenario: Returns True if the graph is biconnected, False otherwise.
+  Principles:
+    description: Returns True if the graph is biconnected, False otherwise.
+- id: node_connected_component
+  task_type_id: Connectivity & Components
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: An undirected graph.
+          type: NetworkX Graph
+        n:
+          description: A node in G
+          type: node label
+      required:
+      - n
+    output_schema:
+      type: set
+      description: A set of nodes in the component of G containing node n.
+  Application_scenario: Returns the set of nodes in the component of graph containing node n.
+  Principles:
+    description: Returns the set of nodes in the component of graph containing node n.
+- id: has_eulerian_path
+  task_type_id: Path
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: The graph to find an euler path in.
+          type: NetworkX Graph
+        source:
+          description: Starting node for path.
+          type: node, optional
+          default: null
+    output_schema:
+      type: True if G has an Eulerian path.
+      description: 'True if G has an Eulerian path. '
+  Application_scenario: Return True iff `G` has an Eulerian path.
+  Principles:
+    description: Return True iff `G` has an Eulerian path.
+- id: is_semiconnected
+  task_type_id: Connectivity & Components
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A directed graph.
+          type: NetworkX graph
+    output_schema:
+      type: bool
+      description: True if the graph is semiconnected, False otherwise.
+  Application_scenario: Returns True if the graph is semiconnected, False otherwise.
+  Principles:
+    description: Returns True if the graph is semiconnected, False otherwise.
+- id: is_arborescence
+  task_type_id: Tree & Spanning Tree
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: The graph to test.
+          type: graph
+    output_schema:
+      type: bool
+      description: A boolean that is True if `G` is an arborescence.
+  Application_scenario: Returns True if `G` is an arborescence.
+  Principles:
+    description: Returns True if `G` is an arborescence.
+- id: is_branching
+  task_type_id: Tree & Spanning Tree
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: The directed graph to test.
+          type: directed graph
+    output_schema:
+      type: bool
+      description: A boolean that is True if `G` is a branching.
+  Application_scenario: Returns True if `G` is a branching.
+  Principles:
+    description: Returns True if `G` is a branching.
+- id: k_shell
+  task_type_id: Cliques & Cores
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A graph or directed graph.
+          type: NetworkX graph
+        k:
+          description: The order of the shell. If not specified return the outer shell.
+          type: int, optional
+          default: null
+        core_number:
+          description: Precomputed core numbers for the graph G.
+          type: dictionary, optional
+          default: null
+    output_schema:
+      type: NetworkX graph
+      description: The k-shell subgraph
+  Application_scenario: Returns the k-shell of G.
+  Principles:
+    description: Returns the k-shell of G.
+- id: k_crust
+  task_type_id: Cliques & Cores
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A graph or directed graph.
+          type: NetworkX graph
+        k:
+          description: The order of the shell. If not specified return the main crust.
+          type: int, optional
+          default: null
+        core_number:
+          description: Precomputed core numbers for the graph G.
+          type: dictionary, optional
+          default: null
+    output_schema:
+      type: NetworkX graph
+      description: The k-crust subgraph
+  Application_scenario: Returns the k-crust of G.
+  Principles:
+    description: Returns the k-crust of G.
+- id: fast_label_propagation_communities
+  task_type_id: Clustering & Community
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Any NetworkX graph.
+          type: Graph, DiGraph, MultiGraph, or MultiDiGraph
+        weight:
+          description: The edge attribute representing a non-negative weight of an edge. If None, each edge is assumed
+            to have weight one. The weight of an edge is used in determining the frequency with which a label appears
+            among the neighbors of a node (edge with weight `w` is equivalent to `w` unweighted edges).
+          type: string, or None (default)
+          default: null
+        seed:
+          description: Indicator of random number generation state. See :ref:`Randomness<randomness>`.
+          type: integer, random_state, or None (default)
+          default: null
+    output_schema:
+      type: iterable
+      description: Iterable of communities given as sets of nodes.
+  Application_scenario: Returns communities in `G` as detected by fast label propagation.
+  Principles:
+    description: Returns communities in `G` as detected by fast label propagation.
+- id: global_efficiency
+  task_type_id: Distance & Measures
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: An undirected graph for which to compute the average global efficiency.
+          type: :class:`networkx.Graph`
+    output_schema:
+      type: any
+      description: float The average global efficiency of the graph.
+  Application_scenario: Returns the average global efficiency of the graph.
+  Principles:
+    description: Returns the average global efficiency of the graph.
+- id: local_efficiency
+  task_type_id: Distance & Measures
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: An undirected graph for which to compute the average local efficiency.
+          type: :class:`networkx.Graph`
+    output_schema:
+      type: any
+      description: float The average local efficiency of the graph.
+  Application_scenario: Returns the average local efficiency of the graph.
+  Principles:
+    description: Returns the average local efficiency of the graph.
+- id: topological_generations
+  task_type_id: Basics
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A directed acyclic graph (DAG) Yields ------ sets of nodes Yields sets of nodes representing
+            each generation.
+          type: NetworkX digraph
+    output_schema:
+      type: any
+      description: 算法执行结果
+  Application_scenario: Stratifies a DAG into generations.
+  Principles:
+    description: Stratifies a DAG into generations.
+- id: transitive_closure_dag
+  task_type_id: Basics
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A directed acyclic graph (DAG)
+          type: NetworkX DiGraph
+        topo_order:
+          description: A topological order for G (if None, the function will compute one)
+          type: list or tuple, optional
+          default: null
+    output_schema:
+      type: any
+      description: NetworkX DiGraph The transitive closure of `G`
+  Application_scenario: Returns the transitive closure of a directed acyclic graph.
+  Principles:
+    description: Returns the transitive closure of a directed acyclic graph.
+- id: transitive_reduction
+  task_type_id: Basics
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A directed acyclic graph (DAG)
+          type: NetworkX DiGraph
+    output_schema:
+      type: any
+      description: NetworkX DiGraph The transitive reduction of `G`
+  Application_scenario: Returns transitive reduction of a directed graph
+  Principles:
+    description: Returns transitive reduction of a directed graph
+- id: louvain_partitions
+  task_type_id: Clustering & Community
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for louvain_partitions
+          type: NetworkX graph
+        weight:
+          description: The name of an edge attribute that holds the numerical value used as a weight. If None then
+            each edge has weight 1.
+          type: string or None, optional (default="weight")
+          default: weight
+        resolution:
+          description: If resolution is less than 1, the algorithm favors larger communities. Greater than 1 favors
+            smaller communities
+          type: float, optional (default=1)
+          default: 1
+        threshold:
+          description: Modularity gain threshold for each level. If the gain of modularity between 2 levels of the
+            algorithm is less than the given threshold then the algorithm stops and returns the resulting communities.
+          type: float, optional (default=0.0000001)
+          default: 1.0e-07
+        seed:
+          description: Indicator of random number generation state. See :ref:`Randomness<randomness>`. Yields ------
+            list A list of sets (partition of `G`). Each set represents one community and contains all the nodes
+            that constitute it.
+          type: integer, random_state, or None (default)
+          default: null
+    output_schema:
+      type: any
+      description: 算法执行结果
+  Application_scenario: Yield partitions for each level of the Louvain Community Detection Algorithm
+  Principles:
+    description: Yield partitions for each level of the Louvain Community Detection Algorithm
+- id: enumerate_all_cliques
+  task_type_id: Cliques & Cores
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: An undirected graph.
+          type: NetworkX graph
+    output_schema:
+      type: any
+      description: iterator An iterator over cliques, each of which is a list of nodes in `G`. The cliques are ordered
+        according to size.
+  Application_scenario: Returns all cliques in an undirected graph.
+  Principles:
+    description: Returns all cliques in an undirected graph.
+- id: is_maximal_matching
+  task_type_id: Matching & Coloring
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for is_maximal_matching
+          type: NetworkX graph
+        matching:
+          description: A dictionary or set representing a matching. If a dictionary, it must have ``matching[u]
+            == v`` and ``matching[v] == u`` for each edge ``(u, v)`` in the matching. If a set, it must have elements
+            of the form ``(u, v)``, where ``(u, v)`` is an edge in the matching.
+          type: dict or set
+      required:
+      - matching
+    output_schema:
+      type: any
+      description: bool Whether the given set or dictionary represents a valid maximal matching in the graph.
+  Application_scenario: Return True if ``matching`` is a maximal matching of ``G``
+  Principles:
+    description: Return True if ``matching`` is a maximal matching of ``G``
+- id: is_perfect_matching
+  task_type_id: Matching & Coloring
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for is_perfect_matching
+          type: NetworkX graph
+        matching:
+          description: A dictionary or set representing a matching. If a dictionary, it must have ``matching[u]
+            == v`` and ``matching[v] == u`` for each edge ``(u, v)`` in the matching. If a set, it must have elements
+            of the form ``(u, v)``, where ``(u, v)`` is an edge in the matching.
+          type: dict or set
+      required:
+      - matching
+    output_schema:
+      type: any
+      description: bool Whether the given set or dictionary represents a valid perfect matching in the graph.
+  Application_scenario: Return True if ``matching`` is a perfect matching for ``G``
+  Principles:
+    description: Return True if ``matching`` is a perfect matching for ``G``
+- id: temporal_paths
+  task_type_id: Path
+  Deployment_method:
+    support_engine: builtin
+    input_schema:
+      parameters:
+        center:
+          type: node
+          required: true
+    output_schema:
+      type: dict
+      description: Chronological path counts, original-edge deduplication, bounded examples and scoped flow totals.
+  Application_scenario: Compute bounded chronological transaction paths and deduplicated flow accounting using dataset
+    value/time roles. Does not infer illegal activity.
+  Principles:
+    description: Connect directed original transactions in chronological order. Preserve parallel transactions,
+      declared scope and completeness flags.

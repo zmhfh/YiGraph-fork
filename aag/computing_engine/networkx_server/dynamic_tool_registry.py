@@ -11,11 +11,12 @@ Key improvements:
 import inspect
 import logging
 import re
+import math
 from typing import Callable, Dict, Any, Optional, get_type_hints, get_origin, get_args, Union
 from functools import wraps
 from pydantic import BaseModel, Field
 import networkx as nx
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator, Mapping, KeysView, ValuesView, ItemsView
 from itertools import islice
 
 logger = logging.getLogger(__name__)
@@ -116,18 +117,10 @@ MODULES_TO_SCAN = [
 # 3. Algorithms to exclude
 # ============================================================================
 ALGORITHMS_TO_EXCLUDE = [
-    # Algorithms with serious performance issues
-    'communicability_betweenness_centrality',
-    'current_flow_betweenness_centrality',
-    'approximate_current_flow_betweenness_centrality',
-    
-    # Duplicated functionality
-    'shortest_path_length',  # Duplicated with shortest_path
-    
-    # Generator-style algorithms (return iterators, not ideal for LLM tooling)
-    'all_simple_paths',
-    'all_shortest_paths',
-    'all_simple_edge_paths',
+    # These are backend dispatch placeholders, not local implementations.
+    'leiden_communities', 'leiden_partitions',
+    # Internal aliases and file-writing utilities are not analysis actions.
+    'orig_func', 'write_edgelist',
 ]
 
 # ============================================================================
@@ -137,7 +130,7 @@ UNDIRECTED_ONLY_ALGORITHMS = {
     # Connectivity components
     'connected_components': 'weakly_connected_components',
     'number_connected_components': 'number_weakly_connected_components', 
-    'node_connected_component': 'node_weakly_connected_component',
+    'node_connected_component': None,
     'is_connected': 'is_weakly_connected',
     
     # Bipartite graph algorithms (convert directed graph to undirected)
@@ -349,7 +342,7 @@ def generate_input_schema(func: Callable) -> Dict[str, Any]:
     for param_name, param in sig.parameters.items():
         if param.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
             continue
-        if param_name not in documented_params:
+        if param_name in {'backend', 'backend_kwargs'}:
             continue
         # ✅ Extract parameter info from docstring
         param_info = _extract_param_description(func, param_name)
@@ -374,6 +367,8 @@ def generate_input_schema(func: Callable) -> Dict[str, Any]:
         # ✅ Attach original type information
         if docstring_type:
             param_schema["type"] = docstring_type
+        elif param.default is not inspect.Parameter.empty and param.default is not None:
+            param_schema['type'] = type(param.default).__name__
         
         # Handle default values
         if param.default != inspect.Parameter.empty:
@@ -441,6 +436,9 @@ def _serialize_result(result: Any) -> Any:
             "type": "graph",
             "graph_type": result.__class__.__name__,
             "nodes": [str(n) for n in nodes],
+            "node_attributes": {str(n): _serialize_result(dict(result.nodes[n])) for n in nodes},
+            "node_members": {str(n): _serialize_result(n) for n in nodes if isinstance(n, (set, frozenset, tuple))},
+            "graph_attributes": _serialize_result(dict(result.graph)),
             "edges": edges,
             "num_nodes": result.number_of_nodes(),
             "num_edges": result.number_of_edges()
@@ -450,7 +448,7 @@ def _serialize_result(result: Any) -> Any:
         return {str(key): _serialize_result(value) for key, value in result.items()}
     if isinstance(result, (set, frozenset)):
         return [_serialize_result(value) for value in sorted(result, key=str)]
-    if isinstance(result, (list, tuple)):
+    if isinstance(result, (list, tuple, KeysView, ValuesView, ItemsView)):
         return [_serialize_result(value) for value in result]
     if isinstance(result, Iterator):
         values = list(islice(result, MAX_ITERATOR_ITEMS + 1))
@@ -462,6 +460,13 @@ def _serialize_result(result: Any) -> Any:
         return serialized
     if hasattr(result, "tolist"):
         return _serialize_result(result.tolist())
+    if isinstance(result, float) and not math.isfinite(result):
+        return {'type': 'nonfinite', 'value': 'nan' if math.isnan(result) else 'inf' if result > 0 else '-inf'}
+    if hasattr(result, 'toarray'):
+        return _serialize_result(result.toarray().tolist())
+    if type(result).__module__.startswith('sympy'):
+        return {'type': 'polynomial', 'expression': str(result),
+                'variables': sorted(str(symbol) for symbol in result.free_symbols)}
 
     # Unsupported objects keep their textual representation.
     try:
@@ -569,6 +574,12 @@ def _create_tool_function(
             # Filter out parameters the original function does not accept (e.g. __post_processing_code__)
             valid_param_names = set(original_sig.parameters.keys())
             execution_kwargs = {k: v for k, v in final_kwargs.items() if k in valid_param_names}
+            from aag.computing_engine.networkx_server.algorithm_functions import graph_argument
+            for graph_name in ('H', 'G2'):
+                if graph_name in execution_kwargs:
+                    execution_kwargs[graph_name] = graph_argument(execution_kwargs[graph_name])
+            if isinstance(execution_kwargs.get('matching'), list):
+                execution_kwargs['matching'] = [tuple(edge) for edge in execution_kwargs['matching']]
             logger.info(f"✅ Final parameter keys passed to algorithm: {list(execution_kwargs.keys())}")
             
             # Extra logging for debugging wrapper parameters:
@@ -614,84 +625,84 @@ def register_discovered_tools(
     logger.info("🚀 Starting dynamic registration of NetworkX algorithms (schema export version)...")
     registered_count = 0
     failed_count = 0
-    skipped_count = 0 
-    
+    skipped_count = 0
+
     # ✅ Collect both input and output schemas
     input_schemas_map = {}
     output_schemas_map = {}
-    
+
+    from aag.computing_engine.networkx_server.algorithm_functions import resolve_function
+    from aag.utils.path_utils import DEFAULT_CONFIG_SERVER_PATH
+    import yaml
+    with open(DEFAULT_CONFIG_SERVER_PATH, encoding='utf-8') as stream:
+        configured = yaml.safe_load(stream).get('engine_supported_algorithms', {}).get('networkx', {})
+    scanned = {}
     for module in MODULES_TO_SCAN:
-        for name, func in inspect.getmembers(module, inspect.isfunction):
-            if name.startswith('_') or name in ALGORITHMS_TO_EXCLUDE: 
+        for name, function in inspect.getmembers(module, inspect.isfunction):
+            scanned.setdefault(name, function)
+    for name in configured:
+        func = resolve_function(name, scanned)
+        if func is None or name in {'initialize_graph', 'get_graph_info'}:
+            continue
+        if name.startswith('_') or name in ALGORITHMS_TO_EXCLUDE:
+            continue
+
+        try:
+            sig = inspect.signature(func)
+            if not sig.parameters or 'G' not in sig.parameters:
                 continue
-            
-            try:
-                sig = inspect.signature(func)
-                if not sig.parameters or 'G' not in sig.parameters: 
-                    continue
-            except (ValueError, TypeError): 
+        except (ValueError, TypeError):
+            continue
+
+        tool_name = f"run_{name}"
+
+        try:
+            # 1. Generate schemas
+            input_schema = generate_input_schema(func)
+            output_schema = generate_output_schema(func)
+            description = _clean_docstring(func.__doc__)
+
+            # 2. Create tool wrapper
+            tool_func = _create_tool_function(
+                tool_name, func, processor_getter,
+                post_processing_decorator
+            )
+
+            # 3. Register in MCP
+            if hasattr(mcp, 'tool'):
+                try:
+                    decorated_func = mcp.tool(
+                        name=tool_name,
+                        description=description,
+                        input_schema=input_schema
+                    )(tool_func)
+                except TypeError:
+                    decorated_func = mcp.tool(
+                        name=tool_name,
+                        description=description
+                    )(tool_func)
+                    if hasattr(decorated_func, '__mcp_tool__'):
+                        decorated_func.__mcp_tool__['input_schema'] = input_schema
+                input_schemas_map[tool_name] = input_schema
+                output_schemas_map[tool_name] = output_schema
+                registered_count += 1
+                logger.info(f"✅ Registered tool: {tool_name}")
+            else:
+                logger.error("MCP 对象没有 'tool' 方法")
                 continue
-            
-            tool_name = f"run_{name}"
-            
-            # TODO(chaoyi): For functions with duplicate names, skip for now.
-            # In the future we may want to support different variants for different graph attributes.
-            if tool_name in input_schemas_map:
-                logger.warning(
-                    f"⚠️ Tool name conflict: {tool_name} already registered, skipping\n"
-                    f"   current module: {module.__name__}\n"
-                    f"   kept module: {input_schemas_map[tool_name].get('_source_module', 'unknown')}"
-                )
-                skipped_count += 1
-                continue  # ✅ 跳过后续同名工具
-            
-            try:
-                # 1. Generate schemas
-                input_schema = generate_input_schema(func)
-                output_schema = generate_output_schema(func)
-                description = _clean_docstring(func.__doc__)
-                
-                # 2. Create tool wrapper
-                tool_func = _create_tool_function(
-                    tool_name, func, processor_getter, 
-                    post_processing_decorator
-                )                               
-                
-                # 3. Register in MCP
-                if hasattr(mcp, 'tool'):
-                    try:
-                        decorated_func = mcp.tool(
-                            name=tool_name,
-                            description=description,
-                            input_schema=input_schema
-                        )(tool_func)
-                    except TypeError:
-                        decorated_func = mcp.tool(
-                            name=tool_name,
-                            description=description
-                        )(tool_func)
-                        if hasattr(decorated_func, '__mcp_tool__'):
-                            decorated_func.__mcp_tool__['input_schema'] = input_schema
-                    input_schemas_map[tool_name] = input_schema
-                    output_schemas_map[tool_name] = output_schema
-                    registered_count += 1
-                    logger.info(f"✅ Registered tool: {tool_name}")
-                else:
-                    logger.error("MCP 对象没有 'tool' 方法")
-                    continue
-                
-            except Exception as e:
-                failed_count += 1
-                logger.error(f"❌ Failed to register '{tool_name}': {type(e).__name__}: {e}")
-    
+
+        except Exception as e:
+            failed_count += 1
+            logger.error(f"❌ Failed to register '{tool_name}': {type(e).__name__}: {e}")
+
     logger.info(f"📊 Registration summary: ✅ {registered_count} success, ❌ {failed_count} failed")
-    
+
     # ✅ 5. Export both kinds of schemas to files
     if input_schemas_map:
         _export_schemas(input_schemas_map, "input")
     if output_schemas_map:
         _export_schemas(output_schemas_map, "output")
-    
+
     return registered_count
 
 

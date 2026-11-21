@@ -320,6 +320,7 @@ class ComputingEngine:
     def algorithm_capabilities(self) -> List[Dict[str, Any]]:
         """List algorithms that this executor can actually dispatch right now."""
         from aag.computing_engine.networkx_server.dynamic_tool_registry import UNDIRECTED_ONLY_ALGORITHMS, MAX_ITERATOR_ITEMS
+        from aag.computing_engine.networkx_server.algorithm_functions import resolve_function
 
         tools = []
         for engine_name, mapping in self.algorithm_tool_mapping.items():
@@ -332,6 +333,8 @@ class ComputingEngine:
                     continue
                 actual = client.available_tools.get(tool_name)
                 if actual is None:
+                    continue
+                if engine_name=='networkx' and resolve_function(algorithm_id) is None:
                     continue
                 behavior = {}
                 supplied = []

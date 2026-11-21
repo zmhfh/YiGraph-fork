@@ -7,7 +7,7 @@ def _text(value, limit):
     return " ".join(str(value or "").split())[:limit]
 
 
-def algorithm_tool_catalog(runtime_tools, knowledge_index, limit=120):
+def algorithm_tool_catalog(runtime_tools, knowledge_index, limit=None):
     """Runtime registration/schema are authoritative; knowledge adds task context.
 
     Do not publish knowledge-only algorithms, stale parameter names or static
@@ -46,4 +46,4 @@ def algorithm_tool_catalog(runtime_tools, knowledge_index, limit=120):
             "implementation_behavior": {key: value for key, value in runtime.get("implementation_behavior", {}).items()
                                         if key not in {"graph", "result_serialization"}},
         })
-    return catalog[:limit]
+    return catalog if limit is None else catalog[:limit]

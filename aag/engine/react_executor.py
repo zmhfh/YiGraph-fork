@@ -114,7 +114,8 @@ class ReActExecutor:
         self.max_retries_per_action = max(0, int(self.config.get("max_retries_per_action", 2)))
         self.observation_chars = max(500, int(self.config.get("observation_chars", 6000)))
         self.timeout_seconds = max(1, float(self.config.get("timeout_seconds", 300)))
-        self.available_tools_limit = max(1, int(self.config.get("available_tools_limit", 120)))
+        configured_limit = self.config.get('available_tools_limit')
+        self.available_tools_limit = max(1, int(configured_limit)) if configured_limit is not None else None
 
         self.events: List[Dict[str, Any]] = []
         self._event_counter = 0
