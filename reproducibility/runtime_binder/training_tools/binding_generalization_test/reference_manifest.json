@@ -1,0 +1,2314 @@
+[
+  {
+    "question_id": "bg0001",
+    "dag_type": "sequential",
+    "graph_sha256": "8c50644c92860acdc469224f1667311dd5434c3f70bff60669cf755298840789",
+    "seed": 751000,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": 0.0
+      }
+    ],
+    "result_digests": {
+      "v1": "6bcb21ab9106726fccfbc34d573b7c149c04de19a5b24d802279dafb6157365a",
+      "working_graph": "f7cb18918e6fadcb7b0a0f8e44080e138789737a3bfdc3d96d9b32864c051316",
+      "sample_graph": "e79fe6755476cd7d1722bc3b2bd8bf35b2c71ffa67cce4be82e1b10e4c1e803d",
+      "v2": "8aed642bf5118b9d3c859bd4be35ecac75b6e873cce34e7b6f554b06f75550d7"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0002",
+    "dag_type": "sequential",
+    "graph_sha256": "8da5ea45cac43993d86ae86dacd915a81c1d39c6ec77183b379b46b57c4d8c01",
+    "seed": 751001,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "clustering",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "core_number",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "f5073e54fdfcbc7b0555db833fee9b2cfd6e6d4fe4043a80baf9273ba1afdba1",
+      "working_graph": "ee4b27f6ebb3068fdb61734fb11e871216fd4959bb7b9b33644f70a11a4628ad",
+      "sample_graph": "b9daf7d8a105609e87d6c98115ceea0e5fb55de130176fb238489a936a254d02",
+      "v2": "0b57702c1193bccbfc6f3d2942e8edfac5dff16b2f44385b8b4a61afc1fb1801"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0003",
+    "dag_type": "sequential",
+    "graph_sha256": "b2cdc2546ae9d1a42ab05657edcd835d02929e3c7c630a276c358318ce5c1f49",
+    "seed": 751002,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "ffb97b23675f0c25735ce5e381b92db8ddd692b0de606c13344f982088e532fa",
+      "working_graph": "2ef7508b11523b69b52d25126df5814a7dedd3d1bbfdda2901f808bfd6647897",
+      "sample_graph": "b5dd4788b87af0450e5ba0628b5d8c2e0fabb133d44e197ece27c666bf2e3c72",
+      "v2": "c139c936d102f55a18e2b80046a34c29e61cb3db7771ab0b0eb8e663a192d39e"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0004",
+    "dag_type": "sequential",
+    "graph_sha256": "5200dbc1e6c81caf08102e7092c09187893266db173632e3504df9fa44b0f7d2",
+    "seed": 751003,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "core_number",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "a29389d89087e8326193415cd5b95e81fb492e87eb3bea1f5d851d22f5679663",
+      "working_graph": "9e6b02baca7443bccbf8c013a754ceedb46fe2b9341f7d0563a371c9aae38738",
+      "sample_graph": "6740447d6039d0365003aeacc332e5f4ddb090d942f130b7f86e9c962a57e979",
+      "v2": "bbece017bbd2abf1029de54b8f7e4a91f834a3516e5b52c422edf8cad9074187"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0005",
+    "dag_type": "sequential",
+    "graph_sha256": "91a3b0ab394187d1e97ba139971b61642791a4eb936f27930432932e3e9f036e",
+    "seed": 751004,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "34335c7233f5e6a03e6bec12ab313718fb989a4b8dba043818bcc70e89e052a2",
+      "working_graph": "cf663e9f1497aac7ff77458583ef11f443a806371145566fe7c289bd8eea1c95",
+      "sample_graph": "11a7aab6090d211b666cb7ecbfdebe413d078b23df9bbf08185c3a3c02ffb085",
+      "v2": "f5499d33b7dce3b78c51cb187fe1935daa359ee2529e3beb2cd44be6342f6449"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0006",
+    "dag_type": "sequential",
+    "graph_sha256": "69d139dd389c819efdac0f4984a53208461f998ce38e81e39b167c4d6a6a1706",
+    "seed": 751005,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": 0.004597701149425287
+      }
+    ],
+    "result_digests": {
+      "v1": "1d4c7176ba9d0a0a2a6aaf45bd30d1a05c89153f301c2f05c046468745ad1d4b",
+      "working_graph": "3bb8a47c350234538d866abddcf058ae841d49398e23503a09d6c98c12d5ea24",
+      "sample_graph": "59b4504bc89881fbcd97c25c78c1ce5d290c82f890eea6ff558f0ccf7b01584b",
+      "v2": "b7df9132be7e5081db018568d6983c00618534ce68fbc0f402dbfd596ff0c897"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0007",
+    "dag_type": "parallel",
+    "graph_sha256": "e26ae0bed09be51f5f14d0949657f9887db8c8a39dc8877158f11cbec7537476",
+    "seed": 751006,
+    "algorithm_edges": [],
+    "reference_trace": [
+      {
+        "step_or_transform": "range_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "range_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "G0"
+        ],
+        "output": 0.006956369194131432
+      }
+    ],
+    "result_digests": {
+      "range_graph": "9ff6043b7ac4f5d09ba87d023f17f6b1c51b6c288e7ac929e5812948e5556360",
+      "v1": "3aaa62a19157ee3243c7780ebb7dca43260eca37a4a59c8388487257f8f95ba4",
+      "v2": "0fc0440a96551debd6579ad1164e968f50f7985e5cc18a20f411c4fc10a68d66"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0008",
+    "dag_type": "parallel",
+    "graph_sha256": "103040665afb9caf0a29154bbaaa28e8f1cf9c8bdfc5f1204c82a171ba49db2e",
+    "seed": 751007,
+    "algorithm_edges": [],
+    "reference_trace": [
+      {
+        "step_or_transform": "range_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v1",
+        "algorithm": "clustering",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "core_number",
+        "input_refs": [
+          "range_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "range_graph": "887be0bd51c940fe30f82d7901255944abde03ed6f869faa8e427ffedee1bdcc",
+      "v1": "dd35fd9cf789d7401083cb3e0b64397d94216ec851bdace32ff8a8dc6da9a463",
+      "v2": "e86d7c727507be09ecea269695dc4ffbac02783c9ef97f7838e38d596721b289"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0009",
+    "dag_type": "parallel",
+    "graph_sha256": "3549a94db533965693ca0777c443c7f721894f15a5caa7a616ebef41460a1ee9",
+    "seed": 751008,
+    "algorithm_edges": [],
+    "reference_trace": [
+      {
+        "step_or_transform": "range_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v1",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "range_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "range_graph": "545d1256e847f0b77e6f4699ee823398d768003fb9c1d4417ba017f42bb00791",
+      "v1": "4d212f9922348f2600b615a48818fc8e0e0c0d2e99ff28b667f9f4f9bd7d8e87",
+      "v2": "c0fd0de8e34f610938e13d1a771d84b1d72ab711c9693cb60b0de38fb9cf43c7"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0010",
+    "dag_type": "parallel",
+    "graph_sha256": "a621ac213a76ea7ce5bf19a76339e82b704b5c52ca9011c7d224cb575c7f5b14",
+    "seed": 751009,
+    "algorithm_edges": [],
+    "reference_trace": [
+      {
+        "step_or_transform": "range_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v1",
+        "algorithm": "core_number",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "range_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "range_graph": "92ec49c3ea86e649c6f791c0eefe1136ed938679abd7ca5e9d5d48c788902a04",
+      "v1": "f7b04989417ce94bdb9b7b774321a464fcc96f236240290d9f7091fe38106dbd",
+      "v2": "6029d77e0efc75eea3a7034f23340f8d26eb6f508ceb68123c083ad77a2f47bc"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0011",
+    "dag_type": "parallel",
+    "graph_sha256": "f502b3a289d35ed8e560bfa934676321936a29c933580d4f24d3335f1fc9a831",
+    "seed": 751010,
+    "algorithm_edges": [],
+    "reference_trace": [
+      {
+        "step_or_transform": "range_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v1",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "range_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "range_graph": "e2b45312a0bba9bef50a31ae96565ca1bb6d0cbe3292ad67315b4e098dd8d4b4",
+      "v1": "ad850e2a239453f79e8b91784e64a231a7d0496cdc236dd10649fe452fc1a70b",
+      "v2": "4fe1f705b606d7b617ce097742f865a30e25c07d08142588e43134865ba780c8"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0012",
+    "dag_type": "parallel",
+    "graph_sha256": "521e16bf5688caa4b73293a4747a836ea69df8389011333995abdf65c908ed3b",
+    "seed": 751011,
+    "algorithm_edges": [],
+    "reference_trace": [
+      {
+        "step_or_transform": "range_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "range_graph"
+        ],
+        "output": 0.0
+      }
+    ],
+    "result_digests": {
+      "range_graph": "91c577309deb73e8f213c698684b4ecdf51452e8408c26d3a236586d9cb67a97",
+      "v1": "e39d6656e860e824d02bb98025959fee02309aee15dd5f9b7a69f114c2be80b3",
+      "v2": "8aed642bf5118b9d3c859bd4be35ecac75b6e873cce34e7b6f554b06f75550d7"
+    },
+    "step_ids": [
+      "v1",
+      "v2"
+    ]
+  },
+  {
+    "question_id": "bg0013",
+    "dag_type": "convergence",
+    "graph_sha256": "ac6769e2384a95572ae7069eabc89fde5a02ba6b642ac263d6053e9896618008",
+    "seed": 751012,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_ranking_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "joined_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1",
+          "v2"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "joined_graph"
+        ],
+        "output": 0.005769230769230769
+      }
+    ],
+    "result_digests": {
+      "v1": "ef49bae9d749e0b3ee28659466496f5b68e8c2ea00d8272fb894dc7697b5e10a",
+      "first_ranking_graph": "630c7e1e2a4790a573995797dbcafe781556c63cfeccad68407c19d84ae74786",
+      "v2": "0e5601a75f9572ac23cd00f6a14b0a8872e6ab828be14704ed2cb0660eb1f08a",
+      "joined_graph": "be4cfce104f040443462f8ef681577d2c8c8ce0989400ab979c7d15dcd042171",
+      "v3": "839fe42b4fc3f45b61b44de3aaa189a660c86437c8a905240031ab61b1aaa403"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0014",
+    "dag_type": "convergence",
+    "graph_sha256": "6537fde842db9481d630fa798589f6c66939d4169efe71c3a8990ce79590277d",
+    "seed": 751013,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "clustering",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_ranking_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "joined_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1",
+          "v2"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "core_number",
+        "input_refs": [
+          "joined_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "9518648096222d59d38d48124ecc08fad4cbb362f16378bea1f0c74c2b825243",
+      "first_ranking_graph": "a30422afcce5c9e4bbcea3c2bd2ab369817adaff09cba5dbc1fa9b4f753ef73b",
+      "v2": "e4ff5094f4c807f2fc25993c4b30d4f6a075af8c27d673eabf2312fa74de4261",
+      "joined_graph": "fd2efc072ad8908885a1d864baa8373a47860edc6b15e59d56909f6630e079a4",
+      "v3": "daffee75afa30f4b36067be5d48b184f6ed72b373205adce58889c4d679afd85"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0015",
+    "dag_type": "convergence",
+    "graph_sha256": "ad39779aa6e488a42e3187494121048e8e19390843aa4ea7245041e7314d1c54",
+    "seed": 751014,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_ranking_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "joined_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1",
+          "v2"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "joined_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "1d66c608927296b40ef02cc333ba75f57a30aa4ba06e3bf01ce74d442d099b10",
+      "first_ranking_graph": "397000f506cd1b26f4d4ac0737f73a565c2b3717633d41e3b1175cc8da2936c9",
+      "v2": "b0caf5a8ef22d82ac1555d6ce97606a8cfde5a84737461ce30795d52f2288098",
+      "joined_graph": "3077cb50efc01d4e8218e3301357bf37a9731effd472b920dc6b774aec94b13d",
+      "v3": "d4a8d49e208000251e33560b774a29f51c8b15d4661546f530edd54efb581980"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0016",
+    "dag_type": "convergence",
+    "graph_sha256": "c95462b8678c7c7607161c50bce182a3086b1254be11e834139abe42bd1c9f27",
+    "seed": 751015,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "core_number",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_ranking_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "joined_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1",
+          "v2"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "joined_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "eef42ec4943f8fb12459775b55e0ceb821748e86ccc082532f447c6b0ae9c581",
+      "first_ranking_graph": "0f17c9fcbdac811f6794d16cd58508329e778da15a343bca2b4376c22d3010f5",
+      "v2": "f6da9ce596d1913547f45a1a620e72b762812b4e8a735b2173a76aca59ca9f1e",
+      "joined_graph": "978833c961246f7c3eacf2d39e9ce078ed0a0a39ce9b47b105dc572e8fe8b8f7",
+      "v3": "05fb0bb743f911ab067c8502f6c162c5833c7618e6fdfcec04a20f2f3bb9634b"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0017",
+    "dag_type": "convergence",
+    "graph_sha256": "0b14a7bcc37dcdf56a9b36650696b0d34b9c851b9e88457850cd51905bcaf653",
+    "seed": 751016,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_ranking_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "joined_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1",
+          "v2"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "joined_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "6792bbebe3df1c9c421bca483ba4c9a9d3dc8941ac27563b2f9e84da5cb80e6a",
+      "first_ranking_graph": "c2be9f2fa521098d61bd694bb7ddc78481c66875ec19e6dcf695e4f53c29f686",
+      "v2": "951555750625e896429e4225a2cedc69543c47da5cfbb6a2b1f52e2f64af5231",
+      "joined_graph": "12dc5e3d945b17136564cd0c61a5459427039acf9d5af979854a953ce9d56a8d",
+      "v3": "0e28c2d64d1a7f932fa4fc83399c443aa5d0b0eafcddac026e788ded7040f4a5"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0018",
+    "dag_type": "convergence",
+    "graph_sha256": "bd7444c3672dcc1532568f97594fe84d275b15fb875de2b25155af9ced52ad07",
+    "seed": 751017,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_ranking_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "joined_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1",
+          "v2"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "joined_graph"
+        ],
+        "output": 0.019781974092318917
+      }
+    ],
+    "result_digests": {
+      "v1": "a883db812ae83e9694974a12a35c6e36044a04416da6e8fee4a32b8bf70eb817",
+      "first_ranking_graph": "20d264e71972d69f25de5914454ddab1f92d258b781e9654251444b00cbeaf1b",
+      "v2": "1f1f6cd8179a2f21cfdb93665b709e505664d011007b0e9c78c45b7d9b17df91",
+      "joined_graph": "01a36dfc0b66b3ad898fd62e2c55639962a7ce6fa8c89e4b3911083fa00320cd",
+      "v3": "5e4db90a44f6f9347690792e9d43aa459726eb46eb6040137baa10dab1512256"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0019",
+    "dag_type": "divergence",
+    "graph_sha256": "bc06c0093ddfd40e4d1bc862fe2b0ce5652a5914ba3084c32faebd69181763a5",
+    "seed": 751018,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": 0.0
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "dijkstra_path_length",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "742898fa6c33baa3f90c6113816416acc4fcbb613dffc41656c6312841d46bc9",
+      "working_graph": "26a440b5c891ac81d6d6c09e8cbfd8b70ebd2a4ba98dd87dc56cbe011c09fc56",
+      "sample_graph": "7c6b12b1372ebda6afc9cca54114a6eb932201ea010f823de8f4f2cd8a7d81bb",
+      "v2": "8aed642bf5118b9d3c859bd4be35ecac75b6e873cce34e7b6f554b06f75550d7",
+      "v3": "bd98f4303fcc4f0f4a430d76fcf81ea4a4c1bc42d27ffa7190e97cb6162a57ed"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0020",
+    "dag_type": "divergence",
+    "graph_sha256": "a5271f797afe99735042ff1042548eb2cde54d3fba649180a50ecc598508b1f7",
+    "seed": 751019,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "clustering",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "core_number",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": 0.4180790960451978
+      }
+    ],
+    "result_digests": {
+      "v1": "075f4e6c98a60ed248cec4de06e1882e00ca9038949dba28ef291bdf38c3a388",
+      "working_graph": "e715219fb7fd8fa3eabb31cc01a5a829d8067405d6a879ff1a61adaa35199008",
+      "sample_graph": "81a34ea8bf97af67d25fa3bbd289259b402dea8f972856cda5cf9f3c97f858c8",
+      "v2": "ef09f2a2867954bc525bf5511fbc332f4f57916dd873297af46fe253b14e4713",
+      "v3": "b7591d2d3f0f70446949d60238d3a35e4df545dc1c5c20ef07e0e1a475752a09"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0021",
+    "dag_type": "divergence",
+    "graph_sha256": "5bd469a2baac72e8571e39f7f419be1c0735bdd975c11afd787cdaa429aada86",
+    "seed": 751020,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "core_number",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "66ed7a907d8a58634d53dc17473884141e7552f84cca846f2b3d7847773b616e",
+      "working_graph": "1d6159692ab28667da904e777d83782a022c577ca34b1f7ccbf6c973edafdbd3",
+      "sample_graph": "dee2d35d842412be251f057c702b79623ae362c58c67a2dfbbe41f8e972ff8f7",
+      "v2": "11c55e70fe48fb8da801536ef167063921da74ddd2081975a3efb2877d191ba2",
+      "v3": "84b1d3dbc504e7b78a15d727684d7de38c7026aa61331afb5d0acbe31e3654a1"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0022",
+    "dag_type": "divergence",
+    "graph_sha256": "3bcbfdf77c98aa2d7e4b3353012936bb7d47b5d6dbc1a2f6b996aa4a1414eab2",
+    "seed": 751021,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "core_number",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "cdf47c945c84dce3275cd866b84d63c3d1318a78ad60cb22a1989fd7f99f77f7",
+      "working_graph": "b94d665f18ac39e8f156c49a3bbd17d3daa4157169d1cfd048e46dd5cac879df",
+      "sample_graph": "6ca4c7dbb3e26d06abfc37056abfe743684efee0e7a40ea70534d5e2717d0b56",
+      "v2": "d7bf2d02eb1174e00c629303228c1e8baeeac1419160e9a31f8c3a49ba0b7742",
+      "v3": "148fff5654238fb8f6affd8fcb9817720d824c0f90f52833eeff4099d94c8203"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0023",
+    "dag_type": "divergence",
+    "graph_sha256": "2b94dda84cfc084a07d11680f71ff12fb9114c00dedd0a9d331c92b091779744",
+    "seed": 751022,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "93d968976e06be72f596fe5b6b6829d84c3ec8bc2be3ecd150b4f96ffebd18fb",
+      "working_graph": "9dfde09b3a27bf55e60cd87ddc728df6417d1147247b0336f0599cd27f5cbe7e",
+      "sample_graph": "0aae086ed2f02f058f72d425c56ee90244b2f646ff149e21421177553967f7e5",
+      "v2": "d07910ab76c3a16358f7e659191233846610ec5c88dea2d334dd382ed793cb41",
+      "v3": "823110ddfc0b47801349c4bd69f6440dbffe5cd0571bf1bcf30f4bff9a9d52a8"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0024",
+    "dag_type": "divergence",
+    "graph_sha256": "2fa613c2a004e1a6c34a81b64bd4cfa91ceac4f82c8ab4b013adbb5c35838f70",
+    "seed": 751023,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "working_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "sample_graph",
+        "algorithm": null,
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": 0.017241379310344827
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "clustering",
+        "input_refs": [
+          "working_graph"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "f1f1c2d6f2c7469e097e589557cb8a2856616433e26a65cbe4a7a55006ad1e85",
+      "working_graph": "89db02bd4b167b6bb7550b1e24197c6f9c0bb7bc79c62419edf1bd143886e43f",
+      "sample_graph": "7ec7b9029857e950f5f5a8979e6d2ce787d126fd8d6c341a59999b7cfac949fd",
+      "v2": "1dcd718f855e5877294f00cbaee822ff860fc787369fa4c6782559ab25ae9f30",
+      "v3": "fdf2847d339c3f236646326ac7086df6f21ea24adc285e04a6841431b4029a06"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3"
+    ]
+  },
+  {
+    "question_id": "bg0025",
+    "dag_type": "diamond",
+    "graph_sha256": "557f352a78d931404554aa81e9193e27ea0c12be641e43605e377b83efe9d741",
+    "seed": 751024,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v4"
+      },
+      {
+        "id": "e5",
+        "from": "v3",
+        "to": "v4"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_core",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "clustering",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "second_core",
+        "algorithm": null,
+        "input_refs": [
+          "first_core",
+          "v2",
+          "v3"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v4",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "second_core"
+        ],
+        "output": 0.0
+      }
+    ],
+    "result_digests": {
+      "v1": "f4dcdc4dd57d006977bd64d8a136208c4b1e12197be585871069c8307e0246de",
+      "first_core": "dae1732672b1a47096d5e9216abdfc352577a35cb9546b2d98d967200be60a91",
+      "v2": "e986b4e72f77ef3acf9df8d6aadab0920b9d53109833b4b26fa1d75d4552aef3",
+      "v3": "552fedabbf5e40f5e1726d79ca6c31ae4072eabac290d92cb8d948dcd99ff16f",
+      "second_core": "ed672073d762a26a51521c8f62d9a572d28f0872ff1c3dc10bc8ac98e339915c",
+      "v4": "8aed642bf5118b9d3c859bd4be35ecac75b6e873cce34e7b6f554b06f75550d7"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3",
+      "v4"
+    ]
+  },
+  {
+    "question_id": "bg0026",
+    "dag_type": "diamond",
+    "graph_sha256": "d78dccd254800ad84ef4850980f5620aea60d9ebcef47679000dfbb9ad9de682",
+    "seed": 751025,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v4"
+      },
+      {
+        "id": "e5",
+        "from": "v3",
+        "to": "v4"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "clustering",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_core",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "clustering",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "second_core",
+        "algorithm": null,
+        "input_refs": [
+          "first_core",
+          "v2",
+          "v3"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v4",
+        "algorithm": "core_number",
+        "input_refs": [
+          "second_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "4f7dd4822122d7434c6524781497c00dac50b4067331a8083315610fac77d7f0",
+      "first_core": "62f26a1ba871c4974d200a1d641196ab098fd0f4e74e26fabf435888922123fa",
+      "v2": "b599033523feb597cd3a6c4db2701d410b4a2f53fa1ca0dc3289d1a9872cbde0",
+      "v3": "0ee5f4470219576f983330abcd1210988dfb862fe0e65f97f72727c06dc74a0e",
+      "second_core": "9ef2d52cb4e646945e67a5019a558c289dad6fd2c1b6a40a087463397eab1657",
+      "v4": "91e1857ab2218318b1e2dd7dff2296d5742c740bf999a39cd0ca014f201d62ba"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3",
+      "v4"
+    ]
+  },
+  {
+    "question_id": "bg0027",
+    "dag_type": "diamond",
+    "graph_sha256": "2d5e254bf1e23367a602b85ab042883175513fdde6f4021fa8ea8ce6087892d4",
+    "seed": 751026,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v4"
+      },
+      {
+        "id": "e5",
+        "from": "v3",
+        "to": "v4"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_core",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "clustering",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "second_core",
+        "algorithm": null,
+        "input_refs": [
+          "first_core",
+          "v2",
+          "v3"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v4",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "second_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "5cead49698b8907f5d6e9b8bc19e6dc04041a9db06d408c345fc04f2c16ec335",
+      "first_core": "e989577799c4d6d3d9059a99993a66c96d95c90b2b178d86b7f03ac3a4a991f2",
+      "v2": "27fcfc359673cb0944a52f1afe458a84fc4047dd9789795b9e0555c11532b963",
+      "v3": "a635085e344771e8815d0b09d4d3d8d912bc6d224a2d55b9c20414144039afc9",
+      "second_core": "d94860fe01f656d31385aa69dd5143448fb4da8233335f311ba8bc644af58584",
+      "v4": "5a7a327f20e16dbc1b5299911193a78852a3221f15ece22f462cad906d6311fc"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3",
+      "v4"
+    ]
+  },
+  {
+    "question_id": "bg0028",
+    "dag_type": "diamond",
+    "graph_sha256": "62e60ca50bb764a6a37003015694f0e395ebc441d3170638dbf277f4123029fc",
+    "seed": 751027,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v4"
+      },
+      {
+        "id": "e5",
+        "from": "v3",
+        "to": "v4"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "core_number",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_core",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "clustering",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "second_core",
+        "algorithm": null,
+        "input_refs": [
+          "first_core",
+          "v2",
+          "v3"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v4",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "second_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "5d4711b9f952f81145c0dd14552f878d9e66ca64e6fe91b85fbd21362914b4af",
+      "first_core": "4149139a8ecb4f0d8c0cfa095f3628545969d31a2f1f820032063bb6c22c10d9",
+      "v2": "0afb76fe3b0f404304fe404403b38c32e89a562596ce47fad2d6970602d2b00f",
+      "v3": "24fc80a6814d3b60d67934ba5095ab437afaf361ef9e48bde7804a14af26580a",
+      "second_core": "76d50a8b57411503bfd9c4582a8f08c25bd460c363b97ac7b5b8c3fadeeac342",
+      "v4": "db68321ad90f44eb6d8b798c96d05db4d8ea80e24ad5d2e19482818c71c6bdb7"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3",
+      "v4"
+    ]
+  },
+  {
+    "question_id": "bg0029",
+    "dag_type": "diamond",
+    "graph_sha256": "277a35bc13f54927dea2616439b0e0a07570605720670596b9d8b0b61c0af036",
+    "seed": 751028,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v4"
+      },
+      {
+        "id": "e5",
+        "from": "v3",
+        "to": "v4"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "pagerank",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_core",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "clustering",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "second_core",
+        "algorithm": null,
+        "input_refs": [
+          "first_core",
+          "v2",
+          "v3"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v4",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "second_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      }
+    ],
+    "result_digests": {
+      "v1": "e76ab5b3a1060b4bb563ea2362c2824d8138c5e5151fdbbd71174ff4292116e6",
+      "first_core": "928330ed64a6781f03004028b445d576310dea6cad6dfcbc96c79d07d71e6b0a",
+      "v2": "605331107535bed8a17b8c4906617cf7e0c31c4a5648463db1af02f79930c4f2",
+      "v3": "f95cfe54283b2aab081da5d827f07493b2ef77bad52a2bd2aa491563f4c7b396",
+      "second_core": "bb9d354d5374d602dae5ff3c9ebb100e7fef3774719b948c98afe9b5875bc182",
+      "v4": "ae07ef2f713da64c6b8b0ca5a7e677cd7882ee52ee2b7e0958b1e54496433fbf"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3",
+      "v4"
+    ]
+  },
+  {
+    "question_id": "bg0030",
+    "dag_type": "diamond",
+    "graph_sha256": "a64f82206fca094fd3d7978399cd1c4f4efa6dd4218e0310f1765ba12a184ae7",
+    "seed": 751029,
+    "algorithm_edges": [
+      {
+        "id": "e1",
+        "from": "v1",
+        "to": "v2"
+      },
+      {
+        "id": "e2",
+        "from": "v1",
+        "to": "v3"
+      },
+      {
+        "id": "e3",
+        "from": "v2",
+        "to": "v4"
+      },
+      {
+        "id": "e5",
+        "from": "v3",
+        "to": "v4"
+      }
+    ],
+    "reference_trace": [
+      {
+        "step_or_transform": "v1",
+        "algorithm": "degree_centrality",
+        "input_refs": [
+          "G0"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "first_core",
+        "algorithm": null,
+        "input_refs": [
+          "G0",
+          "v1"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v2",
+        "algorithm": "average_neighbor_degree",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "v3",
+        "algorithm": "clustering",
+        "input_refs": [
+          "first_core"
+        ],
+        "output": {
+          "type": "mapping_preview"
+        }
+      },
+      {
+        "step_or_transform": "second_core",
+        "algorithm": null,
+        "input_refs": [
+          "first_core",
+          "v2",
+          "v3"
+        ],
+        "output": {
+          "type": "Graph"
+        }
+      },
+      {
+        "step_or_transform": "v4",
+        "algorithm": "average_clustering",
+        "input_refs": [
+          "second_core"
+        ],
+        "output": 0.0
+      }
+    ],
+    "result_digests": {
+      "v1": "5bf4ee3bb841ad875bc4327673a8c7e7dab889a1e597633ca838835ba6d2f7cf",
+      "first_core": "99d61b7033aae07e9728119373480ffc864f1fb789e34713c91053c1e477a806",
+      "v2": "21ed1a225a9477cb114d23bb109593dbd8243b4c9ca35b778f52e81ecbffd3df",
+      "v3": "3cdc19e892f1a00ec366228526411721569a96c89980bd980a8556c87a65cfec",
+      "second_core": "a844f7d5f6ca786892ac1c7bad13971ff8f2834dcc2b9a3b813f89c05321ff1f",
+      "v4": "8aed642bf5118b9d3c859bd4be35ecac75b6e873cce34e7b6f554b06f75550d7"
+    },
+    "step_ids": [
+      "v1",
+      "v2",
+      "v3",
+      "v4"
+    ]
+  }
+]
