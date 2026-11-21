@@ -492,7 +492,7 @@ class ReActExecutor:
             )
         if bound.get("errors"):
             raise ValueError("Input binding failed; correct consumed references: " + "; ".join(bound["errors"]))
-        await self._initialize_working_graph(bound.get("graph_adapter_result"), algorithm)
+        working_graph = await self._initialize_working_graph(bound.get("graph_adapter_result"), algorithm)
         self._emit_status("executing", state.step)
         self._record("tool_call", {"step": state.step, "action": action, "parameters": bound.get("parameters"),
                                   "post_processing_code": post_code})
@@ -503,6 +503,9 @@ class ReActExecutor:
             global_graph=self.global_graph,
         )
         result = await run_call if inspect.isawaitable(run_call) else run_call
+        if working_graph and isinstance(result, dict):
+            result = {**result, "evidence_scope": {**result.get("evidence_scope", {}), "working_graph": working_graph,
+                                                   "algorithm_parameters": copy.deepcopy(bound.get("parameters") or {})}}
         if self._execution_error(result) is None and isinstance(result, dict) and "result" in result:
             result, metadata = await self._postprocess_algorithm_result(
                 action, state, result, metadata, tool_description, bound,
@@ -554,7 +557,7 @@ class ReActExecutor:
         if not post_code and (not callable(generator) or isinstance(raw, (bool, int, float)) or raw is None):
             return result, metadata
         errors = []
-        scope = self._derived_evidence_scope(action, state)
+        scope = {**self._derived_evidence_scope(action, state), **(result.get("evidence_scope") or {})}
         if isinstance(raw, dict) and raw.get("truncated") is True:
             scope = {**scope, "source_truncated": True,
                      "restriction": "The original algorithm enumeration is truncated. Derived fields cover only retained items unless separately supported by exact source statistics."}
@@ -591,6 +594,7 @@ class ReActExecutor:
                 computed = self.computing_engine.execute_code(
                     code=code, data=copy.deepcopy(raw), global_graph=self.global_graph,
                     is_numeric_analysis=False, fallback_to_direct_exec=False,
+                    execution_context=copy.deepcopy(scope),
                 )
                 computed = await computed if inspect.isawaitable(computed) else computed
                 error = self._execution_error(computed)
@@ -752,7 +756,7 @@ class ReActExecutor:
             failures[-1]["previous_code"] = previous_code
         return failures
 
-    async def _initialize_working_graph(self, adapter_result: Optional[Dict[str, Any]], algorithm: Optional[str] = None) -> None:
+    async def _initialize_working_graph(self, adapter_result: Optional[Dict[str, Any]], algorithm: Optional[str] = None) -> Optional[Dict[str, Any]]:
         if self.global_graph is None:
             return
         vertices = self.global_graph.vertices
@@ -791,6 +795,12 @@ class ReActExecutor:
         result = await run_call if inspect.isawaitable(run_call) else run_call
         if isinstance(result, dict) and not result.get("success", False):
             raise RuntimeError(result.get("error") or "failed to initialize working graph")
+        if isinstance(result, dict) and isinstance(result.get("result"), dict):
+            working_graph = {"initializer": initializer, "metadata": copy.deepcopy(result["result"])}
+            description = getattr(self.current_graph_dataset, "description", None)
+            if description:
+                working_graph["source_dataset_description"] = description
+            return working_graph
 
     def _graph_schemas(self) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         if self.global_graph is None:

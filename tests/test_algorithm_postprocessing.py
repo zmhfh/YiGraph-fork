@@ -138,6 +138,51 @@ def test_scalar_results_skip_an_unnecessary_binder_call():
     reasoner.generate_algorithm_postprocessing.assert_not_called()
 
 
+def test_actual_initialized_subgraph_metadata_survives_extraction_and_artifact_preview():
+    from aag.config.data_upload_config import DatasetConfig
+    from aag.computing_engine.networkx_server.graph_computation_processor import GraphComputationProcessor
+    from aag.expert_search_engine.database.datatype import GraphData, VertexData, EdgeData
+
+    graph = GraphData([VertexData(name) for name in ("a", "b", "c")],
+                      [EdgeData("a", "b", rank="first"), EdgeData("a", "b", rank="second"), EdgeData("b", "c", rank="third")])
+    config = DatasetConfig.from_dict({"name": "Other", "type": "graph", "description": "Synthetic payments in one source-defined currency and clock window.", "schema": {
+        "vertex": [], "edge": [], "graph_structure": {"directed": True, "multigraph": True}, "graph_store_info": {}}})
+    reasoner = SimpleNamespace(generate_algorithm_postprocessing=MagicMock(return_value=SPEC))
+    resolver = SimpleNamespace(prepare_react_inputs=AsyncMock(return_value={
+        "parameters": {"alpha": 0.85}, "graph_adapter_result": {"nodes": ["a", "b"], "edges": [["a", "b"]]}, "errors": []}))
+    runner, engine = make_runner(reasoner, {}, global_graph=graph, current_graph_dataset=config, dependency_resolver=resolver)
+    processor = GraphComputationProcessor()
+    reasoner.generate_algorithm_postprocessing.return_value = {"required": True, "code": '''def process(data):
+    metadata = dict(execution_context["working_graph"]["metadata"])
+    execution_context["working_graph"]["metadata"]["edge_count"] = -1
+    return {"actual_graph": metadata, "weight_argument": execution_context["algorithm_parameters"].get("weight")}
+''', "output_schema": {}}
+
+    async def execute(name, parameters, *args, **kwargs):
+        if name == "initialize_graph":
+            processor.create_graph_from_edges(
+                [VertexData.from_dict(item) for item in parameters["vertices"]],
+                [EdgeData.from_dict(item) for item in parameters["edges"]], directed=True, multiedge=True)
+            return {"success": True, "result": processor.get_graph_info()}
+        return {"success": True, "result": processor.run_pagerank()}
+
+    engine.run_algorithm.side_effect = execute
+    request = {**action(), "consumed": [{"artifact_id": "a0", "use_as": "graph"}]}
+    state = RunState(goal="Rank a selected subgraph, retaining parallel events")
+    result, metadata = asyncio.run(runner._execute_action(request, state))
+    actual = result["evidence_scope"]["working_graph"]["metadata"]
+    assert {key: actual[key] for key in ("vertex_count", "edge_count", "directed", "multigraph")} == {
+        "vertex_count": 2, "edge_count": 2, "directed": True, "multigraph": True}
+    assert set(result["result"]["original_result"]) == {"a", "b"}
+    assert result["result"]["actual_graph"] == actual
+    assert actual["edge_count"] == 2  # Generated code cannot mutate authoritative scope metadata.
+    supplied = reasoner.generate_algorithm_postprocessing.call_args.kwargs
+    assert supplied["execution_scope"]["evidence_scope"]["working_graph"]["metadata"] == actual
+    artifact_id = runner._add_artifact(state, request, result, metadata, 1)
+    assert state.prompt_view()["artifacts"][artifact_id]["evidence_scope"]["working_graph"]["metadata"] == actual
+    assert state.prompt_view()["artifacts"][artifact_id]["evidence_scope"]["working_graph"]["source_dataset_description"] == config.description
+
+
 def test_an_extractor_generated_with_missing_parameters_is_reused():
     reasoner = SimpleNamespace(
         extract_parameters_with_postprocess_new=MagicMock(return_value={

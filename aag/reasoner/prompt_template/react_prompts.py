@@ -223,7 +223,11 @@ Rules:
   count_is_exact wrapper. Results derived from partial inputs remain partial; never label them exact
   population counts or global extrema. Preserve relevant scope and truncation flags.
 - A serialized graph with type=graph is restored to a NetworkX graph by the code executor before
-  process(data). global_graph is also available for property lookup using the supplied actual schema.
+  process(data). global_graph is GraphData with vertices/edges, not a NetworkX graph. It is available
+  for property lookup using the supplied actual schema. For the initialized working graph's counts,
+  direction and multigraph flag, read execution_context['working_graph']['metadata']; the source
+  description and action arguments are in execution_context['working_graph']['source_dataset_description']
+  and execution_context['algorithm_parameters'] when present. Missing metadata means unknown, not false.
   Use it only for property enrichment requested by this objective, not for another graph computation.
 - Scope follows the working graph and algorithm parameters; a consumed subgraph is not the full
   dataset. An influence score, transaction amount and risk label are distinct concepts.

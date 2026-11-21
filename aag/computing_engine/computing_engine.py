@@ -232,7 +232,7 @@ class ComputingEngine:
             logger.warning("⚠️ Parameter normalization failed (%s): %s", tool_name, exc)
             return parameters
 
-    def execute_code(self, code: str, data: Any, global_graph: Optional[GraphData] = None, fallback_to_direct_exec: bool = True, is_numeric_analysis: bool = False) -> Any:
+    def execute_code(self, code: str, data: Any, global_graph: Optional[GraphData] = None, fallback_to_direct_exec: bool = True, is_numeric_analysis: bool = False, execution_context: Optional[Dict[str, Any]] = None) -> Any:
         """
         Execute dynamically generated code (numeric analysis, post-processing, etc.).
 
@@ -241,6 +241,7 @@ class ComputingEngine:
             data: Data passed to the code (dict or other).
             fallback_to_direct_exec: If code is not a process() function, run it directly.
             is_numeric_analysis: If True, unpack as **data; else pass data as-is.
+            execution_context: Optional execution facts exposed as a code global.
 
         Returns:
             Execution result.
@@ -249,7 +250,7 @@ class ComputingEngine:
             RuntimeError: If execution fails.
         """
         try:
-            value = self.code_executor.execute(code, data, global_graph=global_graph, is_numeric_analysis=is_numeric_analysis)
+            value = self.code_executor.execute(code, data, global_graph=global_graph, is_numeric_analysis=is_numeric_analysis, execution_context=execution_context)
             return {
                 "algorithm": "numeric_analysis_code",
                 "success": True,
@@ -265,6 +266,7 @@ class ComputingEngine:
                     namespace = {**data, "__builtins__": __builtins__}
                 else:
                     namespace = {"data": data, "__builtins__": __builtins__}
+                namespace["execution_context"] = execution_context or {}
                 exec(code, namespace)
                 return {
                         "algorithm": "numeric_analysis_code",

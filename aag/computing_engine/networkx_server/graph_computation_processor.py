@@ -487,6 +487,10 @@ class GraphComputationProcessor(GraphProcessor):
             return {"error": "图未初始化"}
         
         info = {
+            "vertex_count": self.graph.number_of_nodes(),
+            "edge_count": self.graph.number_of_edges(),
+            "directed": self.graph.is_directed(),
+            "multigraph": self.graph.is_multigraph(),
             "节点数": self.graph.number_of_nodes(),
             "边数": self.graph.number_of_edges(),
             "图类型": "有向图" if self.is_directed else "无向图",

@@ -101,7 +101,7 @@ class DynamicCodeExecutor:
         
         return True
     
-    def execute(self, code: str, data: Any, global_graph: Optional[GraphData] = None, is_numeric_analysis: bool = False) -> Any:
+    def execute(self, code: str, data: Any, global_graph: Optional[GraphData] = None, is_numeric_analysis: bool = False, execution_context: Optional[dict] = None) -> Any:
         """在独立命名空间中执行代码"""
         # 检查并安装依赖
         if not self.check_and_install_dependencies(code):
@@ -148,6 +148,7 @@ class DynamicCodeExecutor:
         namespace = {
             "data": data,
             "global_graph": global_graph,  
+            "execution_context": execution_context or {},
             "__builtins__": __builtins__,  # 保留内置函数
         }
         

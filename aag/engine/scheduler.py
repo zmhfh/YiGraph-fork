@@ -852,6 +852,9 @@ class Scheduler:
         try:
             schema_info = []
             schema_info.append(f"Dataset: {self.current_dataset_name}")
+            description = getattr(self.current_graph_dataset, "description", None)
+            if description:
+                schema_info.append(f"Dataset description: {description}")
             
             # Graph properties
             graph_props = getattr(self.current_graph_dataset.schema, "graph_structure", None) or getattr(self.current_graph_dataset.schema, "graph", None)
