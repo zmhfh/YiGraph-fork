@@ -4,6 +4,7 @@ import community
 from typing import List, Tuple, Dict, Any, Optional, Union
 from aag.expert_search_engine.database.datatype import *
 from aag.computing_engine.graph_processor import GraphProcessor
+from aag.utils.graph_payload import edge_records
 
 logger = logging.getLogger(__name__)
 
@@ -45,19 +46,16 @@ class GraphComputationProcessor(GraphProcessor):
             
             # 添加顶点及属性
             for v in vertices:
-                self.graph.add_node(v.vid, **v.properties)
+                self.graph.add_node(str(v.vid), **(v.properties or {}))
 
             # 添加边及属性
-            for idx, e in enumerate(edges):
-                edge_attrs = e.properties.copy()
-                if e.rank is not None:
-                    edge_attrs['rank'] = e.rank
-
+            kind = self.graph.__class__.__name__
+            for e in edge_records(edges, kind):
                 if self.is_multiedge:
-                    key = e.rank if e.rank is not None else 0
-                    self.graph.add_edge(e.src, e.dst, key=key, **edge_attrs)
+                    self.graph.add_edge(e['src'], e['dst'], key=e['key'])
+                    self.graph[e['src']][e['dst']][e['key']].update(e['properties'])
                 else:
-                    self.graph.add_edge(e.src, e.dst, **edge_attrs)
+                    self.graph.add_edge(e['src'], e['dst'], **e['properties'])
 
             logger.debug(f"✅ 图构建完成: {self.graph.number_of_nodes()} 个节点，{self.graph.number_of_edges()} 条边")
             return self.graph
@@ -494,8 +492,8 @@ class GraphComputationProcessor(GraphProcessor):
             "节点数": self.graph.number_of_nodes(),
             "边数": self.graph.number_of_edges(),
             "图类型": "有向图" if self.is_directed else "无向图",
-            "是否连通": nx.is_connected(self.graph) if not self.is_directed else None,
-            "是否强连通": nx.is_strongly_connected(self.graph) if self.is_directed else None
+            "是否连通": nx.is_connected(self.graph) if len(self.graph) and not self.is_directed else None,
+            "是否强连通": nx.is_strongly_connected(self.graph) if len(self.graph) and self.is_directed else None
         }
         
         return info

@@ -222,15 +222,8 @@ class GraphMCPClient:
             Tool execution result dictionary
         """
         try:
-            # ========== New: Argument cleaning ==========
-            cleaned_arguments = {}
-            for key, value in arguments.items():
-                # Convert empty containers to None (avoid empty container traps in libraries like NetworkX)
-                if isinstance(value, (dict, list)) and len(value) == 0:
-                    cleaned_arguments[key] = None
-                    logger.warning(f"⚠️ Parameter '{key}' is an empty container, converted to None")
-                else:
-                    cleaned_arguments[key] = value
+            # Empty nodes/edges and empty parameter mappings are meaningful.
+            # Forward them unchanged; do not announce an unused conversion to None.
             # ========== Argument validation ==========
             if validate:
                 is_valid, error_msg = self.validate_arguments(tool_name, arguments)

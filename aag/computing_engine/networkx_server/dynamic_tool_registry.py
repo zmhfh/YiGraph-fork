@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field
 import networkx as nx
 from collections.abc import Iterator, Mapping, KeysView, ValuesView, ItemsView
 from itertools import islice
+from aag.engine.result_adapter import TRAVERSALS, normalize_result
 
 logger = logging.getLogger(__name__)
 MAX_ITERATOR_ITEMS = 10000
@@ -398,6 +399,12 @@ def generate_input_schema(func: Callable) -> Dict[str, Any]:
 
 def generate_output_schema(func: Callable) -> Dict[str, Any]:
     """Generate output_schema from a function docstring."""
+    if func.__name__ in TRAVERSALS:
+        return {"type": "object", "description": (
+            "bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes and complete=true. "
+            "Other BFS tools return type=edge_set|parent_mapping|node_layers, algorithm, items, source, complete, truncated. "
+            "To consume a traversal as a graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. "
+            "Layers alone do not define tree parents; edge_bfs is not a tree. Incomplete results cannot be executable graphs.")}
     docstring = func.__doc__ or ""
     return _parse_returns_from_docstring(docstring)
 
@@ -418,23 +425,30 @@ def _serialize_result(result: Any) -> Any:
         # Convert to a list-of-nodes and list-of-edges format
         nodes = list(result.nodes())
         edges = []
-        for u, v, data in result.edges(data=True):
+        records = result.edges(keys=True, data=True) if result.is_multigraph() else ((u, v, None, data) for u, v, data in result.edges(data=True))
+        for u, v, edge_key, data in records:
             edge_dict = {"src": str(u), "dst": str(v)}
+            if result.is_multigraph():
+                edge_dict["key"] = edge_key
             # Add edge attributes (skip non-serializable values)
             for key, value in data.items():
                 try:
                     # Try to JSON-serialize the value
                     import json
                     json.dumps(value)
-                    edge_dict[key] = value
+                    if key not in {"src", "dst", "key", "properties"}:
+                        edge_dict[key] = value
                 except (TypeError, ValueError):
                     # If not serializable, fall back to string
-                    edge_dict[key] = str(value)
+                    if key not in {"src", "dst", "key", "properties"}:
+                        edge_dict[key] = str(value)
+            edge_dict["properties"] = _serialize_result(dict(data))
             edges.append(edge_dict)
         
         return {
             "type": "graph",
             "graph_type": result.__class__.__name__,
+            "complete": True,
             "nodes": [str(n) for n in nodes],
             "node_attributes": {str(n): _serialize_result(dict(result.nodes[n])) for n in nodes},
             "node_members": {str(n): _serialize_result(n) for n in nodes if isinstance(n, (set, frozenset, tuple))},
@@ -590,7 +604,7 @@ def _create_tool_function(
             result = actual_func(**execution_kwargs)
             
             # 5. Serialize the result (convert NetworkX graph objects to JSON-friendly structures)
-            serializable_result = _serialize_result(result)
+            serializable_result = normalize_result(algo_name, _serialize_result(result), execution_kwargs)
             
             # 6. Return the result
             logger.info(f"✅ '{tool_name}' completed successfully")

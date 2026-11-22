@@ -5,14 +5,17 @@
 
 import json
 import logging
-from typing import Dict, Any, List, Optional, Tuple
+from typing import Dict, Any, List, Optional, Tuple, TYPE_CHECKING
 from enum import Enum
 from dataclasses import dataclass
 from aag.models.graph_workflow_dag import WorkflowStep, StepOutputItem
-from aag.reasoner.model_deployment import Reasoner
+if TYPE_CHECKING:
+    from aag.reasoner.model_deployment import Reasoner
 from aag.models.task_types import GraphAnalysisType
 from aag.utils.data_utils import take_sample
 from aag.engine.react_trace import preview, collection_metadata
+from aag.utils.graph_payload import executable_graph, kind_from_dataset, from_graph_data, to_graph_data
+from aag.engine.result_adapter import TRAVERSALS, traversal_graph
 from aag.error_recovery.error_manager import ErrorRecovery
 
 logger = logging.getLogger(__name__)
@@ -59,15 +62,60 @@ class DataDependencyResolver:
     3. 管理子图缓存
     """
     
-    def __init__(self, reasoner: Reasoner, error_recovery: Optional[ErrorRecovery] = None):
+    def __init__(self, reasoner: "Reasoner", error_recovery: Optional[ErrorRecovery] = None):
         self.reasoner = reasoner
         self.error_recovery = error_recovery
         self.global_vertices: Optional[List[str]] = None
         self.global_edges: Optional[List[Tuple[str, str]]] = None
+        self.global_graph_data = None
+        self.global_graph_kind = None
         
     def set_global_graph(self, graph_nodes: List[str] , graph_edges: List[Tuple[str, str]]):
         self.global_vertices = graph_nodes
         self.global_edges = graph_edges
+
+    def _graph_conversion_environment(self):
+        env = {"global_nodes": self.global_vertices, "global_edges": self.global_edges}
+        if self.global_graph_data is not None:
+            original = from_graph_data(self.global_graph_data, self.global_graph_kind)
+            def induced_graph(nodes):
+                selected = {str(n) for n in nodes}
+                if not selected <= set(original["nodes"]):
+                    raise ValueError("Induced graph contains unknown vertices")
+                return {**original, "nodes": sorted(selected),
+                        "node_attributes": {n: original["node_attributes"][n] for n in selected},
+                        "edges": [e for e in original["edges"] if e["src"] in selected and e["dst"] in selected]}
+            env.update(global_edge_records=original["edges"], global_graph_type=self.global_graph_kind,
+                       induced_graph=induced_graph)
+        return env
+
+    def set_graph_context(self, graph, dataset=None, fallback=None):
+        self.global_graph_data = graph
+        self.global_graph_kind = kind_from_dataset(dataset, fallback)
+        self.set_global_graph([str(v.vid) for v in graph.vertices],
+                              [(str(e.src), str(e.dst)) for e in graph.edges])
+
+    def _typed_graph_input(self, value, reference, artifact, artifacts):
+        if isinstance(value, dict) and value.get("algorithm") in TRAVERSALS:
+            if value.get("graph_type") and not reference.get("graph_mode"):
+                return executable_graph(value, self.global_graph_data, self.global_graph_kind)
+            source = artifact.get("graph_source")
+            if artifact.get("graph_input") is not None:
+                payload = artifact["graph_input"]
+                from aag.expert_search_engine.database.datatype import GraphData
+                graph, kind = GraphData(*to_graph_data(payload)), payload["graph_type"]
+            elif source == "G0":
+                graph, kind = self.global_graph_data, self.global_graph_kind
+            elif source in artifacts:
+                payload = executable_graph(artifacts[source]["value"], self.global_graph_data, self.global_graph_kind)
+                from aag.expert_search_engine.database.datatype import GraphData
+                graph, kind = GraphData(*to_graph_data(payload)), payload["graph_type"]
+            else:
+                raise ValueError("Traversal graph_source is unavailable; cannot infer an induced graph from G0")
+            return traversal_graph(value, reference.get("graph_mode"), graph, kind)
+        if isinstance(value, dict) and {"nodes", "edges"} <= value.keys():
+            return executable_graph(value, self.global_graph_data, self.global_graph_kind)
+        return None
 
     async def prepare_react_inputs(
         self,
@@ -92,6 +140,7 @@ class DataDependencyResolver:
         parameter_items: List[SingleDependencyItem] = []
         parent_steps: Dict[int, WorkflowStep] = {}
         errors: List[str] = []
+        typed_graphs = []
 
         for index, reference in enumerate(consumed, start=1):
             if isinstance(reference, str):
@@ -142,6 +191,12 @@ class DataDependencyResolver:
                 reason=str(reference.get("reason") or "explicit ReAct consumed reference"),
             )
             if item.use_as == "graph":
+                try:
+                    typed = self._typed_graph_input(value, reference, artifact, artifacts)
+                    if typed is not None:
+                        typed_graphs.append(typed)
+                except (ValueError, TypeError, KeyError) as exc:
+                    errors.append(str(exc))
                 graph_items.append(item)
             else:
                 parameter_items.append(item)
@@ -156,7 +211,11 @@ class DataDependencyResolver:
 
         graph_adapter_result = None
         parameter_adapter_result: Dict[str, Any] = {}
-        if graph_items:
+        if typed_graphs and len(graph_items) != 1:
+            errors.append("Multiple graph inputs require an explicit merge transformation")
+        elif typed_graphs:
+            graph_adapter_result = typed_graphs[0]
+        elif graph_items and not errors:
             converted = await self._convert_graph_dependencies(
                 current_question=current_question,
                 graph_items=graph_items,
@@ -497,7 +556,15 @@ class DataDependencyResolver:
                 "raw_llm_response": None
             }
 
-        if not self.global_vertices or not self.global_edges:
+        value = graph_items[0].value if len(graph_items) == 1 else None
+        if isinstance(value, dict) and {"nodes", "edges"} <= value.keys() and self.global_graph_kind:
+            try:
+                return {"converted_graph": executable_graph(value, self.global_graph_data, self.global_graph_kind),
+                        "description": "Complete typed graph; no model conversion is needed."}
+            except (ValueError, TypeError) as exc:
+                return {"converted_graph": None, "description": str(exc)}
+
+        if self.global_vertices is None or self.global_edges is None:
             error_msg = "全局图数据未初始化，请先加载图数据集。"
             logger.info(f"  {error_msg}")
             return {
@@ -505,6 +572,12 @@ class DataDependencyResolver:
                 "converted_graph": None,
                 "raw_llm_response": None
             }
+
+        if self.global_graph_kind and self.global_graph_kind.startswith("Multi"):
+            current_question += ("\nThe source is a " + self.global_graph_kind + ". Parallel edges are separate transactions. "
+                "For node-induced selection call induced_graph(selected_nodes). For exact transaction selection use global_edge_records "
+                "(src,dst,key,properties). Return a typed graph object with graph_type. Never deduplicate by endpoint pair or invent keys. "
+                "Do not infer transaction weights from amount fields without an explicit request.")
 
         # Step 1: 构造传给 LLM 的 dependency_items（带 sample_value）
         dependency_list = []
@@ -542,10 +615,7 @@ class DataDependencyResolver:
                 # Step 2: 执行生成的代码
                 upstream_values = {i.field_key: i.value for i in graph_items}
                 field_keys_in_order = [i.field_key for i in graph_items]
-                exec_env = {
-                    "global_nodes": self.global_vertices,
-                    "global_edges": self.global_edges
-                }
+                exec_env = self._graph_conversion_environment()
                 exec(code, exec_env)
                 fn = exec_env.get("transform_graph")
                 if not fn or not callable(fn):
@@ -596,10 +666,7 @@ class DataDependencyResolver:
             try:
                 upstream_values = {i.field_key: i.value for i in graph_items}
                 field_keys_in_order = [i.field_key for i in graph_items]
-                exec_env = {
-                    "global_nodes": self.global_vertices,
-                    "global_edges": self.global_edges
-                }
+                exec_env = self._graph_conversion_environment()
                 exec(code, exec_env)
                 fn = exec_env.get("transform_graph")
                 if not fn or not callable(fn):

@@ -42,6 +42,12 @@ Rules:
    return_fields contains property references, not AS aliases or aggregate expressions.
 4. Use numeric_analysis for calculations on COMPLETE artifacts. Previews are not complete inputs.
    A consumed reference without field selects the complete artifact. Give colliding inputs unique aliases.
+   For complete typed graph outputs, consume the graph itself (or its original_result field after extraction).
+   BFS edge_set, parent_mapping and node_layers outputs are not automatically graphs. To use one as a graph,
+   specify graph_mode="bfs_tree" or graph_mode="induced_subgraph" on that consumed reference.
+   These modes differ: a tree keeps traversal arcs; an induced subgraph keeps every original edge between
+   the visited nodes, including parallel transactions. Layers do not define tree parents. edge_bfs is not a tree.
+   Truncated previews cannot be executable complete graphs. Never assume transaction amounts are weights.
    Registered algorithm results may contain original_result plus task-specific extracted fields.
    Prefer those exact fields when they already answer the objective. Refer to field=original_result
    when another computation needs the full raw algorithm result; do not rank wrapper field names.

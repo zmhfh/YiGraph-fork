@@ -17,38 +17,14 @@ def graph_argument(payload):
         return payload
     if not isinstance(payload, dict):
         raise ValueError('An additional graph must be an explicit nodes/edges or vertices/edges JSON object')
-    kind = payload.get('graph_type', '')
-    directed = payload.get('directed', kind in {'DiGraph', 'MultiDiGraph'})
-    multigraph = payload.get('multigraph', kind in {'MultiGraph', 'MultiDiGraph'})
-    graph = (nx.MultiDiGraph if multigraph else nx.DiGraph)() if directed else (nx.MultiGraph if multigraph else nx.Graph)()
-    nodes = payload.get('vertices', payload.get('nodes'))
-    if not isinstance(nodes, list) or not isinstance(payload.get('edges'), list):
-        raise ValueError('An additional graph needs explicit node and edge arrays')
-    for node in nodes:
-        if isinstance(node, dict):
-            key = node.get('vid', node.get('id'))
-            if key is None:
-                raise ValueError('Graph node objects require vid or id')
-            graph.add_node(str(key), **node.get('properties', {}))
-        else:
-            graph.add_node(str(node))
-    for i, edge in enumerate(payload['edges']):
-        if isinstance(edge, dict):
-            source, target = edge.get('src', edge.get('source')), edge.get('dst', edge.get('target'))
-            props = dict(edge.get('properties', {}))
-            props.update({k: v for k, v in edge.items() if k not in {'src','dst','source','target','rank','key','properties'}})
-            key = edge.get('rank', edge.get('key', str(i)))
-        elif isinstance(edge, (list, tuple)) and len(edge) >= 2:
-            source, target, props, key = edge[0], edge[1], {}, str(i)
-        else:
-            raise ValueError('Invalid graph edge')
-        if str(source) not in graph or str(target) not in graph:
-            raise ValueError('Additional graph edge refers to an undeclared node')
-        if graph.is_multigraph():
-            graph.add_edge(str(source), str(target), key=key, **props)
-        else:
-            graph.add_edge(str(source), str(target), **props)
-    return graph
+    from aag.utils.graph_payload import from_graph_data, to_networkx
+    kind = payload.get('graph_type') or (("Multi" if payload.get('multigraph') else "") + ("DiGraph" if payload.get('directed') else "Graph"))
+    if 'vertices' in payload:
+        from aag.expert_search_engine.database.datatype import GraphData
+        payload = from_graph_data(GraphData.from_dict(payload), kind)
+    else:
+        payload = {**payload, 'graph_type': kind}
+    return to_networkx(payload)
 
 
 def k_hop_neighbors(G, source, k=2):

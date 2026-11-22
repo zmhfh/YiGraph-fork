@@ -155,3 +155,10 @@ node_modules
 
 # Local ReAct execution records (goals, observations and artifacts).
 /output/react-runs/
+
+# Local trained adapter, inference settings and protocol logs.
+/models/runtime_binder/
+/runtime/binder/
+/tools/runtime_binder/local.env*
+/*-test.log
+/import-check.log

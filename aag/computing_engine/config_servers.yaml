@@ -268,6 +268,21 @@ engine_supported_algorithms:
     bfs_tree:
       - tool: bfs_tree
 
+    bfs_edges:
+      - tool: bfs_edges
+
+    bfs_successors:
+      - tool: bfs_successors
+
+    bfs_predecessors:
+      - tool: bfs_predecessors
+
+    bfs_layers:
+      - tool: bfs_layers
+
+    edge_bfs:
+      - tool: edge_bfs
+
     dfs_tree:
       - tool: dfs_tree
 

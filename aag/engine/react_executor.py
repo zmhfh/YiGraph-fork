@@ -22,7 +22,8 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 from aag.expert_search_engine.database.datatype import GraphData
 from aag.models.graph_workflow_dag import GraphWorkflowDAG
 from aag.utils.data_utils import take_sample
-from aag.utils.graph_conversion import reconstruct_graph
+from aag.utils.graph_payload import executable_graph, kind_from_dataset, from_graph_data, to_graph_data, dataset_for_kind
+from aag.engine.result_adapter import TRAVERSALS
 from aag.engine.react_trace import ReactTraceStore, preview, is_sampled, collection_metadata
 from aag.computing_engine.schema_roles import temporal_path_schema, bind_temporal_path_parameters
 
@@ -482,6 +483,11 @@ class ReActExecutor:
                     post_code = post_code or generated_post
 
         bound = {"parameters": base_parameters, "graph_adapter_result": None, "errors": []}
+        context_setter = getattr(self.dependency_resolver, "set_graph_context", None)
+        if callable(context_setter) and self.global_graph is not None:
+            import os
+            context_setter(self.global_graph, self.current_graph_dataset,
+                           os.environ.get("YIGRAPH_BINDER_GRAPH_KIND", "DiGraph"))
         if self.dependency_resolver and action.get("consumed"):
             bound = await self.dependency_resolver.prepare_react_inputs(
                 current_question=action.get("objective") or state.goal,
@@ -492,7 +498,15 @@ class ReActExecutor:
             )
         if bound.get("errors"):
             raise ValueError("Input binding failed; correct consumed references: " + "; ".join(bound["errors"]))
+        from aag.engine.runtime_binder import bind_prepared_inputs
+        bound = await bind_prepared_inputs(self, action, state, bound)
         working_graph = await self._initialize_working_graph(bound.get("graph_adapter_result"), algorithm)
+        if algorithm.removeprefix("run_") in TRAVERSALS and self.global_graph is not None:
+            import os
+            kind = kind_from_dataset(self.current_graph_dataset, os.environ.get("YIGRAPH_BINDER_GRAPH_KIND", "DiGraph"))
+            if not hasattr(state, "_traversal_inputs"):
+                state._traversal_inputs = {}
+            state._traversal_inputs[state.step] = copy.deepcopy(bound.get("graph_adapter_result")) if bound.get("graph_adapter_result") is not None else from_graph_data(self.global_graph, kind)
         self._emit_status("executing", state.step)
         self._record("tool_call", {"step": state.step, "action": action, "parameters": bound.get("parameters"),
                                   "post_processing_code": post_code})
@@ -759,20 +773,13 @@ class ReActExecutor:
     async def _initialize_working_graph(self, adapter_result: Optional[Dict[str, Any]], algorithm: Optional[str] = None) -> Optional[Dict[str, Any]]:
         if self.global_graph is None:
             return
-        vertices = self.global_graph.vertices
-        edges = self.global_graph.edges
-        if adapter_result:
-            nodes = list(dict.fromkeys(str(n) for n in (adapter_result.get("nodes") or [])))
-            pairs = []
-            seen = set()
-            for edge in adapter_result.get("edges") or []:
-                if isinstance(edge, (list, tuple)) and len(edge) >= 2:
-                    pair = (str(edge[0]), str(edge[1]))
-                    if pair not in seen:
-                        seen.add(pair)
-                        pairs.append(pair)
-            if nodes or pairs:
-                vertices, edges = reconstruct_graph(nodes, pairs, vertices, edges)
+        import os
+        kind = kind_from_dataset(self.current_graph_dataset, os.environ.get("YIGRAPH_BINDER_GRAPH_KIND", "DiGraph"))
+        vertices, edges = self.global_graph.vertices, self.global_graph.edges
+        if adapter_result is not None:
+            graph = executable_graph(adapter_result, self.global_graph, kind)
+            kind = graph["graph_type"]
+            vertices, edges = to_graph_data(graph)
         runner = getattr(self.computing_engine, "run_algorithm", None)
         if not callable(runner):
             return
@@ -780,8 +787,10 @@ class ReActExecutor:
             "vertices": [v.to_dict() for v in vertices or []],
             "edges": [e.to_dict() for e in edges or []],
         }
-        if self.current_graph_dataset and hasattr(self.current_graph_dataset, "to_dict"):
-            payload["dataset_config"] = self.current_graph_dataset.to_dict()
+        if adapter_result is not None and graph.get("graph_attributes"):
+            payload["graph_attributes"] = copy.deepcopy(graph["graph_attributes"])
+        if self.current_graph_dataset is not None:
+            payload["dataset_config"] = dataset_for_kind(self.current_graph_dataset, kind)
         initializer = "initialize_graph"
         mappings = getattr(self.computing_engine, "algorithm_tool_mapping", {}) or {}
         if algorithm and isinstance(mappings, dict):
@@ -941,6 +950,9 @@ class ReActExecutor:
             "fields": fields,
             "summary": str(preview(raw_result))[: self.observation_chars],
             "evidence_scope": evidence_scope,
+            "binding_input_refs": action.get("_runtime_binder_input_refs", []),
+            **({"graph_input": getattr(state, "_traversal_inputs", {})[step]}
+               if step in getattr(state, "_traversal_inputs", {}) else {}),
         }
         return artifact_id
 
