@@ -2,6 +2,8 @@
 
 这份代码基于 YiGraph-fork main 的 `563a78ed6f89045b9a08bce82e2ab60c925ff63a`，包含 Binder 接入和本轮图兼容修复。当前 LoRA 权重保持原样。框架测试通过不代表该 LoRA 在新图类型上已经通过测试。
 
+已有 LoRA、复现材料与校验值见 [runtime-binder-v1.0.0 发布页](https://github.com/zmhfh/YiGraph-fork/releases/tag/runtime-binder-v1.0.0)。本次修复没有重新训练或替换这些权重。
+
 ## 修改内容
 
 1. 从已加载数据集获取 Graph、DiGraph、MultiGraph 或 MultiDiGraph 类型；环境变量仅作缺少元数据时的备选。
@@ -81,3 +83,51 @@ python -m pytest tests/test_graph_payload.py tests/test_binder_graph_compat.py t
 完整测试集在当前 Windows 环境中仍受无关的发布依赖 keyring、NLTK 资源和 POSIX 文件权限断言影响。相关执行模块的专项回归另行运行；完整 pytest 不能被宣称为全部通过。
 
 保留多重交易不意味着所有 NetworkX 算法都支持 MultiDiGraph。算法不支持时仍会返回错误。若业务要求投影成简单图，必须另行明确方向处理、平行交易聚合方式、金额权重和时间筛选规则，不应为了让算法运行而隐式合并交易。真实 LoRA 的新类型准确率及完整网页流程需要在服务器上验收。
+
+## 网页部署与实际验收
+
+前端需要 Node.js >=20.9；已在 node1 用 Node.js 22 完成静态页面构建。后端建议使用独立 Python 3.12 环境：项目的 engine 依赖固定 transformers==4.53.1，Binder 的 Qwen3.5 环境使用其原有版本。
+
+```bash
+# 在独立网页环境中安装；不要在训练环境中执行。
+python -m pip install -e '.[engine]' \
+  'Flask==3.0.0' 'Flask-CORS==4.0.0' 'Flask-SocketIO==5.3.6'
+
+npm ci --prefix web/frontend/next-app
+npm run build --prefix web/frontend/next-app
+```
+
+主对话模型负责生成工具调用和报告，Binder LoRA 负责输入引用选择。LLaMA-Factory 可单独用基础 Qwen 提供主对话 API；不要把只返回 input_refs 的 Binder 服务当成聊天接口。主模型服务须先通过 `/v1/models` 和 `/v1/chat/completions` 检查，再填写实际接口地址与模型名。代码包中的远程 API 配置是示例，不包含可用凭据。
+
+LlamaIndex 的嵌入模型缓存由 LLAMA_INDEX_CACHE_DIR 控制；仅设置 HF_HOME 不会覆盖它显式传入的缓存位置。在网页后端启动终端设置自己可写的路径：
+
+```bash
+export LLAMA_INDEX_CACHE_DIR=/home/hdd/fuzq/yigraph-web-cache/llama-index
+export HF_HOME=/home/hdd/fuzq/yigraph-web-cache/huggingface
+mkdir -p "$LLAMA_INDEX_CACHE_DIR" "$HF_HOME"
+export NO_PROXY="127.0.0.1,localhost,::1${NO_PROXY:+,$NO_PROXY}"
+export no_proxy="$NO_PROXY"
+```
+
+原图查询和 GraphRAG 还需要可用的 Neo4j 账号。数据库密码可通过 YIGRAPH_NEO4J_PASSWORD 或配置中的 password_file 在节点本地提供，不要提交到 Git。NLTK 的词库目录须符合已安装 NLTK 的私有路径检查；共享目录权限与代理下载策略需要分别处理，不要用关闭安全检查的方法消除警告。
+
+后端从 5089 起选择可用端口；静态 out/index.html 存在时，前端和 API 由同一后端端口提供。请转发新进程实际打印的端口，避免访问旧实例。
+
+在网页选择 AMLSim1K，提交以下问题：
+
+```text
+WEB-BFS-1111
+在完整原始交易图上，以账户 ID 1111 为源执行 bfs_tree，沿原图方向遍历，不限制深度。
+将得到的 BFS 树传给 pagerank，alpha=0.85，weight=null。
+汇总实际原图和树的节点、边数量，以及树上 PageRank 排名前五的节点和得分。
+```
+
+执行结束后运行：
+
+```bash
+python tools/runtime_binder/verify_web_run.py --repo "$PWD"
+```
+
+检查器读取对应网页运行的完整产物与 Binder 事件，从 BFS 实际输入快照计算参考树和全部 PageRank 得分，并检查下游工作图类型与规模。它不把网页文本或严格 JSON 字符串匹配当成数值计算正确性的证明；报告文字还须核对其给出的参考事实。
+
+截至 2026-11-22，已收到 node1 的框架检查 passed=true（原图 1446 节点、17512 条边；树 778 节点、777 条边）及主模型列表接口成功记录。完整网页流程仍受嵌入缓存权限、Neo4j 凭据和 NLTK 配置影响，尚未收到网页检查器 passed=true 的结果；不能将此发布解释为真实网页验收已全部通过。
