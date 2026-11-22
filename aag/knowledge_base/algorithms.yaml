@@ -10597,3 +10597,221 @@
   Principles:
     description: Connect directed original transactions in chronological order. Preserve parallel transactions,
       declared scope and completeness flags.
+
+- id: bfs_edges
+  task_type_id: Basics
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for bfs_edges
+          type: NetworkX graph
+        source:
+          description: Specify starting node for breadth-first search; this function
+            iterates over only those edges in the component reachable from this node.
+          type: node
+        reverse:
+          description: If True traverse a directed graph in the reverse direction
+          type: bool, optional
+          default: false
+        depth_limit:
+          description: Specify the maximum search depth
+          type: int, optional(default=len(G))
+          default: null
+        sort_neighbors:
+          description: A function that takes an iterator over nodes as the input,
+            and
+          type: function (default=None)
+          default: null
+      required:
+      - source
+    output_schema:
+      type: object
+      description: bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes
+        and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers,
+        algorithm, items, source, complete, truncated. To consume a traversal as a
+        graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers
+        alone do not define tree parents; edge_bfs is not a tree. Incomplete results
+        cannot be executable graphs.
+    graph_type:
+      directed: both
+      multigraph: true
+      weighted: false
+      heterogeneous: false
+  Application_scenario: Explicit breadth-first traversal; retain output type and completeness
+    before downstream graph conversion.
+  Principles:
+    description: Iterate over edges in a breadth-first-search starting at source.
+  solvable_questions:
+  - Traverse the selected input graph using bfs_edges and report its typed result.
+- id: bfs_successors
+  task_type_id: Basics
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for bfs_successors
+          type: NetworkX graph
+        source:
+          description: Specify starting node for breadth-first search
+          type: node
+        depth_limit:
+          description: Specify the maximum search depth
+          type: int, optional(default=len(G))
+          default: null
+        sort_neighbors:
+          description: A function that takes an iterator over nodes as the input,
+            and
+          type: function (default=None)
+          default: null
+      required:
+      - source
+    output_schema:
+      type: object
+      description: bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes
+        and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers,
+        algorithm, items, source, complete, truncated. To consume a traversal as a
+        graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers
+        alone do not define tree parents; edge_bfs is not a tree. Incomplete results
+        cannot be executable graphs.
+    graph_type:
+      directed: both
+      multigraph: true
+      weighted: false
+      heterogeneous: false
+  Application_scenario: Explicit breadth-first traversal; retain output type and completeness
+    before downstream graph conversion.
+  Principles:
+    description: Returns an iterator of successors in breadth-first-search from source.
+  solvable_questions:
+  - Traverse the selected input graph using bfs_successors and report its typed result.
+- id: bfs_predecessors
+  task_type_id: Basics
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: Parameter 'G' for bfs_predecessors
+          type: NetworkX graph
+        source:
+          description: Specify starting node for breadth-first search
+          type: node
+        depth_limit:
+          description: Specify the maximum search depth
+          type: int, optional(default=len(G))
+          default: null
+        sort_neighbors:
+          description: A function that takes an iterator over nodes as the input,
+            and
+          type: function (default=None)
+          default: null
+      required:
+      - source
+    output_schema:
+      type: object
+      description: bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes
+        and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers,
+        algorithm, items, source, complete, truncated. To consume a traversal as a
+        graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers
+        alone do not define tree parents; edge_bfs is not a tree. Incomplete results
+        cannot be executable graphs.
+    graph_type:
+      directed: both
+      multigraph: true
+      weighted: false
+      heterogeneous: false
+  Application_scenario: Explicit breadth-first traversal; retain output type and completeness
+    before downstream graph conversion.
+  Principles:
+    description: Returns an iterator of predecessors in breadth-first-search from
+      source.
+  solvable_questions:
+  - Traverse the selected input graph using bfs_predecessors and report its typed
+    result.
+- id: bfs_layers
+  task_type_id: Basics
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A graph over which to find the layers using breadth-first search.
+          type: NetworkX graph
+        sources:
+          description: Specify starting nodes for single source or multiple sources
+            breadth-first search. Yields ------
+          type: node in `G` or iterable of nodes in `G`
+      required:
+      - sources
+    output_schema:
+      type: object
+      description: bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes
+        and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers,
+        algorithm, items, source, complete, truncated. To consume a traversal as a
+        graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers
+        alone do not define tree parents; edge_bfs is not a tree. Incomplete results
+        cannot be executable graphs.
+    graph_type:
+      directed: both
+      multigraph: true
+      weighted: false
+      heterogeneous: false
+  Application_scenario: Explicit breadth-first traversal; retain output type and completeness
+    before downstream graph conversion.
+  Principles:
+    description: Returns an iterator of all the layers in breadth-first search traversal.
+  solvable_questions:
+  - Traverse the selected input graph using bfs_layers and report its typed result.
+- id: edge_bfs
+  task_type_id: Basics
+  Deployment_method:
+    support_engine: networkx
+    input_schema:
+      type: object
+      parameters:
+        G:
+          description: A directed/undirected graph/multigraph.
+          type: graph
+        source:
+          description: The node from which the traversal begins. If None, then a source
+            is chosen arbitrarily and repeatedly until all edges from each node in
+            the graph are searched.
+          type: node, list of nodes
+          default: null
+        orientation:
+          description: For directed graphs and directed multigraphs, edge traversals
+            need not respect the original orientation of the edges. When set to 'reverse'
+            every edge is traversed in the reverse direction. When set to 'ignore',
+            every edge is treated as undirected. When set to 'original', every edge
+            is treated as directed. In all three cases, the yielded edge tuples add
+            a last entry to indicate the direction in which that edge was traversed.
+            If orientation is None, the yielded edge has no direction indicated. The
+            direction is respected, but not reported. Yields ------
+          type: 'None | ''original'' | ''reverse'' | ''ignore'' (default: None)'
+          default: null
+    output_schema:
+      type: object
+      description: bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes
+        and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers,
+        algorithm, items, source, complete, truncated. To consume a traversal as a
+        graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers
+        alone do not define tree parents; edge_bfs is not a tree. Incomplete results
+        cannot be executable graphs.
+    graph_type:
+      directed: both
+      multigraph: true
+      weighted: false
+      heterogeneous: false
+  Application_scenario: Explicit breadth-first traversal; retain output type and completeness
+    before downstream graph conversion.
+  Principles:
+    description: A directed, breadth-first-search of edges in `G`, beginning at `source`.
+  solvable_questions:
+  - Traverse the selected input graph using edge_bfs and report its typed result.

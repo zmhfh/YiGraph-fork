@@ -149,7 +149,8 @@ def test_actual_initialized_subgraph_metadata_survives_extraction_and_artifact_p
         "vertex": [], "edge": [], "graph_structure": {"directed": True, "multigraph": True}, "graph_store_info": {}}})
     reasoner = SimpleNamespace(generate_algorithm_postprocessing=MagicMock(return_value=SPEC))
     resolver = SimpleNamespace(prepare_react_inputs=AsyncMock(return_value={
-        "parameters": {"alpha": 0.85}, "graph_adapter_result": {"nodes": ["a", "b"], "edges": [["a", "b"]]}, "errors": []}))
+        "parameters": {"alpha": 0.85}, "graph_adapter_result": {"nodes": ["a", "b"], "edges": [["a", "b"]],
+            "edge_selection": "all_parallel"}, "errors": []}))
     runner, engine = make_runner(reasoner, {}, global_graph=graph, current_graph_dataset=config, dependency_resolver=resolver)
     processor = GraphComputationProcessor()
     reasoner.generate_algorithm_postprocessing.return_value = {"required": True, "code": '''def process(data):

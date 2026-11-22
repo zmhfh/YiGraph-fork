@@ -4090,5 +4090,123 @@
     "required": [
       "matching"
     ]
+  },
+  "run_bfs_edges": {
+    "type": "object",
+    "parameters": {
+      "G": {
+        "description": "Parameter 'G' for bfs_edges",
+        "type": "NetworkX graph"
+      },
+      "source": {
+        "description": "Specify starting node for breadth-first search; this function iterates over only those edges in the component reachable from this node.",
+        "type": "node"
+      },
+      "reverse": {
+        "description": "If True traverse a directed graph in the reverse direction",
+        "type": "bool, optional",
+        "default": false
+      },
+      "depth_limit": {
+        "description": "Specify the maximum search depth",
+        "type": "int, optional(default=len(G))",
+        "default": null
+      },
+      "sort_neighbors": {
+        "description": "A function that takes an iterator over nodes as the input, and",
+        "type": "function (default=None)",
+        "default": null
+      }
+    },
+    "required": [
+      "source"
+    ]
+  },
+  "run_bfs_layers": {
+    "type": "object",
+    "parameters": {
+      "G": {
+        "description": "A graph over which to find the layers using breadth-first search.",
+        "type": "NetworkX graph"
+      },
+      "sources": {
+        "description": "Specify starting nodes for single source or multiple sources breadth-first search. Yields ------",
+        "type": "node in `G` or iterable of nodes in `G`"
+      }
+    },
+    "required": [
+      "sources"
+    ]
+  },
+  "run_bfs_predecessors": {
+    "type": "object",
+    "parameters": {
+      "G": {
+        "description": "Parameter 'G' for bfs_predecessors",
+        "type": "NetworkX graph"
+      },
+      "source": {
+        "description": "Specify starting node for breadth-first search",
+        "type": "node"
+      },
+      "depth_limit": {
+        "description": "Specify the maximum search depth",
+        "type": "int, optional(default=len(G))",
+        "default": null
+      },
+      "sort_neighbors": {
+        "description": "A function that takes an iterator over nodes as the input, and",
+        "type": "function (default=None)",
+        "default": null
+      }
+    },
+    "required": [
+      "source"
+    ]
+  },
+  "run_bfs_successors": {
+    "type": "object",
+    "parameters": {
+      "G": {
+        "description": "Parameter 'G' for bfs_successors",
+        "type": "NetworkX graph"
+      },
+      "source": {
+        "description": "Specify starting node for breadth-first search",
+        "type": "node"
+      },
+      "depth_limit": {
+        "description": "Specify the maximum search depth",
+        "type": "int, optional(default=len(G))",
+        "default": null
+      },
+      "sort_neighbors": {
+        "description": "A function that takes an iterator over nodes as the input, and",
+        "type": "function (default=None)",
+        "default": null
+      }
+    },
+    "required": [
+      "source"
+    ]
+  },
+  "run_edge_bfs": {
+    "type": "object",
+    "parameters": {
+      "G": {
+        "description": "A directed/undirected graph/multigraph.",
+        "type": "graph"
+      },
+      "source": {
+        "description": "The node from which the traversal begins. If None, then a source is chosen arbitrarily and repeatedly until all edges from each node in the graph are searched.",
+        "type": "node, list of nodes",
+        "default": null
+      },
+      "orientation": {
+        "description": "For directed graphs and directed multigraphs, edge traversals need not respect the original orientation of the edges. When set to 'reverse' every edge is traversed in the reverse direction. When set to 'ignore', every edge is treated as undirected. When set to 'original', every edge is treated as directed. In all three cases, the yielded edge tuples add a last entry to indicate the direction in which that edge was traversed. If orientation is None, the yielded edge has no direction indicated. The direction is respected, but not reported. Yields ------",
+        "type": "None | 'original' | 'reverse' | 'ignore' (default: None)",
+        "default": null
+      }
+    }
   }
 }

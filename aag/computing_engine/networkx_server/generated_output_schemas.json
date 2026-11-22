@@ -12,8 +12,8 @@
     "description": "bool True if `G` is a DAG, False otherwise"
   },
   "run_bfs_tree": {
-    "type": "any",
-    "description": "T: NetworkX DiGraph An oriented tree"
+    "type": "object",
+    "description": "bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers, algorithm, items, source, complete, truncated. To consume a traversal as a graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers alone do not define tree parents; edge_bfs is not a tree. Incomplete results cannot be executable graphs."
   },
   "run_dfs_tree": {
     "type": "NetworkX DiGraph",
@@ -874,5 +874,25 @@
   "run_is_perfect_matching": {
     "type": "any",
     "description": "bool Whether the given set or dictionary represents a valid perfect matching in the graph."
+  },
+  "run_bfs_edges": {
+    "type": "object",
+    "description": "bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers, algorithm, items, source, complete, truncated. To consume a traversal as a graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers alone do not define tree parents; edge_bfs is not a tree. Incomplete results cannot be executable graphs."
+  },
+  "run_bfs_layers": {
+    "type": "object",
+    "description": "bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers, algorithm, items, source, complete, truncated. To consume a traversal as a graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers alone do not define tree parents; edge_bfs is not a tree. Incomplete results cannot be executable graphs."
+  },
+  "run_bfs_predecessors": {
+    "type": "object",
+    "description": "bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers, algorithm, items, source, complete, truncated. To consume a traversal as a graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers alone do not define tree parents; edge_bfs is not a tree. Incomplete results cannot be executable graphs."
+  },
+  "run_bfs_successors": {
+    "type": "object",
+    "description": "bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers, algorithm, items, source, complete, truncated. To consume a traversal as a graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers alone do not define tree parents; edge_bfs is not a tree. Incomplete results cannot be executable graphs."
+  },
+  "run_edge_bfs": {
+    "type": "object",
+    "description": "bfs_tree returns a complete typed DiGraph with nodes, edges, node_attributes and complete=true. Other BFS tools return type=edge_set|parent_mapping|node_layers, algorithm, items, source, complete, truncated. To consume a traversal as a graph, set consumed.graph_mode=bfs_tree or induced_subgraph explicitly. Layers alone do not define tree parents; edge_bfs is not a tree. Incomplete results cannot be executable graphs."
   }
 }

@@ -22,7 +22,7 @@ from aag.data_pipeline.data_transformer.dataset_manager import DatasetManager
 from aag.config.data_upload_config import DatasetConfig
 from aag.engine.dependency_resolver import DataDependencyResolver
 from aag.expert_search_engine.database.datatype import VertexData, EdgeData, GraphData
-from aag.utils.graph_conversion import flatten_graph, reconstruct_graph
+from aag.utils.graph_payload import executable_graph, kind_from_dataset, to_graph_data, dataset_for_kind
 from aag.utils.data_utils import take_sample
 from aag.rag_engine.vector_rag import VectorRAG
 from aag.rag_engine.graph_rag import GraphRAG
@@ -211,8 +211,7 @@ class Scheduler:
             self.current_graph_dataset = self.current_dataset[0]
             global_vertices, global_edges = self.dataset_manager.get_dataset_content(self.current_graph_dataset)
             self.global_graph = GraphData(vertices=global_vertices, edges=global_edges)
-            graph_nodes, graph_edges = flatten_graph(global_vertices, global_edges)
-            self.data_dependency_resolver.set_global_graph(graph_nodes, graph_edges)
+            self.data_dependency_resolver.set_graph_context(self.global_graph, self.current_graph_dataset)
             
             neo4j_config_dict = self.config.retrieval.database.neo4j
             self.dataset_manager.load_graph_to_neo4j(
@@ -288,8 +287,7 @@ class Scheduler:
                 self.current_graph_dataset = converted_graph_config
                 global_vertices, global_edges = self.dataset_manager.get_dataset_content(self.current_graph_dataset)
                 self.global_graph = GraphData(vertices=global_vertices, edges=global_edges)
-                graph_nodes, graph_edges = flatten_graph(global_vertices, global_edges)
-                self.data_dependency_resolver.set_global_graph(graph_nodes, graph_edges)         
+                self.data_dependency_resolver.set_graph_context(self.global_graph, self.current_graph_dataset)
             
             return await self._execute_graph(query, decompose=decompose, mode=mode, callback=callback)
         
@@ -1629,40 +1627,21 @@ class Scheduler:
         if self.global_graph is None:
             raise RuntimeError("Global graph not loaded; cannot run graph algorithms.")
 
-        use_subgraph = bool(graph_dependencies) and bool(graph_adapter_result)
-        vertices_to_use = self.global_graph.vertices
-        edges_to_use = self.global_graph.edges
-
+        use_subgraph = bool(graph_dependencies) and graph_adapter_result is not None
+        kind = kind_from_dataset(self.current_graph_dataset)
+        vertices_to_use, edges_to_use = self.global_graph.vertices, self.global_graph.edges
+        graph = None
         if use_subgraph:
-            node_ids_raw = (graph_adapter_result or {}).get("nodes") or []
-            edge_pairs_raw = (graph_adapter_result or {}).get("edges") or []
-            # Convert to string and remove duplicates while preserving order
-            node_ids = list(dict.fromkeys([str(n) for n in node_ids_raw]))
-            edge_pairs: List[Tuple[str, str]] = []
-            seen_edges = set()
-            for edge in edge_pairs_raw:
-                if isinstance(edge, (list, tuple)) and len(edge) >= 2:
-                    edge_pair = (str(edge[0]), str(edge[1]))
-                    if edge_pair not in seen_edges:
-                        edge_pairs.append(edge_pair)
-                        seen_edges.add(edge_pair)
-            if node_ids or edge_pairs:
-                vertices_to_use, edges_to_use = reconstruct_graph(
-                    node_ids,
-                    edge_pairs,
-                    self.global_graph.vertices,
-                    self.global_graph.edges,
-                )
-            else:
-                logger.warning("⚠️ Subgraph dependency has no valid nodes/edges; falling back to full graph.")
-                use_subgraph = False
-
+            graph = executable_graph(graph_adapter_result, self.global_graph, kind)
+            kind = graph["graph_type"]
+            vertices_to_use, edges_to_use = to_graph_data(graph)
         payload = {
-            "vertices": [v.to_dict() for v in vertices_to_use or []],
-            "edges": [e.to_dict() for e in edges_to_use or []],
+            "vertices": [v.to_dict() for v in vertices_to_use],
+            "edges": [e.to_dict() for e in edges_to_use],
+            "dataset_config": dataset_for_kind(self.current_graph_dataset, kind),
         }
-        if self.current_graph_dataset:
-            payload["dataset_config"] = self.current_graph_dataset.to_dict()
+        if graph is not None and graph.get("graph_attributes"):
+            payload["graph_attributes"] = graph["graph_attributes"]
 
         result = await self.computing_engine.run_algorithm("initialize_graph", payload)
         if not result.get("success", False):

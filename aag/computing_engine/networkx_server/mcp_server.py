@@ -177,7 +177,7 @@ def apply_processing(func):
 # 新增: 添加 outputSchema 以匹配动态工具（使用 camelCase）
 
 @mcp.tool()
-def run_initialize_graph(vertices: List[Dict[str, Any]], edges: List[Dict[str, Any]], dataset_config: Dict[str, Any]) -> Dict[str, Any]:
+def run_initialize_graph(vertices: List[Dict[str, Any]], edges: List[Dict[str, Any]], dataset_config: Dict[str, Any], graph_attributes: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """初始化图数据结构，加载顶点和边数据。必须首先调用此工具才能运行任何图算法。"""
     try:
         dataset_obj = DatasetConfig.from_dict(dataset_config)
@@ -188,6 +188,7 @@ def run_initialize_graph(vertices: List[Dict[str, Any]], edges: List[Dict[str, A
         edge_objs = [EdgeData.from_dict(e) for e in edges]
         processor = get_processor()
         processor.create_graph_from_edges(vertex_objs, edge_objs, directed, multiedge)
+        processor.graph.graph.update(graph_attributes or {})
 
         info = processor.get_graph_info()
         summary = f"图初始化成功: {info.get('节点数', 0)}个节点, {info.get('边数', 0)}条边"

@@ -13,7 +13,8 @@ from dataclasses import dataclass
 from aag.models.task_types import GraphAnalysisType, GraphAnalysisSubType
 from typing import Dict, List, Set, Any, Optional, TYPE_CHECKING
 from dataclasses import dataclass
-from aag.reasoner.model_deployment import Reasoner
+if TYPE_CHECKING:
+    from aag.reasoner.model_deployment import Reasoner
 
 
 class OutputField(BaseModel):
@@ -682,7 +683,7 @@ class GraphWorkflowDAG:
         """返回 query_id -> step_id 映射的副本。"""
         return copy.deepcopy(self.query_id_mapping)
 
-    def modify_dag(self, reasoner: Reasoner, user_request: str) -> Dict[str, Any]:
+    def modify_dag(self, reasoner: "Reasoner", user_request: str) -> Dict[str, Any]:
         """
         Based on the user's natural language modification request, regenerate the subquery_plan.
         """

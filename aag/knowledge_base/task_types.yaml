@@ -6,6 +6,11 @@
     - is_forest
     - is_directed_acyclic_graph
     - bfs_tree
+    - bfs_edges
+    - bfs_successors
+    - bfs_predecessors
+    - bfs_layers
+    - edge_bfs
     - dfs_tree
     - topological_sort
     - lexicographical_topological_sort
